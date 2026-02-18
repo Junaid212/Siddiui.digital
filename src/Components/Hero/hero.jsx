@@ -526,7 +526,7 @@ export default function Hero({ onBookConsultation }) {
                 <div className="image-frame">
                   
                   <img
-                    src="/assets/images/img/Siddiqui.png"
+                    src="./assets/images/img/Siddiqui.png"
                     alt="Mr. Siddiqui"
                     style={{ position: 'relative', zIndex: 1 }}
                   />
