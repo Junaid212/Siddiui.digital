@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, BookOpen, GraduationCap, CalendarCheck } from "lucide-react";
+import profile from "../../assets/images/img/Siddiqui.png";
 
 export default function Hero({ onBookConsultation }) {
   const [darkMode, setDarkMode] = useState(true);
@@ -526,7 +527,7 @@ export default function Hero({ onBookConsultation }) {
                 <div className="image-frame">
                   
                   <img
-                    src="./assets/images/img/Siddiqui.png"
+                    src={profile}
                     alt="Mr. Siddiqui"
                     style={{ position: 'relative', zIndex: 1 }}
                   />
