@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, BookOpen, GraduationCap, CalendarCheck } from "lucide-react";
-import profile from "../../assets/images/img/Siddiqui.png";
+import profile from "./assets/images/img/Siddiqui.png";
 
 export default function Hero({ onBookConsultation }) {
   const [darkMode, setDarkMode] = useState(true);
