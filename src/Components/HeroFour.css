@@ -1,0 +1,250 @@
+/* Simple Hero Section */
+.mil-hero-simple {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 120px 0 80px;
+    position: relative;
+    overflow: hidden;
+}
+
+.mil-hero-simple::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 1;
+}
+
+.mil-hero-content {
+    position: relative;
+    z-index: 2;
+    color: #ffffff;
+}
+
+/* Name Styling */
+.mil-hero-name {
+    font-size: 1.125rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 1.5rem !important;
+}
+
+/* Title Styling */
+.mil-hero-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 1.5rem !important;
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+    .mil-hero-title {
+        font-size: 2.5rem;
+    }
+}
+
+/* Description Styling */
+.mil-hero-description {
+    font-size: 1.25rem;
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.85);
+    max-width: 800px;
+    margin: 0 auto 3rem !important;
+    font-weight: 300;
+}
+
+/* Button Container */
+.mil-hero-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 2rem;
+}
+
+@media (max-width: 576px) {
+    .mil-hero-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+}
+
+/* Button Styling */
+.mil-button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    background-color: transparent;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border: solid 2px #ffffff;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: #ffffff;
+    padding: 0 30px;
+    height: 50px;
+    border-radius: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.mil-button.mil-button-md {
+    height: 50px;
+    padding: 0 35px;
+    font-size: 0.875rem;
+}
+
+.mil-button.mil-button-linear {
+    background-color: transparent;
+    border: solid 2px #ffffff;
+    color: #ffffff;
+}
+
+.mil-button.mil-button-dark {
+    border-color: #ffffff;
+    color: #ffffff;
+}
+
+.mil-button:hover {
+    background-color: #ffffff;
+    color: #764ba2;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.mil-button:active {
+    transform: translateY(0);
+}
+
+.mil-button span {
+    white-space: nowrap;
+    transition: all 0.3s ease;
+}
+
+/* Button Hover Effect - Slide Animation */
+.mil-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: #ffffff;
+    transition: all 0.4s ease;
+    z-index: 0;
+}
+
+.mil-button:hover::before {
+    left: 0;
+}
+
+.mil-button span {
+    position: relative;
+    z-index: 1;
+}
+
+/* Additional Elements for Visual Appeal */
+.mil-hero-simple .container {
+    position: relative;
+}
+
+/* Add subtle pattern overlay */
+.mil-hero-simple::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.3;
+    z-index: 1;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+    .mil-hero-simple {
+        padding: 100px 0 60px;
+        min-height: 80vh;
+    }
+    
+    .mil-hero-title {
+        font-size: 2.75rem;
+    }
+    
+    .mil-hero-description {
+        font-size: 1.125rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .mil-hero-simple {
+        padding: 80px 0 40px;
+        min-height: 70vh;
+    }
+    
+    .mil-hero-title {
+        font-size: 2rem;
+    }
+    
+    .mil-hero-description {
+        font-size: 1rem;
+        padding: 0 15px;
+    }
+    
+    .mil-button.mil-button-md {
+        padding: 0 25px;
+        height: 45px;
+        font-size: 0.813rem;
+    }
+}
+
+/* Utility Classes */
+.mil-mb-20 { margin-bottom: 20px !important; }
+.mil-mb-30 { margin-bottom: 30px !important; }
+.mil-mb-50 { margin-bottom: 50px !important; }
+.mil-mr-20 { margin-right: 20px !important; }
+
+.text-center { text-align: center !important; }
+
+/* Ensure proper font rendering */
+.mil-hero-content * {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Add this to HeroFour.css for a different gradient option */
+
+.mil-hero-simple-alt {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    padding: 120px 0 80px;
+    position: relative;
+    overflow: hidden;
+}
+
+.mil-hero-simple-alt::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.3));
+    z-index: 1;
+}
