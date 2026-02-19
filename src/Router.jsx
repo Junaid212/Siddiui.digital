@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Outlet, useLocation } from "react-router-dom";
 import HomePage from "./Page/Home";
 import AboutPage from "./Page/About";
 import ServicePage from "./Page/Service";
@@ -14,6 +14,7 @@ import SinglePortfolioPage from "./Page/PortfolioDetail";
 import SinglePostPage from "./Page/SinglePost";
 import PageNotFound from "./Page/NotFoundPage/NotFound";
 import EbookPage from "./Page/Ebook";
+import AppointmentDrawer from "./Components/AppointmentDrawer/appointmentDrawer";
 
 function AppRouters(){
     return(
@@ -22,7 +23,7 @@ function AppRouters(){
             <Route path="/Siddiui.digital/" element={<HomePage />} />
             <Route path="about" element={<AboutPage />} />
             <Route path="services" element={<ServicePage />} />
-            <Route path="/Siddiui.digital/e-book" element={<SingleServicePage />} />
+            <Route path="e-book" element={<SingleServicePage />} />
             <Route path="portfolio" element={<PortfolioPage />} />
             <Route path="portfolio-detail" element={<SinglePortfolioPage/>}/>
             <Route path="pricing" element={<PricingPage />} />
@@ -37,8 +38,11 @@ function AppRouters(){
 
 
             <Route path="ebooks" element={<EbookPage />}/>
+            <Route path="appointment-drawer" element={<AppointmentDrawer />}/>
+
         </Routes>
     );
 }
+
 
 export default AppRouters;

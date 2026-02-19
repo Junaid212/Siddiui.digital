@@ -11,7 +11,7 @@ const SingleServicePage = () => {
     return(
         <>
             <HeadTitle title="Service Detail - Aspire - SEO & Digital Marketing Agency" />
-            <BannerInnerSection title="On-Page SEO" currentPage="On page SEO" />
+            {/* <BannerInnerSection title="On-Page SEO" currentPage="On page SEO" /> */}
             <SingleServiceSection />
             {/* <EnrollBook /> */}
             {/* <AchievementSection/> */}

@@ -3,6 +3,31 @@ import { motion } from "framer-motion";
 import { ArrowRight, BookOpen, GraduationCap, CalendarCheck } from "lucide-react";
 import img from "/assets/images/img/Siddiqui.png"
 
+// Helper component to render text with character-by-character animation
+const AnimatedCharacters = ({ text, isAccent = false }) => {
+  const characters = text.split("");
+  
+  return (
+    <>
+      {characters.map((char, index) => (
+        <motion.span
+          key={index}
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{
+            duration: 0.9,
+            delay: index * 0.115,
+            ease: "easeOut"
+          }}
+          style={{ display: "inline-block", whiteSpace: "pre" }}
+        >
+          {char}
+        </motion.span>
+      ))}
+    </>
+  );
+};
+
 export default function Hero({ onBookConsultation }) {
   const [darkMode, setDarkMode] = useState(true);
 
@@ -202,7 +227,7 @@ export default function Hero({ onBookConsultation }) {
         @media (min-width: 1024px) {
           .hero-title { 
             font-size: 3.75rem; 
-            line-height: 1.1;
+            line-height: 0.6;
           }
         }
         
@@ -470,8 +495,11 @@ export default function Hero({ onBookConsultation }) {
               </div>
               
               <h1 className="hero-title">
-                Expert Guidance.
-                <span className="hero-title-accent">Real Results</span>
+                <AnimatedCharacters text="Expert Guidance." />
+                <span className="hero-title-accent">
+                  <br />
+                  <AnimatedCharacters text="Real Results" isAccent={true} />
+                </span>
               </h1>
               
               <p className="hero-description">

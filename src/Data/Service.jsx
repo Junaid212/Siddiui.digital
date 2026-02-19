@@ -7,7 +7,7 @@ export const servicedata = [
         image: img1,
         title: "Content Marketing",
         content: "Rhoncus magna curabitur pretium non arcu magnis vestibulum cursus. Maximus gravida orci libero tristique non",
-        link: "/Siddiui.digital/e-book",
+        link: "/e-book",
     },
     {
         id: 2,
@@ -15,7 +15,7 @@ export const servicedata = [
         image: img1,
         title: "On-Page SEO",
         content: "Rhoncus magna curabitur pretium non arcu magnis vestibulum cursus. Maximus gravida orci libero tristique non",
-        link: "/Siddiui.digital/e-book",
+        link: "/e-book",
     },
     {
         id: 3,
@@ -23,7 +23,7 @@ export const servicedata = [
         image: img1,
         title: "Off-Page SEO",
         content: "Rhoncus magna curabitur pretium non arcu magnis vestibulum cursus. Maximus gravida orci libero tristique non",
-        link: "/Siddiui.digital/e-book",
+        link: "/e-book",
     },
     {
         id: 4,
@@ -31,7 +31,7 @@ export const servicedata = [
         image: img1,
         title: "Social Media Marketing",
         content: "Rhoncus magna curabitur pretium non arcu magnis vestibulum cursus. Maximus gravida orci libero tristique non",
-        link: "/Siddiui.digital/e-book",
+        link: "/e-book",
     },
     {
         id: 5,
@@ -39,7 +39,7 @@ export const servicedata = [
         image: img1,
         title: "Analytic Reporting",
         content: "Rhoncus magna curabitur pretium non arcu magnis vestibulum cursus. Maximus gravida orci libero tristique non",
-        link: "/Siddiui.digital/e-book",
+        link: "/e-book",
     },
     {
         id: 6,
@@ -47,6 +47,6 @@ export const servicedata = [
         image: img1,
         title: "Influencer Marketing",
         content: "Rhoncus magna curabitur pretium non arcu magnis vestibulum cursus. Maximus gravida orci libero tristique non",
-        link: "/Siddiui.digital/e-book",
+        link: "/e-book",
     },
 ];

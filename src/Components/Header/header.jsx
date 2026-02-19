@@ -323,18 +323,18 @@ const Navbar = () => {
                                             className={`nav-link dropdown-toggle ${
                                                 isDropdownActive(["/portfolio", "/portfolio-detail"]) ? "active" : ""
                                             }`}
-                                            href="#"
+                                            href="/portfolio"
                                             role="button"
-                                            data-bs-toggle="dropdown"
+                                            // data-bs-toggle="dropdown"    
                                             aria-expanded="false"
                                         >
                                             Course 
                                             {/* <i className="fa-solid fa-angle-down"></i> */}
                                         </a>
-                                        <ul className="dropdown-menu">
+                                        {/* <ul className="dropdown-menu">
                                             <li><NavLink to="#" className="dropdown-item" onClick={closeMenu}>Portfolio</NavLink></li>
                                             <li><NavLink to="#" className="dropdown-item" onClick={closeMenu}>Portfolio Details</NavLink></li>
-                                        </ul>
+                                        </ul> */}
                                     </li>
 
                                     <li className="nav-item dropdown">
@@ -354,7 +354,7 @@ const Navbar = () => {
                                                     : ""
                                             }
                                             `}
-                                            href="/consultation"
+                                            href="/appointment-drawer"
                                             role="button"
                                             data-bs-toggle="dropdown"
                                             aria-expanded="false"
