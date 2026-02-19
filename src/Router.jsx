@@ -22,7 +22,7 @@ function AppRouters(){
             <Route path="/Siddiui.digital/" element={<HomePage />} />
             <Route path="about" element={<AboutPage />} />
             <Route path="services" element={<ServicePage />} />
-            <Route path="e-book" element={<SingleServicePage />} />
+            <Route path="/Siddiui.digital/e-book" element={<SingleServicePage />} />
             <Route path="portfolio" element={<PortfolioPage />} />
             <Route path="portfolio-detail" element={<SinglePortfolioPage/>}/>
             <Route path="pricing" element={<PricingPage />} />
