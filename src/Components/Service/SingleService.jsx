@@ -93,7 +93,7 @@ const SingleServiceSection = () => {
             <div className="cta-content">
               <div className="cta-container">
                 <h2 className="secondary-accent">
-                  Continue to Read More
+                  This is just a preview. Enroll now to access the complete book
                 </h2>
                 <style>{`
                 .cta-content{
@@ -121,7 +121,7 @@ const SingleServiceSection = () => {
                     onClick={() => setIsDrawerOpen(true)}
                     className="btn btn-secondary-accent"
                   >
-                    Book Free Consultation
+                    Enroll Now
                   </button>
                 </div>
               </div>

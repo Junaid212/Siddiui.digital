@@ -1,5 +1,6 @@
 import React from "react";
 import useAnimateOnScroll from "../Hooks/useAnimateOnScroll";
+import image from "/assets/images/dummy-img-600x400.jpg";
 
 const AboutSection = () => {
     useAnimateOnScroll();
@@ -11,7 +12,7 @@ const AboutSection = () => {
                         <div className="d-flex flex-column flex-md-row h-100 gspace-3">
                             <div className="about-image-wrapper">
                                 <div className="image-container">
-                                    <img src="/assets/images/dummy-img-600x400.jpg" alt="About Image" className="img-fluid animate-box animated animate__animated" data-animate="animate__fadeInRight" />
+                                    <img src={image} alt="About Image" className="img-fluid animate-box animated animate__animated" data-animate="animate__fadeInRight" />
                                 </div>
                                 <div className="card about-traffic-card animate-box animated animate__animated" data-animate="animate__zoomIn">
                                     <div className="d-flex flex-column gspace-2 align-self-center text-center">

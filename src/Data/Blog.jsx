@@ -1,7 +1,9 @@
+import img1 from "/assets/images/dummy-img-600x700.jpg"
+
 export const blogdata = [
     {
         id: 1,
-        image: "/assets/images/dummy-img-600x700.jpg",
+        image: img1,
         title: "Creating Compelling Content That Convert",
         content: "Curabitur dictum dui nisi lacinia; facilisis iaculis. Ipsum tempor class eu integer ridiculus. Class himenaeos nullam lectus sodales purus nunc....",
         link: "#",
@@ -10,7 +12,7 @@ export const blogdata = [
     },
     {
         id: 2,
-        image: "/assets/images/dummy-img-600x700.jpg",
+        image: img1,
         title: "Getting Started with Google Ads",
         content: "Curabitur dictum dui nisi lacinia; facilisis iaculis. Ipsum tempor class eu integer ridiculus. Class himenaeos nullam lectus sodales purus nunc....",
         link: "#",
@@ -19,7 +21,7 @@ export const blogdata = [
     },
     {
         id: 3,
-        image: "/assets/images/dummy-img-600x700.jpg",
+        image: img1,
         title: "The Power of Influencer Marketing in 2024",
         content: "Curabitur dictum dui nisi lacinia; facilisis iaculis. Ipsum tempor class eu integer ridiculus. Class himenaeos nullam lectus sodales purus nunc....",
         link: "#",
@@ -28,7 +30,7 @@ export const blogdata = [
     },
     {
         id: 4,
-        image: "/assets/images/dummy-img-600x700.jpg",
+        image: img1,
         title: "How to Conduct Effective Keyword Research",
         content: "Curabitur dictum dui nisi lacinia; facilisis iaculis. Ipsum tempor class eu integer ridiculus. Class himenaeos nullam lectus sodales purus nunc....",
         link: "#",
@@ -37,7 +39,7 @@ export const blogdata = [
     },
     {
         id: 5,
-        image: "/assets/images/dummy-img-600x700.jpg",
+        image: img1,
         title: "Top 10 SEO Trends for 2024",
         content: "Curabitur dictum dui nisi lacinia; facilisis iaculis. Ipsum tempor class eu integer ridiculus. Class himenaeos nullam lectus sodales purus nunc....",
         link: "#",
@@ -46,7 +48,7 @@ export const blogdata = [
     },
     {
         id: 6,
-        image: "/assets/images/dummy-img-600x700.jpg",
+        image: img1,
         title: "The Ultimate Guide to On-Page SEO",
         content: "Curabitur dictum dui nisi lacinia; facilisis iaculis. Ipsum tempor class eu integer ridiculus. Class himenaeos nullam lectus sodales purus nunc....",
         link: "#",

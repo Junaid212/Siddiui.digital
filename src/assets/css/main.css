@@ -196,6 +196,12 @@ ul{
     padding: 4em 1em 4em 1em;
 }
 
+@media screen and (max-width: 768px) {
+    .section {
+        padding: 3em 0 3em 0;
+    }
+}
+
 .section.compact-bottom { 
     padding: 4em 1em 2em 1em !important;
 }

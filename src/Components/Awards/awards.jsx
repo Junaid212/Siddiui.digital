@@ -1,6 +1,7 @@
 import React from "react";
 import useAnimateOnScroll from "../Hooks/useAnimateOnScroll";
 import { Calendar, User } from "lucide-react";
+import img1 from "/assets/images/dummy-img-600x400.jpg"
 
 const Awards = () => {
     useAnimateOnScroll();
@@ -63,7 +64,7 @@ const Awards = () => {
                             </div>
                             <div className="about-image-wrapper">
                                 <div className="image-container">
-                                    <img src="/assets/images/dummy-img-600x400.jpg" alt="About Image" className="img-fluid animate-box animated animate__animated" data-animate="animate__fadeInRight" />
+                                    <img src={img1} alt="About Image" className="img-fluid animate-box animated animate__animated" data-animate="animate__fadeInRight" />
                                 </div>
                                 <div className="card about-traffic-card animate-box animated animate__animated" data-animate="animate__zoomIn">
                                     <div className="d-flex flex-column gspace-2 align-self-center text-center">

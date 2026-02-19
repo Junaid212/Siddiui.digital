@@ -1,8 +1,10 @@
+import img1 from "/assets/images/img/b1.png"
+
 export const servicedata = [
     {
         id: 1,
         icon: "fa-solid fa-file",
-        image: "assets/images/img/b1.png",
+        image: img1,
         title: "Content Marketing",
         content: "Rhoncus magna curabitur pretium non arcu magnis vestibulum cursus. Maximus gravida orci libero tristique non",
         link: "/e-book",
@@ -10,7 +12,7 @@ export const servicedata = [
     {
         id: 2,
         icon: "fa-solid fa-file",
-        image: "assets/images/img/b1.png",
+        image: img1,
         title: "On-Page SEO",
         content: "Rhoncus magna curabitur pretium non arcu magnis vestibulum cursus. Maximus gravida orci libero tristique non",
         link: "/e-book",
@@ -18,7 +20,7 @@ export const servicedata = [
     {
         id: 3,
         icon: "fa-solid fa-magnifying-glass",
-        image: "assets/images/img/b1.png",
+        image: img1,
         title: "Off-Page SEO",
         content: "Rhoncus magna curabitur pretium non arcu magnis vestibulum cursus. Maximus gravida orci libero tristique non",
         link: "/e-book",
@@ -26,7 +28,7 @@ export const servicedata = [
     {
         id: 4,
         icon: "fa-solid fa-share-nodes",
-        image: "assets/images/img/b1.png",
+        image: img1,
         title: "Social Media Marketing",
         content: "Rhoncus magna curabitur pretium non arcu magnis vestibulum cursus. Maximus gravida orci libero tristique non",
         link: "/e-book",
@@ -34,7 +36,7 @@ export const servicedata = [
     {
         id: 5,
         icon: "fa-solid fa-address-card",
-        image: "assets/images/img/b1.png",
+        image: img1,
         title: "Analytic Reporting",
         content: "Rhoncus magna curabitur pretium non arcu magnis vestibulum cursus. Maximus gravida orci libero tristique non",
         link: "/e-book",
@@ -42,7 +44,7 @@ export const servicedata = [
     {
         id: 6,
         icon: "fa-solid fa-people-group",
-        image: "assets/images/img/b1.png",
+        image: img1,
         title: "Influencer Marketing",
         content: "Rhoncus magna curabitur pretium non arcu magnis vestibulum cursus. Maximus gravida orci libero tristique non",
         link: "/e-book",

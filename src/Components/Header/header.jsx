@@ -299,7 +299,7 @@ const Navbar = () => {
                                             className={`nav-link dropdown-toggle ${
                                                 isDropdownActive(["/services", "/service-detail"]) ? "active" : ""
                                             }`}
-                                            href="/ebook"
+                                            href="/ebooks"
                                             role="button"
                                             // data-bs-toggle="dropdown"
                                             aria-expanded="false"
@@ -323,7 +323,8 @@ const Navbar = () => {
                                             data-bs-toggle="dropdown"
                                             aria-expanded="false"
                                         >
-                                            Portfolio <i className="fa-solid fa-angle-down"></i>
+                                            Course 
+                                            {/* <i className="fa-solid fa-angle-down"></i> */}
                                         </a>
                                         <ul className="dropdown-menu">
                                             <li><NavLink to="#" className="dropdown-item" onClick={closeMenu}>Portfolio</NavLink></li>
@@ -333,7 +334,8 @@ const Navbar = () => {
 
                                     <li className="nav-item dropdown">
                                         <a
-                                            className={`nav-link dropdown-toggle ${
+                                            className={`nav-link dropdown-toggle
+                                                ${
                                                 isDropdownActive([
                                                     "/pricing",
                                                     "/team",
@@ -345,15 +347,17 @@ const Navbar = () => {
                                                 ])
                                                     ? "active"
                                                     : ""
-                                            }`}
-                                            href="#"
+                                            }
+                                            `}
+                                            href="/consultation"
                                             role="button"
                                             data-bs-toggle="dropdown"
                                             aria-expanded="false"
                                         >
-                                            Pages <i className="fa-solid fa-angle-down"></i>
+                                            Consultation
+                                             {/* <i className="fa-solid fa-angle-down"></i> */}
                                         </a>
-                                        <ul className="dropdown-menu">
+                                        {/* <ul className="dropdown-menu">
                                             <li><NavLink to="#" className="dropdown-item" onClick={closeMenu}>Pricing Plan</NavLink></li>
                                             <li><NavLink to="#" className="dropdown-item" onClick={closeMenu}>Team</NavLink></li>
                                             <li><NavLink to="#" className="dropdown-item" onClick={closeMenu}>Testimonials</NavLink></li>
@@ -361,9 +365,13 @@ const Navbar = () => {
                                             <li><NavLink to="#" className="dropdown-item" onClick={closeMenu}>404 Error</NavLink></li>
                                             <li><NavLink to="#" className="dropdown-item" onClick={closeMenu}>Blog Archive</NavLink></li>
                                             <li><NavLink to="#" className="dropdown-item" onClick={closeMenu}>Single Post</NavLink></li>
-                                        </ul>
+                                        </ul> */}
                                     </li>
-
+                                    <li className="nav-item">
+                                        <NavLink to="/blogs" className="nav-link" onClick={closeMenu}>
+                                            Blog
+                                        </NavLink>
+                                    </li>
                                     <li className="nav-item">
                                         <NavLink to="/contact" className="nav-link" onClick={closeMenu}>
                                             Contact
@@ -423,7 +431,7 @@ const Navbar = () => {
             [data-theme="dark"] {
                 /* Dark theme colors */
                 --bg-primary: #121212;
-                --bg-secondary: #1e1e1e;
+                --bg-secondary: #000000;
                 --bg-tertiary: #2d2d2d;
                 --text-primary: #ffffff;
                 --text-secondary: #b0b0b0;
@@ -432,7 +440,7 @@ const Navbar = () => {
                 --accent-color: #c80808;
                 --accent-hover: #e50909;
                 --shadow-color: rgba(0, 0, 0, 0.3);
-                --card-bg: #1e1e1e;
+                --card-bg: #000000;
                 --navbar-bg: rgba(0, 0, 0, 0.95);
                 --footer-bg: #121212;
             }

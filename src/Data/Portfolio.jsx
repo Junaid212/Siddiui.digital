@@ -1,7 +1,9 @@
+import img1 from "/assets/images/dummy-img-600x800.jpg";
+
 export const portfoliodata = [
     {
         id: 1,
-        image: "/assets/images/dummy-img-600x800.jpg",
+        image: img1,
         logo: "/assets/images/partner-4-65f90f1a4e273.webp",
         category: "Price",
         title: "Course1",
@@ -11,7 +13,7 @@ export const portfoliodata = [
     },
     {
         id: 2,
-        image: "/assets/images/dummy-img-600x800.jpg",
+        image: img1,
         logo: "/assets/images/partner-5-65f90f1ae5cd3.webp",
         category: "Price",
         title: "Course2",

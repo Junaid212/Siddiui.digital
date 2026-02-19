@@ -18,6 +18,7 @@ import EbookPage from "./Page/Ebook";
 function AppRouters(){
     return(
         <Routes>
+            
             <Route path="/" element={<HomePage />} />
             <Route path="about" element={<AboutPage />} />
             <Route path="services" element={<ServicePage />} />
@@ -35,7 +36,7 @@ function AppRouters(){
             <Route path="*" element={<PageNotFound />}/>
 
 
-            <Route path="ebook" element={<EbookPage />}/>
+            <Route path="ebooks" element={<EbookPage />}/>
         </Routes>
     );
 }
