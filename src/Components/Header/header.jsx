@@ -299,24 +299,24 @@ const Navbar = () => {
                                         </NavLink>
                                     </li>
 
-                                    <li className="nav-item dropdown">
+                                    {/* <li className="nav-item dropdown">
                                         <a
                                             className={`nav-link dropdown-toggle ${
                                                 isDropdownActive(["/services", "/service-detail"]) ? "active" : ""
                                             }`}
                                             href="/ebooks"
                                             role="button"
-                                            // data-bs-toggle="dropdown"
+                                            data-bs-toggle="dropdown"
                                             aria-expanded="false"
                                         >
                                             E-Books 
-                                            {/* <i className="fa-solid fa-angle-down"></i> */}
+                                            <i className="fa-solid fa-angle-down"></i>
                                         </a                                                                                 >
                                         <ul className="dropdown-menu">
                                             <li><NavLink to="#" className="dropdown-item" onClick={closeMenu}>Service</NavLink></li>
                                             <li><NavLink to="#" className="dropdown-item" onClick={closeMenu}>Service Details</NavLink></li>
                                         </ul>
-                                    </li>
+                                    </li> */}
 
                                     <li className="nav-item dropdown">
                                         <a
