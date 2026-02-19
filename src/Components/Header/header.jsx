@@ -293,6 +293,11 @@ const Navbar = () => {
                                             About Us
                                         </NavLink>
                                     </li>
+                                    <li className="nav-item">
+                                        <NavLink to="/ebooks" className="nav-link" onClick={closeMenu}>
+                                            E-Books
+                                        </NavLink>
+                                    </li>
 
                                     <li className="nav-item dropdown">
                                         <a
@@ -306,7 +311,7 @@ const Navbar = () => {
                                         >
                                             E-Books 
                                             {/* <i className="fa-solid fa-angle-down"></i> */}
-                                        </a>
+                                        </a                                                                                 >
                                         <ul className="dropdown-menu">
                                             <li><NavLink to="#" className="dropdown-item" onClick={closeMenu}>Service</NavLink></li>
                                             <li><NavLink to="#" className="dropdown-item" onClick={closeMenu}>Service Details</NavLink></li>

@@ -3334,7 +3334,7 @@ footer {
   --accent-color: #C80808;
   --accent-color-2: #f0f0f0;
   --accent-color-3: #0a8f3c;
-  --accent-color-4: #63626210;
+  /* --accent-color-4: #63626210; */
   --accent-color-5: #00000020;
   --accent-color-6: rgba(0, 0, 0, 0.05);
   --accent-border-1: #e0e0e0;
@@ -3349,7 +3349,7 @@ footer {
     --accent-color: #C80808; 
     --accent-color-2: #313131;
     --accent-color-3: #8AFFAC;
-    --accent-color-4: #00000030;
+    /* --accent-color-4: #00000030; */
     --accent-color-5: #00000073;
     --accent-color-6: rgba(255, 255, 255, 0.041);
     --accent-color-error: #e63946;
