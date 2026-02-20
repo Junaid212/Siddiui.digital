@@ -354,9 +354,9 @@ const Navbar = () => {
                                                     : ""
                                             }
                                             `}
-                                            href="/appointment-drawer"
+                                            href="/consultation"
                                             role="button"
-                                            data-bs-toggle="dropdown"
+                                            // data-bs-toggle="dropdown"
                                             aria-expanded="false"
                                         >
                                             Consultation

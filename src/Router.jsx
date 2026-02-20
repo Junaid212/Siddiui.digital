@@ -15,6 +15,8 @@ import SinglePostPage from "./Page/SinglePost";
 import PageNotFound from "./Page/NotFoundPage/NotFound";
 import EbookPage from "./Page/Ebook";
 import AppointmentDrawer from "./Components/AppointmentDrawer/appointmentDrawer";
+import BookPage from "./Page/Book";
+import BookAppointment from "./Page/BookAppointment";
 
 function AppRouters(){
     return(
@@ -38,7 +40,9 @@ function AppRouters(){
 
 
             <Route path="ebooks" element={<EbookPage />}/>
+            <Route path="e_books" element={<BookPage />}/>
             <Route path="appointment-drawer" element={<AppointmentDrawer />}/>
+            <Route path="consultation" element={<BookAppointment />}/>
 
         </Routes>
     );

@@ -1,7 +1,23 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { ChevronRight } from 'lucide-react';
 
-const styles = `
+const getStyles = (darkMode) => `
+  /* Theme variables */
+  :root {
+    --primary: ${darkMode ? '#121212' : '#FCFCFC'};
+    --secondary: ${darkMode ? '#FCFCFC' : '#121212'};
+    --text-color: ${darkMode ? '#DAFAF4' : '#121212'};
+    --accent-color: #C80808;
+    --accent-color-2: ${darkMode ? '#313131' : '#f0f0f0'};
+    --accent-color-3: ${darkMode ? '#ff8a8a' : '#8f110a'};
+    --accent-color-4: ${darkMode ? '#00000030' : '#00000010'};
+    --accent-color-5: ${darkMode ? '#00000073' : '#00000020'};
+    --accent-color-6: ${darkMode ? 'rgba(255, 255, 255, 0.041)' : 'rgba(0, 0, 0, 0.05)'};
+    --accent-border-1: ${darkMode ? '#313131' : '#e0e0e0'};
+    --accent-color-placeholder: ${darkMode ? '#cccccc' : '#666666'};
+    --animation-fast: 300ms;
+  }
+
   /* Keyframes (unchanged) */
   @keyframes fade-in {
     from { opacity: 0; transform: translateY(20px); }
@@ -35,15 +51,18 @@ const styles = `
 
   /* Custom utility classes (replacing Tailwind) */
   .min-h-screen { min-height: 100vh; }
-  .bg-gray-50 { background-color: #f9fafb; }
+  .bg-gray-50 { 
+    background-color: var(--primary);
+    transition: background-color var(--animation-fast) ease;
+  }
   .py-20 { padding-top: 5rem; padding-bottom: 5rem; }
-  .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
-  .max-w-7xl { max-width: 80rem; }
+  .px-6 { padding-left: 2rem; padding-right: 1.5rem; }
+  .max-w-7xl { max-width: 90rem; }
   .mx-auto { margin-left: auto; margin-right: auto; }
   .grid { display: grid; }
   .grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
   .gap-12 { gap: 3rem; }
-  .gap-32 { gap: 8rem; }
+  .gap-32 { gap: 10rem; }
 
   /* Make cards smaller and add more spacing — on wide screens switch to
      a flex layout so items can be justified with space-between. */
@@ -65,7 +84,7 @@ const styles = `
 
     .card-outer {
       width: calc(50% - 2rem);
-      max-width: 36rem;
+      max-width: 26rem;
     }
   }
 
@@ -91,29 +110,29 @@ const styles = `
   .line {
     width: 1px;
     height: 8rem;
-    background: linear-gradient(to bottom, transparent, #febab4, transparent);
-    opacity: 0;
+    background: linear-gradient(to bottom, transparent, ${darkMode ? '#ff8a8a' : '#febab4'}, transparent);
+    opacity: 0.5;
     transition: opacity 700ms;
   }
   .dot {
     width: 1rem;
     height: 1rem;
     border-radius: 9999px;
-    background-color: #ffd5d5;
+    background-color: ${darkMode ? '#ff8a8a' : '#ffd5d5'};
     transition: all 500ms;
   }
   .group:hover .line {
     opacity: 1;
   }
   .group:hover .dot {
-    background-color: #fc8484;
+    background-color: ${darkMode ? '#ff6e6e' : '#fc8484'};
     transform: scale(1.25);
   }
 
   .writing-mode-vertical {
     writing-mode: vertical-rl;
     text-orientation: mixed;
-    color: #9ca3af;
+    color: var(--accent-color-placeholder);
     font-size: 0.875rem;
     font-weight: 500;
     letter-spacing: 0.05em;
@@ -138,12 +157,12 @@ const styles = `
     width: 0.75rem;
     height: 0.75rem;
     border-radius: 9999px;
-    background-color: #fc8484;
+    background-color: ${darkMode ? '#ff8a8a' : '#fc8484'};
     opacity: 0.6;
     z-index: 10;
   }
   .hashtag {
-    color: #ea3333;
+    color: var(--accent-color);
     font-weight: 600;
     font-size: 0.875rem;
     letter-spacing: 0.025em;
@@ -153,7 +172,7 @@ const styles = `
   .title {
     font-size: 1.5rem;
     font-weight: 700;
-    color: #111827;
+    color: var(--accent-color) !important;
     line-height: 1.25;
     letter-spacing: -0.025em;
   }
@@ -194,7 +213,7 @@ const styles = `
 
   /* Button */
   .project-button {
-    background-color: #ea3333;
+    background-color: var(--accent-color);
     color: white;
     font-weight: 600;
     padding: 1rem 2rem;
@@ -222,18 +241,56 @@ const styles = `
 `;
 
 function CoursPage() {
+  const [darkMode, setDarkMode] = useState(true);
+
+  // Listen for theme changes from navbar
   useEffect(() => {
-    const styleSheet = document.createElement('style');
-    styleSheet.textContent = styles;
-    document.head.appendChild(styleSheet);
+    const checkTheme = () => {
+      const isDarkMode = document.documentElement.getAttribute("data-theme") === "dark" ||
+                        document.body.classList.contains("dark-mode");
+      setDarkMode(isDarkMode);
+    };
+
+    // Initial check
+    checkTheme();
+
+    // Create a MutationObserver to watch for theme changes
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'data-theme' || 
+            mutation.attributeName === 'class') {
+          checkTheme();
+        }
+      });
+    });
+
+    // Observe the html element for data-theme changes
+    observer.observe(document.documentElement, { attributes: true });
+    
+    // Also observe body for class changes
+    observer.observe(document.body, { attributes: true });
+
+    // Listen for custom theme change event
+    const handleThemeChange = () => checkTheme();
+    window.addEventListener('themeChange', handleThemeChange);
+
     return () => {
-      // Optional cleanup
-      // document.head.removeChild(styleSheet);
+      observer.disconnect();
+      window.removeEventListener('themeChange', handleThemeChange);
     };
   }, []);
 
+  useEffect(() => {
+    const styleSheet = document.createElement('style');
+    styleSheet.textContent = getStyles(darkMode);
+    document.head.appendChild(styleSheet);
+    return () => {
+      document.head.removeChild(styleSheet);
+    };
+  }, [darkMode]);
+
   return (
-    <div className="min-h-screen bg-gray-50 py-20 px-6">
+    <div className="min-h-screen bg-gray-50 py-20 px-6 ">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg-grid-cols-2 gap-32">
           <CaseStudyCard
@@ -246,7 +303,7 @@ function CoursPage() {
           <CaseStudyCard
             caseNumber="02"
             hashtag="#Content Creation and Strategy"
-            title="OPTIMIZING SEO FOR INCREASED CONVERSIONS: A COMPREHENSIVE APPROACH"
+            title=" INCREASED CONVERSIONS: A COMPREHENSIVE APPROACH"
             imageUrl="/assets/images/dummy-img-600x600.jpg"
           />
         </div>
@@ -262,7 +319,7 @@ function CaseStudyCard({ caseNumber, hashtag, title, imageUrl }) {
       <div className="left-decor">
         <div className="line"></div>
         <div className="dot"></div>
-        <div className="writing-mode-vertical">Case {caseNumber}</div>
+        <div className="writing-mode-vertical">Course {caseNumber}</div>
       </div>
 
       <div className="content">
@@ -287,7 +344,7 @@ function CaseStudyCard({ caseNumber, hashtag, title, imageUrl }) {
         {/* Button */}
         <button className="project-button group-btn animate-slide-up-delayed">
           <ChevronRight className="btn-icon" />
-          View Project
+          View Course
         </button>
       </div>
     </div>
