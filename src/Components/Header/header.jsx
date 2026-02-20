@@ -294,7 +294,7 @@ const Navbar = () => {
                                         </NavLink>
                                     </li>
                                     <li className="nav-item">
-                                        <NavLink to="/ebooks" className="nav-link" onClick={closeMenu}>
+                                        <NavLink to="/e_books" className="nav-link" onClick={closeMenu}>
                                             E-Books
                                         </NavLink>
                                     </li>
