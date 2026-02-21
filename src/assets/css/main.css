@@ -9,6 +9,17 @@
 body.dark-mode .aspire-book-page {
     background-image: var(--book-bg-dark);
 }
+
+.aspire-book-page-bg {
+    background-image: var(--book-bg-light-theme);
+    background-size: cover;
+    background-position: center;
+}
+
+[data-theme="dark"] .aspire-book-page-bg,
+body.dark-mode .aspire-book-page-bg {
+    background-image: var(--book-bg-dark-theme);
+}
 /*===============================================
 Template Name: Aspire - SEO Digital Marketing Agency React Bootstrap Template
 Author:  https://themeforest.net/user/fox_creation
@@ -77,7 +88,7 @@ Table of Contents
     --text-color: #DAFAF4;
     --accent-color: #C80808; 
     --accent-color-2: #313131;
-    --accent-color-3: #8AFFAC;
+    --accent-color-3: #ff8a8a;
     --accent-color-4: #00000030;
     --accent-color-5: #00000073;
     --accent-color-6: rgba(255, 255, 255, 0.041);
@@ -95,7 +106,9 @@ Table of Contents
     --animation-slow: 2s;
     --animation-fast: 0.75s;
     --book-bg-light: url('/assets/images/img/bg.jpg');
-    --book-bg-dark: url('/assets/images/img/bg-dark.png');
+    --book-bg-dark: url('/assets/images/img/bg-d1.webp');
+    --book-bg-light-theme: url('/assets/images/img/bg-l1.webp');
+    --book-bg-dark-theme: url('/assets/images/img/bg-d2.webp');
 }
 
 /* 03. Keyframes Animation */
@@ -233,6 +246,19 @@ ul{
 
 .section.compact-top-bottom {
     padding: 2em 1em 2em 1em !important;
+}
+@media (max-width: 768px) {
+.section.compact-top-bottom {
+    padding: 0 !important;
+}
+.banner-inner-content
+ {
+    width: auto !important;
+ }
+ .hero-container{
+    padding: 0 !important;
+ }
+    
 }
 
 .section.section-footer{
@@ -1592,7 +1618,7 @@ textarea.error-border{
     display: flex;
     flex-direction: column;
     position: relative;
-    gap: 20px;
+    gap: 10px;
     z-index: 2;
 }
 
@@ -2410,7 +2436,7 @@ textarea.error-border{
 
 .social-item.accent-color{
     background-color: transparent;
-    color: var(--accent-color);
+    color: var(--accent-color) !important;
     height: 40px;
     width: 40px;
     display: flex;
@@ -2418,9 +2444,20 @@ textarea.error-border{
     align-items: center;
     font-size: 1.2em;
 }
+#accent-color{
+    background-color: transparent;
+    color: var(--accent-color) !important;
+    height: 40px;
+    width: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2em;
+    z-index: 99;
+}
 
 .social-item.accent-color:hover{
-    color: var(--accent-color-3);
+    color: var(--accent-color-3) !important;
 }
 
 .social-footer{
@@ -3249,7 +3286,7 @@ textarea.error-border{
           --text-color: #121212;
           --accent-color: #C80808;
           --accent-color-2: #f0f0f0;
-          --accent-color-3: #0a8f3c;
+          --accent-color-3: #8f0a0a;
           --accent-color-4: #00000010;
           --accent-color-5: #00000020;
           --accent-color-6: rgba(0, 0, 0, 0.05);
@@ -3267,7 +3304,7 @@ textarea.error-border{
           --text-color: #DAFAF4;
           --accent-color: #C80808;
           --accent-color-2: #313131;
-          --accent-color-3: #8AFFAC;
+          --accent-color-3: #ff8a8a;
           --accent-color-4: #00000030;
           --accent-color-5: #00000073;
           --accent-color-6: rgba(255, 255, 255, 0.041);
@@ -3346,7 +3383,7 @@ footer {
   --text-primary: #fcf7f7;
   --accent-color: #C80808;
   --accent-color-2: #f0f0f0;
-  --accent-color-3: #0a8f3c;
+  --accent-color-3: #8f0a0a;
   /* --accent-color-4: #63626210; */
   --accent-color-5: #00000020;
   --accent-color-6: rgba(0, 0, 0, 0.05);
@@ -3361,7 +3398,7 @@ footer {
     --text-color: #DAFAF4;
     --accent-color: #C80808; 
     --accent-color-2: #313131;
-    --accent-color-3: #8AFFAC;
+    --accent-color-3: #ff8a8a;
     /* --accent-color-4: #00000030; */
     --accent-color-5: #00000073;
     --accent-color-6: rgba(255, 255, 255, 0.041);
@@ -3379,3 +3416,689 @@ footer {
     --animation-slow: 2s;
     --animation-fast: 0.75s;
 }
+
+
+
+/* ----------------BookConsultation.css - internal styles ----------------------------- */
+
+        .bc-container {
+          min-height: 100vh;
+          /* background: linear-gradient(to bottom right, #fafafa, #ffffff, #f5f5f5); */
+        }
+
+        
+
+        /* Main content */
+        .bc-main {
+          max-width: 86rem;
+          margin-left: auto;
+          margin-right: auto;
+          padding-left: 1rem;
+          padding-right: 1rem;
+          padding-top: 2rem;
+          padding-bottom: 2rem;
+        }
+        @media (min-width: 768px) {
+          .bc-main {
+            padding-top: 3rem;
+            padding-bottom: 3rem;
+          }
+        }
+        .bc-grid {
+          display: grid;
+          gap: 2rem;
+        }
+        @media (min-width: 1024px) {
+          .bc-grid {
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+          }
+        }
+
+        /* Left column (profile) */
+        .bc-profile-col {
+          grid-column: span 2 / span 2;
+        }
+        .bc-profile-card {
+          /* background-color: #fff; */
+          border-radius: 1.5rem;
+          /* box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02); */
+          overflow: hidden;
+          position: sticky;
+          top: 2rem;
+        backdrop-filter: blur(10px);
+        background-color: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px -5px;
+        }
+        .bc-profile-header {
+          height: 8rem;
+          background: linear-gradient(to bottom right, #AA0A14, #EA2103, #750A17);
+          position: relative;
+        }
+        .bc-profile-header-pattern {
+          position: absolute;
+          inset: 0;
+          opacity: 0.3;
+          background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .bc-profile-content {
+          padding: 0 1.5rem 1.5rem 1.5rem;
+          margin-top: -4rem;
+          position: relative;
+        }
+        .bc-profile-avatar-wrapper {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+        }
+        .bc-profile-avatar {
+          position: relative;
+        }
+        .bc-profile-img {
+          width: 7rem;
+          height: 7rem;
+          border-radius: 1rem;
+          object-fit: cover;
+          border: 4px solid #fff;
+          box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+        .bc-profile-online {
+          position: absolute;
+          bottom: -0.5rem;
+          right: -0.5rem;
+          background-color: #c52222;
+          width: 1.5rem;
+          height: 1.5rem;
+          border-radius: 9999px;
+          border: 4px solid #fff;
+        }
+        .bc-profile-name {
+          margin-top: 1rem;
+          font-size: 1.25rem;
+          font-weight: 700;
+          color: #000;
+        }
+        .bc-profile-title {
+          color: #a09696 !important;
+          font-size: 0.875rem;
+          margin-top: 0.25rem;
+        }
+        .bc-profile-rating {
+          display: flex;
+          align-items: center;
+          gap: 0.25rem;
+          margin-top: 0.75rem;
+        }
+        .bc-star {
+          width: 1rem;
+          height: 1rem;
+          fill: #fbbf24;
+          color: #fbbf24;
+        }
+        .bc-rating-value {
+          font-weight: 600;
+          color: #000;
+        }
+        .bc-rating-count {
+          color: #a3a3a3;
+          font-size: 0.875rem;
+        }
+
+        /* Stats cards */
+        .bc-stats-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 0.5rem;
+          margin-top: 1.5rem;
+          padding: 1rem;
+          /* background-color: #fafafa; */
+          border-radius: 1rem;
+          backdrop-filter: blur(10px);
+        background-color: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px -5px;
+        }
+        .bc-stat-item {
+          text-align: center;
+        }
+        .bc-stat-value {
+          font-size: 1.125rem;
+          font-weight: 700;
+          color: #000;
+        }
+        .bc-stat-label {
+          font-size: 0.75rem;
+          color: #737373;
+        }
+        .bc-stat-border {
+          border-left: 1px solid #e5e5e5;
+          border-right: 1px solid #e5e5e5;
+        }
+
+        /* Info rows */
+        .bc-info-list {
+          margin-top: 1.5rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+        }
+        .bc-info-item {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          font-size: 0.875rem;
+        }
+        .bc-info-icon {
+          width: 2rem;
+          height: 2rem;
+          /* background-color: #fee2e2; */
+          border-radius: 0.5rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          backdrop-filter: blur(10px);
+        background-color: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px -5px;
+        }
+        .bc-info-icon svg {
+          width: 1rem;
+          height: 1rem;
+          color: #dc2626;
+        }
+        .bc-info-text {
+          color: #525252;
+        }
+
+        /* Bio */
+        .bc-bio {
+          margin-top: 1.5rem;
+          font-size: 0.875rem;
+          color: #525252;
+          line-height: 1.625;
+        }
+
+        /* Specialties */
+        .bc-specialties-title {
+          font-size: 0.75rem;
+          font-weight: 600;
+          color: #a3a3a3;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          margin-bottom: 0.75rem;
+        }
+        .bc-specialties-list {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+        }
+        .bc-badge {
+          background-color: #f5f5f5;
+          color: #404040;
+          padding: 0.25rem 0.75rem;
+          border-radius: 9999px;
+          font-size: 0.75rem;
+          font-weight: 500;
+          transition: background-color 0.2s;
+        }
+        .bc-badge:hover {
+          background-color: #e5e5e5;
+        }
+
+        /* Right column (booking) */
+        .bc-booking-col {
+          grid-column: span 3 / span 3;
+          display: flex;
+          flex-direction: column;
+          gap: 1.5rem;
+        }
+
+        /* Cards */
+        .bc-card {
+          /* background-color: #fff; */
+          border-radius: 1.5rem;
+          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+          padding: 1.5rem;
+          backdrop-filter: blur(10px);
+        background-color: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        /* box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px -5px; */
+        }
+
+        /* Calendar */
+        .bc-calendar-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 1.5rem;
+        }
+        .bc-calendar-title h2 {
+          font-size: 1.125rem;
+          font-weight: 700;
+          color: #000;
+        }
+        .bc-calendar-subtitle {
+          font-size: 0.875rem;
+          color: #737373;
+          margin-top: 0.25rem;
+        }
+        .bc-calendar-nav {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+        .bc-nav-btn {
+          width: 2.5rem;
+          height: 2.5rem;
+          border-radius: 0.75rem;
+          background-color: #f5f5f5;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: background-color 0.2s;
+          border: none;
+          cursor: pointer;
+        }
+        .bc-nav-btn:hover {
+          background-color: #e5e5e5;
+        }
+        .bc-nav-btn svg {
+          width: 1.25rem;
+          height: 1.25rem;
+          color: #525252;
+        }
+        .bc-month-year {
+          font-size: 0.875rem;
+          font-weight: 600;
+          color: #000;
+          min-width: 140px;
+          text-align: center;
+        }
+
+        /* Calendar grid */
+        .bc-weekdays {
+          display: grid;
+          grid-template-columns: repeat(7, 1fr);
+          gap: 0.25rem;
+        }
+        .bc-weekday {
+          height: 2.5rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 0.75rem;
+          font-weight: 600;
+          color: #a3a3a3;
+        }
+        .bc-days-grid {
+          display: grid;
+          grid-template-columns: repeat(7, 1fr);
+          gap: 0.25rem;
+        }
+        .bc-day-btn {
+          height: 3rem;
+          border-radius: 0.75rem;
+          font-size: 0.875rem;
+          font-weight: 500;
+          transition: all 0.2s;
+          border: none;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+        }
+        .bc-day-empty {
+          cursor: default;
+        }
+        .bc-day-disabled {
+          color: #d4d4d4;
+          cursor: not-allowed;
+        }
+        .bc-day-enabled {
+          color: #404040;
+        }
+        .bc-day-enabled:hover {
+          background-color: #f5f5f5;
+        }
+        .bc-day-selected {
+          background-color: #dc2626;
+          color: #fff;
+          box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.3);
+        }
+        .bc-day-selected:hover {
+          background-color: #b91c1c;
+        }
+        .bc-today-ring {
+          box-shadow: 0 0 0 2px #ff5454;
+        }
+        .bc-today-dot {
+          position: absolute;
+          bottom: 0.375rem;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 0.25rem;
+          height: 0.25rem;
+          background-color: #ef4444;
+          border-radius: 9999px;
+        }
+
+        /* Time slots */
+        .bc-time-header {
+          margin-bottom: 1.5rem;
+        }
+        .bc-time-header h2 {
+          font-size: 1.125rem;
+          font-weight: 700;
+          color: #000;
+        }
+        .bc-time-subtitle {
+          font-size: 0.875rem;
+          color: #737373;
+          margin-top: 0.25rem;
+        }
+        .bc-time-disabled {
+          opacity: 0.5;
+          pointer-events: none;
+        }
+        .bc-period {
+          margin-bottom: 1.5rem;
+        }
+        .bc-period-header {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          margin-bottom: 0.75rem;
+        }
+        .bc-period-icon {
+          width: 1.5rem;
+          height: 1.5rem;
+          border-radius: 0.5rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 0.75rem;
+        }
+        .bc-icon-morning {
+          background-color: #fef3c7;
+        }
+        .bc-icon-afternoon {
+          background-color: #ffedd5;
+        }
+        .bc-icon-evening {
+          background-color: #e0e7ff;
+        }
+        .bc-period-label {
+          font-size: 0.875rem;
+          font-weight: 600;
+          color: #404040;
+        }
+        .bc-slots-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 0.5rem;
+        }
+        @media (min-width: 640px) {
+          .bc-slots-grid-morning, .bc-slots-grid-afternoon {
+            grid-template-columns: repeat(6, 1fr);
+          }
+          .bc-slots-grid-evening {
+            grid-template-columns: repeat(5, 1fr);
+          }
+        }
+        .bc-slot-btn {
+          padding: 0.75rem 0.5rem;
+          border-radius: 0.75rem;
+          font-size: 0.875rem;
+          font-weight: 500;
+          transition: all 0.2s;
+          border: none;
+          cursor: pointer;
+        }
+        .bc-slot-unavailable {
+          background-color: #f5f5f5;
+          color: #d4d4d4;
+          text-decoration: line-through;
+          cursor: not-allowed;
+        }
+        .bc-slot-available {
+          background-color: #fafafa;
+          color: #404040;
+        }
+        .bc-slot-available:hover {
+          background-color: #f5f5f5;
+        }
+        .bc-slot-selected {
+          background-color: #000;
+          color: #fff;
+          box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2);
+        }
+        .bc-slot-selected:hover {
+          background-color: #1a1a1a;
+        }
+
+        /* Summary card */
+        .bc-summary-card {
+          background: linear-gradient(to bottom right, #000, #171717, #000);
+          border-radius: 1.5rem;
+          padding: 1.5rem;
+          color: #fff;
+        }
+        .bc-summary-inner {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+        @media (min-width: 640px) {
+          .bc-summary-inner {
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+          }
+        }
+        .bc-selection-label {
+          color: #a3a3a3;
+          font-size: 0.875rem;
+        }
+        .bc-selection-details {
+          margin-top: 0.25rem;
+        }
+        .bc-selection-date {
+          font-weight: 600;
+        }
+        .bc-selection-time {
+          color: #f87171;
+          font-weight: 500;
+        }
+        .bc-no-selection {
+          color: #737373;
+          margin-top: 0.25rem;
+        }
+        .bc-continue-btn {
+          background-color: #dc2626;
+          color: #fff;
+          padding: 0.75rem 2rem;
+          border-radius: 0.75rem;
+          font-weight: 600;
+          font-size: 1rem;
+          border: none;
+          cursor: pointer;
+          transition: all 0.2s;
+          box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.3);
+        }
+        .bc-continue-btn:hover {
+          background-color: #b91c1c;
+          box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.5);
+        }
+        .bc-continue-btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+          box-shadow: none;
+        }
+
+        /* Modals */
+        .bc-modal-overlay {
+          position: fixed;
+          inset: 0;
+          background-color: rgba(0, 0, 0, 0.6);
+          backdrop-filter: blur(4px);
+          z-index: 50;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 1rem;
+        }
+        .bc-modal-content {
+          background-color: #fff;
+          border-radius: 1.5rem;
+          padding: 2rem;
+          max-width: 28rem;
+          width: 100%;
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        .bc-modal-icon {
+          width: 4rem;
+          height: 4rem;
+          background-color: #fee2e2;
+          border-radius: 1rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 auto 1.5rem auto;
+        }
+        .bc-modal-icon svg {
+          width: 2rem;
+          height: 2rem;
+          color: #dc2626;
+        }
+        .bc-modal-title {
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: #000;
+          text-align: center;
+        }
+        .bc-modal-text {
+          color: #737373;
+          margin-top: 0.5rem;
+          text-align: center;
+        }
+        .bc-modal-actions {
+          margin-top: 2rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+        }
+        .bc-modal-btn {
+          width: 100%;
+          padding: 1rem;
+          border-radius: 0.75rem;
+          font-weight: 600;
+          border: none;
+          cursor: pointer;
+          transition: background-color 0.2s;
+        }
+        .bc-modal-btn-primary {
+          background-color: #dc2626;
+          color: #fff;
+        }
+        .bc-modal-btn-primary:hover {
+          background-color: #b91c1c;
+        }
+        .bc-modal-btn-secondary {
+          background-color: transparent;
+          border: 2px solid #e5e5e5;
+          color: #000;
+        }
+        .bc-modal-btn-secondary:hover {
+          background-color: #fafafa;
+        }
+        .bc-modal-link {
+          display: block;
+          margin-top: 1.5rem;
+          font-size: 0.875rem;
+          color: #737373;
+          text-align: center;
+          cursor: pointer;
+          background: none;
+          border: none;
+        }
+        .bc-modal-link:hover {
+          color: #404040;
+        }
+
+        /* Success modal specific */
+        .bc-success-icon {
+          width: 5rem;
+          height: 5rem;
+          background-color: #dcfce7;
+          border-radius: 9999px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 auto 1.5rem auto;
+        }
+        .bc-success-icon svg {
+          width: 2.5rem;
+          height: 2.5rem;
+          color: #16a34a;
+        }
+        .bc-success-details {
+          margin-top: 1.5rem;
+          padding: 1rem;
+          background-color: #fafafa;
+          border-radius: 1rem;
+        }
+        .bc-success-row {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+        }
+        .bc-success-img {
+          width: 3rem;
+          height: 3rem;
+          border-radius: 0.75rem;
+          object-fit: cover;
+        }
+        .bc-success-info {
+          text-align: left;
+        }
+        .bc-success-name {
+          font-weight: 600;
+          color: #000;
+        }
+        .bc-success-time {
+          font-size: 0.875rem;
+          color: #737373;
+        }
+        .bc-success-email {
+          margin-top: 1.5rem;
+          padding: 1rem;
+          background-color: #fee2e2;
+          border-radius: 1rem;
+          text-align: left;
+        }
+        .bc-email-title {
+          font-size: 0.875rem;
+          font-weight: 500;
+          color: #b91c1c;
+        }
+        .bc-email-note {
+          font-size: 0.75rem;
+          color: #b91c1c;
+          margin-top: 0.25rem;
+        }
+        .bc-done-btn {
+          width: 100%;
+          margin-top: 1.5rem;
+          background-color: #000;
+          color: #fff;
+          padding: 1rem;
+          border-radius: 0.75rem;
+          font-weight: 600;
+          border: none;
+          cursor: pointer;
+        }
+        .bc-done-btn:hover {
+          background-color: #262626;
+        }

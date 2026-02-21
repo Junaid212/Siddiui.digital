@@ -9,7 +9,7 @@ const ServiceSection = () => {
 
     return(
         <>
-            <div className="section spacious-bottom">
+            <div className="section spacious-bottom aspire-book-page-bg">
                 <div className="hero-container">
                     <div className="d-flex flex-column gspace-2">
                         <div className="service-heading-container">

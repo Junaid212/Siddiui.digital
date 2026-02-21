@@ -2,21 +2,21 @@ import { useEffect, useState } from 'react';
 import { ChevronRight } from 'lucide-react';
 
 const getStyles = (darkMode) => `
-  /* Theme variables */
-  :root {
-    --primary: ${darkMode ? '#121212' : '#FCFCFC'};
-    --secondary: ${darkMode ? '#FCFCFC' : '#121212'};
-    --text-color: ${darkMode ? '#DAFAF4' : '#121212'};
-    --accent-color: #C80808;
-    --accent-color-2: ${darkMode ? '#313131' : '#f0f0f0'};
-    --accent-color-3: ${darkMode ? '#ff8a8a' : '#8f110a'};
-    --accent-color-4: ${darkMode ? '#00000030' : '#00000010'};
-    --accent-color-5: ${darkMode ? '#00000073' : '#00000020'};
-    --accent-color-6: ${darkMode ? 'rgba(255, 255, 255, 0.041)' : 'rgba(0, 0, 0, 0.05)'};
-    --accent-border-1: ${darkMode ? '#313131' : '#e0e0e0'};
-    --accent-color-placeholder: ${darkMode ? '#cccccc' : '#666666'};
-    --animation-fast: 300ms;
-  }
+  // /* Theme variables */
+  // :root {
+  //   --primary: ${darkMode ? '#121212' : '#FCFCFC'};
+  //   --secondary: ${darkMode ? '#FCFCFC' : '#121212'};
+  //   --text-color: ${darkMode ? '#DAFAF4' : '#121212'};
+  //   --accent-color: #C80808;
+  //   --accent-color-2: ${darkMode ? '#313131' : '#f0f0f0'};
+  //   --accent-color-3: ${darkMode ? '#ff8a8a' : '#8f110a'};
+  //   --accent-color-4: ${darkMode ? '#00000030' : '#00000010'};
+  //   --accent-color-5: ${darkMode ? '#00000073' : '#00000020'};
+  //   --accent-color-6: ${darkMode ? 'rgba(255, 255, 255, 0.041)' : 'rgba(0, 0, 0, 0.05)'};
+  //   --accent-border-1: ${darkMode ? '#313131' : '#e0e0e0'};
+  //   --accent-color-placeholder: ${darkMode ? '#cccccc' : '#666666'};
+  //   --animation-fast: 300ms;
+  // }
 
   /* Keyframes (unchanged) */
   @keyframes fade-in {

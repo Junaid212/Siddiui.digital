@@ -5,7 +5,7 @@ const ServiceCard  = ({icon,image, title, content, link, highlight}) => {
     return(
         <>
             <div
-                className={`card card-service animate-box animated animate__animated ${highlight ? 'card-service--highlight' : ''}`}
+                className={`card card-service animate-box animated animate__animated ${highlight ? 'card-service--highlight' : 'card-service--highlight'}`}
                 data-animate="animate__fadeIn"
             >
                 <div className="" style={{display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "1rem"}}>

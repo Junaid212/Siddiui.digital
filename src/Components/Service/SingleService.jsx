@@ -73,27 +73,35 @@ const SingleServiceSection = () => {
                     </div>
 
                     <div className="col col-lg-4 ">
+                        <div >
+                            <img src="/assets/images/dummy-img-600x600.jpg" alt="Book Overview" className="img-fluid"/>
+                        </div>
                         <div className="card other-services">
                             <div className="other-services-content">
-                                <h3 className="accent-color-2">Other Books</h3>
+                                <h3 className="accent-color-2">Book Details</h3>
                                 <div className="underline-1"></div>
                                 <ul className="service-list px-0">
-                                    {servicedata.slice(0,5).map((item) => (
+                                    {/* {servicedata.slice(0,5).map((item) => (
                                         <li key={item.id}>
                                             <Link to={item.link} className="other-service-link">
                                                 {item.title}
                                                 <i className="fa-solid fa-arrow-right rotate45"></i>
                                             </Link>
                                         </li>
-                                    ))}
+                                    ))} */}
+                                    <li>Title: Book Title</li>
+                                    <li>Author: Author Name</li>
+                                    <li>Category: Marketing</li>
+                                    <li>Published: 2023</li>
+                                    <li>Pages: 300</li>
                                 </ul>
                             </div>
                         </div>
-                        <div className="cta-banner " style={{marginTop:'50px'}}>
+                        <div className="cta-banner " style={{marginTop:'2em'}}>
             <div className="cta-content">
               <div className="cta-container">
                 <h2 className="secondary-accent">
-                  This is just a preview. Enroll now to access the complete book
+                  Continue to Read
                 </h2>
                 <style>{`
                 .cta-content{
@@ -108,6 +116,11 @@ const SingleServiceSection = () => {
                     position: relative;
                     z-index: 1;
                 }
+                    .img-fluid{
+                        position: relative;
+                        border-radius: var(--global-border-radius);
+                        margin-bottom: 2em;
+                        }
                 `}</style>
 
                 {/* <p>

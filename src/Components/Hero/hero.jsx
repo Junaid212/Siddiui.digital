@@ -473,7 +473,7 @@ export default function Hero({ onBookConsultation }) {
         }
       `}</style>
       
-      <section className="hero-section" id="hero-section">
+      <section className="hero-section aspire-book-page" id="hero-section">
         {/* Subtle grid pattern */}
         <div className="grid-pattern" />
         

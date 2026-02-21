@@ -91,27 +91,27 @@ function Sidebar() {
 
                     <li className="sidebar-dropdown">
                         <div className="dropdown-header">
-                        <a href="#">Services</a>
-                        <button className="sidebar-dropdown-btn">
+                        <a href="/e_books">E-Book</a>
+                        {/* <button className="sidebar-dropdown-btn">
                             <i className="fa-solid fa-angle-down"></i>
-                        </button>
+                        </button> */}
                         </div>
-                        <ul className="sidebar-dropdown-menu">
+                        {/* <ul className="sidebar-dropdown-menu">
                             <li>
                                 <NavLink to="/services">Service</NavLink>
                             </li>
                             <li>
                                 <NavLink to="/service-detail">Service Details</NavLink>
                             </li>
-                        </ul>
+                        </ul> */}
                     </li>
 
                     <li className="sidebar-dropdown below-dropdown">
                         <div className="dropdown-header">
-                        <a href="#">Portfolio</a>
-                        <button className="sidebar-dropdown-btn">
+                        <a href="/portfolio">Course</a>
+                        {/* <button className="sidebar-dropdown-btn">
                             <i className="fa-solid fa-angle-down"></i>
-                        </button>
+                        </button> */}
                         </div>
                         <ul className="sidebar-dropdown-menu">
                         <li>
@@ -125,10 +125,10 @@ function Sidebar() {
 
                     <li className="sidebar-dropdown">
                         <div className="dropdown-header">
-                            <a href="#">Pages</a>
-                            <button className="sidebar-dropdown-btn">
+                            <a href="#">Consultation</a>
+                            {/* <button className="sidebar-dropdown-btn">
                                 <i className="fa-solid fa-angle-down"></i>
-                            </button>
+                            </button> */}
                         </div>
                         <ul className="sidebar-dropdown-menu">
                             <li>
@@ -155,6 +155,9 @@ function Sidebar() {
                         </ul>
                     </li>
 
+                    <li className="below-dropdown">
+                        <NavLink to="/blog">Blog</NavLink>
+                    </li>
                     <li className="below-dropdown">
                         <NavLink to="/contact">Contact Us</NavLink>
                     </li>

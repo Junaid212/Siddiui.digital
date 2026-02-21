@@ -16,13 +16,14 @@ import PageNotFound from "./Page/NotFoundPage/NotFound";
 import EbookPage from "./Page/Ebook";
 import AppointmentDrawer from "./Components/AppointmentDrawer/appointmentDrawer";
 import BookPage from "./Page/Book";
+import ConsultantPage from "./Page/Consultant";
 // import BookAppointment from "./Page/BookAppointment";
 
 function AppRouters(){
     return(
         <Routes>
             
-            <Route path="/Siddiui.digital/" element={<HomePage />} />
+            <Route path="/" element={<HomePage />} />
             <Route path="about" element={<AboutPage />} />
             <Route path="services" element={<ServicePage />} />
             <Route path="e-book" element={<SingleServicePage />} />
@@ -41,8 +42,7 @@ function AppRouters(){
 
             <Route path="ebooks" element={<EbookPage />}/>
             <Route path="e_books" element={<BookPage />}/>
-            <Route path="appointment-drawer" element={<AppointmentDrawer />}/>
-            {/* <Route path="consultation" element={<BookAppointment />}/> */}
+            <Route path="consultation" element={<ConsultantPage />}/>
 
         </Routes>
     );

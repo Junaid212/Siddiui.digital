@@ -283,7 +283,7 @@ const Navbar = () => {
                             <div className={`collapse navbar-collapse ${isMenuOpen ? 'show' : ''}`} id="navbarNav">
                                 <ul className="navbar-nav my-4 my-lg-0">
                                     <li className="nav-item">
-                                        <NavLink to="/Siddiui.digital/" className="nav-link" onClick={closeMenu} end>
+                                        <NavLink to="/" className="nav-link" onClick={closeMenu} end>
                                             Home
                                         </NavLink>
                                     </li>
@@ -398,7 +398,7 @@ const Navbar = () => {
 
                         {/* Mobile Menu Toggle */}
                         <button
-                            className="navbar-toggler nav-btn"
+                            className="navbar-toggler nav-btn "
                             type="button"
                             onClick={toggleMenu}
                             aria-controls="navbarNav"
@@ -606,7 +606,8 @@ const Navbar = () => {
                 display: none;
                 cursor: pointer;
                 transition: all 0.3s ease;
-                color: var(--text-primary);
+                color: var(--accent-color) !important;
+                z-index: 999;
             }
 
             .navbar-toggler.nav-btn:hover {
