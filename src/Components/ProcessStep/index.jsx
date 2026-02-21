@@ -14,7 +14,7 @@ const ProcessSection = () => {
                         </div>
                         <h2 className="text-center animate-box animated animate__animated" data-animate="animate__fadeInUp">Step-by-Step to Achieving Your Goals</h2>
 
-                        <div className="row row-cols-md-3 row-cols-1 grid-spacer-2">
+                        <div className="row row-cols-md-3 row-cols-1 grid-spacer-2 d-flex">
                             <div className="col">
                                 <div className="d-flex flex-column gspace-1">
                                     <div className="process-header">
@@ -23,8 +23,8 @@ const ProcessSection = () => {
                                     
                                     <div className="card card-process animate-box animated animate__animated" data-animate="animate__fadeInUp">
                                         <i className="fa-solid fa-people-arrows"></i>
-                                        <h3 className="secondary-accent">Free Consultation & Mentorship</h3>
-                                        <p>Get a free consultation with Mr. Siddiqui, an experienced marketing and business management professional offering practical, real-world guidance to help you grow with clarity and confidence.</p>
+                                        <h3 className="secondary-accent">Free Consultation</h3>
+                                        <p>Get free consultation with Mr. Siddiqui, an experienced marketing & business management professional offering practical, real-world guidance to help you grow with confidence.</p>
                                     </div>
                                 </div>
                             </div>
@@ -49,7 +49,7 @@ const ProcessSection = () => {
                                     
                                     <div className="card card-process animate-box animated animate__animated" data-animate="animate__fadeInUp">
                                         <i className="fa-solid fa-computer"></i>
-                                        <h3 className="secondary-accent">Professional Courses & Training</h3>
+                                        <h3 className="secondary-accent">Professional Courses</h3>
                                         <p>Join industry-focused marketing and business courses by Mr. Siddiqui, designed with real-life case studies and proven strategies for measurable career and business success.</p>
                                     </div>
                                 </div>

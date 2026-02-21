@@ -13,7 +13,7 @@ const TeamSection = () => {
         <>
             <div className="section spacious-top">
                 <div className="hero-container">
-                    <div className="d-flex flex-column gspace-2">
+                    <div className="d-flex flex-column ">
                         <div className="team-heading-container">
                             <div className="sub-heading">
                                 <i className="fa-solid fa-circle-notch"></i>
@@ -21,11 +21,11 @@ const TeamSection = () => {
                             </div>
                             <h2 className="animate-box animated animate__animated" data-animate="animate__fadeInUp">Industry-Recognized Certifications</h2>
                         </div>
-                        <Swiper className="row row-cols-lg-4 row-cols-md-2 row-cols-1 grid-spacer-2"
+                        <Swiper className="row row-cols-lg-4 row-cols-md-2 row-cols-1 "
   modules={[Navigation, Pagination, Autoplay]}
-  spaceBetween={24}
+  spaceBetween={12}
   slidesPerView={1}                                              
-  autoplay={{ delay: 2000, disableOnInteraction: false }}
+  autoplay={{ delay: 20000, disableOnInteraction: false }}
 //   pagination={{ clickable: true, color: "#f10808" }}
 //   navigation
   breakpoints={{
@@ -39,16 +39,7 @@ const TeamSection = () => {
     </SwiperSlide>
   ))}
 </Swiper>
-<style>{`
-.swiper {
-  padding-bottom: 40px;
-}
 
-.swiper-slide {
-  height: auto;
-}
-
-`}</style>
                     </div>
                 </div>
             </div>

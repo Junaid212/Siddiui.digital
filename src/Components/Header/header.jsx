@@ -373,7 +373,7 @@ const Navbar = () => {
                                         </ul> */}
                                     </li>
                                     <li className="nav-item">
-                                        <NavLink to="/blogs" className="nav-link" onClick={closeMenu}>
+                                        <NavLink to="/portfolio-detail" className="nav-link" onClick={closeMenu}>
                                             Blog
                                         </NavLink>
                                     </li>

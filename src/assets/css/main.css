@@ -528,6 +528,9 @@ textarea.error-border{
 .success p{
     color: var(--primary);
 }
+.no-dark p, span, h3{
+    color: var(--primary) !important;
+}
   
 .error {
     display: flex;
@@ -1573,7 +1576,7 @@ textarea.error-border{
 /* 18. Swiper Styles */
 
 .swiper-slide {
-    padding: 0.5rem;
+    /* padding: 0.5rem; */
 }
 
 /* 19. Service Styles */

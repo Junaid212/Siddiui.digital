@@ -7,13 +7,13 @@ const PortfolioDetailSection = () => {
                 <div className="row row-cols-md-2 row-cols-1 grid-spacer-2">
                     <div className="col col-md-4">
                         <div className="d-flex flex-column gspace-2">
-                            <div className="card project-logo">
+                            {/* <div className="card project-logo">
                             <img
                                 src="/assets/images/partner-4-65f90f1a4e273.webp"
                                 alt="Portfolio Logo"
                                 className="img-fluid"
                             />
-                            </div>
+                            </div> */}
                             <div className="image-container">
                             <img
                                 src="/assets/images/dummy-img-600x800.jpg"

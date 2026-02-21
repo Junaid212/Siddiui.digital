@@ -12,7 +12,7 @@ const PortfolioPage = () => {
     return(
         <>
             <HeadTitle title="Portfolio - Aspire - SEO & Digital Marketing Agency" />
-            <BannerInnerSection title="Portfolio" currentPage="Portfolio" />
+            <BannerInnerSection title="Courses" currentPage="Portfolio" />
             <CoursPage/>
             {/* <PortfolioSection />
             <CtaSection />

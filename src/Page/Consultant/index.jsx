@@ -7,7 +7,7 @@ const ConsultantPage= () => {
     return(
         <>
             <HeadTitle title="Consultant "/>
-            <BannerInnerSection title="Free Consultation" currentPage="Consultant" />
+            {/* <BannerInnerSection title="Free Consultation" currentPage="Consultant" /> */}
             <BookConsultation />
         </>
     );

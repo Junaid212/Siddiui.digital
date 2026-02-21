@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ShoppingCart } from "lucide-react";
-import BannerInnerSection from "../../Components/Banner/inner";
 
 const books = [
   {
@@ -102,8 +100,8 @@ function BookCard({ book, index, direction }) {
             boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)'
           }}>
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px', marginBottom: '8px' }}>
-              <h3 style={{
-                color: 'white',
+              <h3 className="no-dark" style={{
+                color: '#ffffff !important',
                 fontWeight: 'bold',
                 fontSize: '18px',
                 lineHeight: '1.25',
@@ -111,18 +109,21 @@ function BookCard({ book, index, direction }) {
               }}>
                 {book.title}
               </h3>
-              <span style={{
-                color: '#fb2424',
+              <span className="no-dark" style={{
+                backgroundColor:'#ffffff',
+                color: '#f4f4f4',
                 fontWeight: 'bold',
                 fontSize: '18px',
-                whiteSpace: 'nowrap'
+                whiteSpace: 'nowrap',
+                padding: '2px 12px',
+                borderRadius: '20px'
               }}>
                 {book.price}
               </span>
             </div>
             
-            <p style={{
-              color: 'rgba(255, 255, 255, 0.8)',
+            <p className="no-dark" style={{
+              color: 'rgb(255, 227, 184) !important',
               fontSize: '14px',
               marginBottom: '12px',
               overflow: 'hidden',
@@ -194,14 +195,14 @@ export default function Ebooks() {
           {/* <h1 className="accent-color font-family-1" style={{ fontSize: '3rem', fontWeight: 'bold', marginBottom: '16px', letterSpacing: '-0.025em' }}>
             Featured Books
           </h1> */}
-          <p className="secondary-accent font-family-2" style={{ fontSize: '1.125rem', maxWidth: '672px', margin: '0 auto' }}>
+          <p className="secondary-accent font-family-2 " style={{ fontSize: '1.125rem', maxWidth: '672px', margin: '0 auto' }}>
             Discover our handpicked collection of extraordinary reads
           </p>
           <div className="bg-accent-color" style={{ marginTop: '24px', width: '96px', height: '4px', margin: '24px auto 0', borderRadius: '9999px' }} />
         </motion.div>
 
         {/* Books Grid */}
-        <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
+        <div className="no-dark" style={{ maxWidth: '1280px', margin: '0 auto' }}>
           {/* First Row - 3 Books */}
           <div style={{
             display: 'grid',
@@ -220,7 +221,7 @@ export default function Ebooks() {
           </div>
 
           {/* Second Row - 2 Books Centered */}
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '32px' }}>
+          <div className="no-dark" style={{ display: 'flex', justifyContent: 'center', gap: '32px' }}>
             <div style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',

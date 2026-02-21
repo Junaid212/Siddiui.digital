@@ -78,8 +78,8 @@ const getStyles = (darkMode) => `
     .grid {
       display: flex;
       flex-wrap: wrap;
-      justify-content: space-between;
-      gap: 10rem; /* horizontal and vertical spacing between cards */
+      justify-content: center;
+      // gap: 10rem; /* horizontal and vertical spacing between cards */
     }
 
     .card-outer {

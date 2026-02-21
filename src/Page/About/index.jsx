@@ -18,13 +18,14 @@ const AboutPage = () => {
             <BannerInnerSection title="About Us" currentPage="About Us" />
             {/* <PartnersipSection /> */}
             <WhyChooseUsSection />
+            <Awards />
             {/* <AboutSection /> */}
             <AchievementSection />
             {/* <TeamSection /> */}
             {/* <WhyChooseUsSection /> */}
             {/* <CtaSection /> */}
             <ProcessSection />
-            <Awards />
+            
             <TeamSection />
             {/* <TestimonialSection /> */}
         </>

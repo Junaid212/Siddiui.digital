@@ -12,9 +12,9 @@ const SinglePortfolioPage = () => {
             <HeadTitle title="Portfolio Detail - Aspire - SEO & Digital Marketing Agency" />
             <BannerInnerSection title="Visibility Boost" currentPage="Visibility Boost" />
             <PortfolioDetailSection />
-            <CtaSection />
-            <WhyChooseUsSection />
-            <TestimonialSection />
+            {/* <CtaSection /> */}
+            {/* <WhyChooseUsSection /> */}
+            {/* <TestimonialSection /> */}
         </>
     );
 }

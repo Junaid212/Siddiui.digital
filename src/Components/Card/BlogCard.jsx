@@ -3,8 +3,8 @@ import React from "react";
 const BlogCard = ({image, title, content, link, date, comment}) => {
     return(
         <>
-            <div className="card card-blog">
-                <img src={image} alt="Blog Image" className="img-fluid" />
+            <div className="card " >
+                <img src={image} alt="Blog Image" className="img-fluid" style={{border:'2px solid #C80808', borderRadius:'25px'}} />
                 {/* <div className="card-body">
                     <h3 className="blog-title">{title}</h3>
                     <div className="blog-date">
