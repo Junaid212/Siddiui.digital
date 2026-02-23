@@ -1,4 +1,4 @@
-import { Routes, Route, Outlet, useLocation } from "react-router-dom";
+import { Routes, Route, Outlet, useLocation, BrowserRouter } from "react-router-dom";
 import HomePage from "./Page/Home";
 import AboutPage from "./Page/About";
 import ServicePage from "./Page/Service";
@@ -17,10 +17,13 @@ import EbookPage from "./Page/Ebook";
 import AppointmentDrawer from "./Components/AppointmentDrawer/appointmentDrawer";
 import BookPage from "./Page/Book";
 import ConsultantPage from "./Page/Consultant";
+import Questionnaire from "./Page/Questionnaire";
+import PopupPage from "./Page/PopupManager";
 // import BookAppointment from "./Page/BookAppointment";
 
 function AppRouters(){
     return(
+    <BrowserRouter>
         <Routes>
             
             <Route path="/" element={<HomePage />} />
@@ -45,6 +48,7 @@ function AppRouters(){
             <Route path="consultation" element={<ConsultantPage />}/>
 
         </Routes>
+        </BrowserRouter>
     );
 }
 

@@ -7,6 +7,7 @@ import Sidebar from "./Components/Sidebar/sidebar";
 import ScrollToTop from "./Components/ScrollToTop";
 import PageTransition from "./Components/PageTransition"; // <-- import the transition component
 import CustomCursor from "./Components/CustomCursor";
+import PopupManager from "./Page/PopupManager";
 
 const App = () => {
     return (
@@ -19,6 +20,7 @@ const App = () => {
                 {/* Wrap only the dynamic routes with PageTransition */}
                 <PageTransition>
                     <AppRouters />
+                    <PopupManager/>
                 </PageTransition>
             </ModalVideoProvider>
             <Footer />
