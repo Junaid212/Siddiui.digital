@@ -419,12 +419,15 @@ export default function CustomCursor() {
       <div ref={touchRippleRef} className="touch-ripple" />
 
       <style>{`
-        /* Hide default cursor */
-        * {
-          cursor: none !important;
+        /* Hide default cursor only on body */
+        body {
+          cursor: none;
         }
 
         @media (max-width: 768px) {
+          body {
+            cursor: auto;
+          }
           .cursor-outer, .cursor-inner, .cursor-dots {
             display: none !important;
           }
