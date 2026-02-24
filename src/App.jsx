@@ -1,4 +1,6 @@
 import { BrowserRouter as Router } from "react-router-dom";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import AppRouters from "./Router";
 import { ModalVideoProvider } from "./Components/Video/ModalVideoContext";
 import Navbar from "./Components/Header/header";
@@ -9,9 +11,21 @@ import PageTransition from "./Components/PageTransition"; // <-- import the tran
 import CustomCursor from "./Components/CustomCursor";
 import PopupManager from "./Page/PopupManager";
 
-const App = () => {
+const AppContent = () => {
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        // Handle GitHub Pages 404 redirect
+        const redirect = new URLSearchParams(window.location.search).get('redirect');
+        if (redirect) {
+            // Remove the query parameter from history and navigate
+            window.history.replaceState(null, '', window.location.pathname);
+            navigate(redirect);
+        }
+    }, [navigate]);
+
     return (
-        <Router>
+        <>
             <CustomCursor />
             <Navbar />
             <Sidebar />
@@ -24,6 +38,14 @@ const App = () => {
                 </PageTransition>
             </ModalVideoProvider>
             <Footer />
+        </>
+    );
+};
+
+const App = () => {
+    return (
+        <Router>
+            <AppContent />
         </Router>
     );
 };
