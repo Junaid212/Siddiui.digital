@@ -1,4 +1,5 @@
 import React from "react";
+import img1 from "/assets/images/dummy-img-600x800.jpg"
 
 const PortfolioDetailSection = () => {
     return (
@@ -16,7 +17,7 @@ const PortfolioDetailSection = () => {
                             </div> */}
                             <div className="image-container">
                             <img
-                                src="./assets/images/dummy-img-600x800.jpg"
+                                src="https://i.pinimg.com/736x/4c/33/61/4c3361de62bbc0160c3c715b2fe73b12.jpg"
                                 alt="Portfolio Image"
                                 className="img-fluid"
                             />

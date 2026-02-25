@@ -2,9 +2,9 @@ import React from "react";
 import { servicedata } from "../../Data/Service";
 import { Link } from "react-router-dom";
 import EnrollBook from "../EnrollBook/enrollBook";
-import img1 from "/assets/images/dummy-img-600x400.jpg"
-import img2 from "/assets/images/dummy-img-600x400.jpg"
-import img3 from "/assets/images/dummy-img-600x600.jpg"
+import img1 from "/assets/images/img/26.png"
+import img2 from "/assets/images/img/27.png"
+import img3 from "/assets/images/img/28.png"
 
 const SingleServiceSection = () => {
     return (
@@ -25,20 +25,28 @@ const SingleServiceSection = () => {
 
                             <div>
                                 <p>
-                                    Elit class porta interdum commodo nisi sociosqu maecenas curae.
-                                    Ad in nullam libero commodo magnis tristique, accumsan etiam
-                                    viverra. Massa arcu sociosqu nascetur magna parturient morbi
-                                    ultrices senectus. Consectetur venenatis penatibus primis
-                                    tristique ac ultrices cras suscipit! Porta auctor laoreet dui
-                                    nisl tempor.
+                                    As a discipline, marketing is in the process of
+transition from an art which is practised to a
+profession with strong theoretical foundations.
+In doing so it is following closely the precedents
+set by professions such as medicine, architecture
+and engineering, all of which have also been
+practised for thousands of years and have built
+up a wealth of descriptive information concerning the art which has both chronicled and
+advanced its evolution. At some juncture, however, continued progress demands a transition
+from description to analysis, such as that
+initiated by Harvey’s discovery of the circulation of the blood. If marketing is to develop it,
+too, must make the transition from art to applied
+science and develop sound theoretical foundations, mastery of which should become an
+essential qualification for practice.
                                 </p>
-                                <p>
+                                {/* <p>
                                     Eu netus turpis himenaeos congue urna, volutpat laoreet
                                     dignissim. Natoque bibendum ante tempor sem vestibulum tortor
                                     urna potenti. Vulputate augue porta elementum eget; ut
                                     imperdiet. Velit himenaeos etiam eu est egestas dis nullam
                                     fringilla sit.
-                                </p>
+                                </p> */}
                             </div>
 
                             <div className="row row-cols-lg-2 row-cols-1 grid-spacer-2">
@@ -55,19 +63,21 @@ const SingleServiceSection = () => {
                                 <div className="col">
                                     <div className="d-flex flex-column h-100 gap-4">
                                         <p>
-                                        Proin parturient dignissim elementum magnis aptent fusce
-                                        curae. Accumsan vestibulum vel laoreet dui at tellus nisi
-                                        dolor. Parturient nunc montes, habitasse ligula habitant
-                                        facilisi.
+                                        Adoption of this proposition is as threatening to many of today’s marketers as the
+establishment of the British Medical Association
+was to the surgeon-barber. But, today, you
+would not dream of going to a barber for medical
+advice.
+
                                         </p>
 
                                         <ul className="circle-notch-list">
-                                        <li>Consequat orci maecenas purus cursus pellente</li>
-                                        <li>Iaculis est rutrum vulputate nisi erat nullam sed</li>
-                                        <li>Facilisi risus auctor ex lacus scelerisque mauris</li>
-                                        <li>Ut donec natoque ac finibus senectus faucibus ante</li>
-                                        <li>Turpis commodo fermentum aliquam facilisis rutrum</li>
-                                        <li>Quam maximus cras augue suspendisse cubilia sed</li>
+                                        <li>Marketing as a managerial orientation</li>
+                                        <li>Marketing myopia – a watershed </li>
+                                        <li>Life cycles and evolution </li>
+                                        <li>Marketing misunderstood</li>
+                                        <li>The marketing function</li>
+                                        <li>Relationship marketing 11</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -92,18 +102,18 @@ const SingleServiceSection = () => {
                                             </Link>
                                         </li>
                                     ))} */}
-                                    <li>Title: Book Title</li>
-                                    <li>Author: Author Name</li>
-                                    <li>Category: Marketing</li>
-                                    <li>Published: 2023</li>
-                                    <li>Pages: 300</li>
+                                    <li><b>Title:</b> Inbound Marketing: Attract, Engage, and Delight Customers Online</li>
+                                    <li><b>Author:</b> Michael J.Baker</li>
+                                    <li><b>Category:</b> Marketing</li>
+                                    <li><b>Published:</b> 2003</li>
+                                    <li><b>Pages:</b> 875</li>
                                 </ul>
                             </div>
                         </div>
                         <div className="cta-banner " style={{marginTop:'2em'}}>
             <div className="cta-content">
               <div className="cta-container">
-                <h2 className="secondary-accent">
+                <h2 className="secondary-accent no-dark">
                   Continue to Read
                 </h2>
                 <style>{`
