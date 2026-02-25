@@ -271,7 +271,7 @@ const Navbar = () => {
                 <nav className="navbar navbar-expand-lg">
                     <div className="container-fluid flex-nowrap">
 
-                        <NavLink className="navbar-brand" to="/" onClick={closeMenu}>
+                        <NavLink className="navbar-brand" to="/" >
                             {/* <img 
                                 src={darkMode ? "/assets/images/logo.webp" : "/assets/images/logo.webp"} 
                                 className="logo" 
@@ -298,6 +298,16 @@ const Navbar = () => {
                                             E-Books
                                         </NavLink>
                                     </li>
+                                    <li className="nav-item">
+                                        <NavLink to="/portfolio" className="nav-link" onClick={closeMenu}>
+                                            Course
+                                        </NavLink>
+                                    </li>
+                                    <li className="nav-item">
+                                        <NavLink to="/consultation" className="nav-link" onClick={closeMenu}>
+                                            Consultation
+                                        </NavLink>
+                                    </li>
 
                                     {/* <li className="nav-item dropdown">
                                         <a
@@ -318,26 +328,26 @@ const Navbar = () => {
                                         </ul>
                                     </li> */}
 
-                                    <li className="nav-item dropdown">
+                                    {/* <li className="nav-item dropdown">
                                         <a
                                             className={`nav-link dropdown-toggle ${
                                                 isDropdownActive(["/portfolio", "/portfolio-detail"]) ? "active" : ""
                                             }`}
                                             href="/portfolio"
                                             role="button"
-                                            // data-bs-toggle="dropdown"    
+                                            data-bs-toggle="dropdown"    
                                             aria-expanded="false"
                                         >
                                             Course 
-                                            {/* <i className="fa-solid fa-angle-down"></i> */}
+                                            <i className="fa-solid fa-angle-down"></i>
                                         </a>
-                                        {/* <ul className="dropdown-menu">
+                                        <ul className="dropdown-menu">
                                             <li><NavLink to="#" className="dropdown-item" onClick={closeMenu}>Portfolio</NavLink></li>
                                             <li><NavLink to="#" className="dropdown-item" onClick={closeMenu}>Portfolio Details</NavLink></li>
-                                        </ul> */}
-                                    </li>
+                                        </ul>
+                                    </li> */}
 
-                                    <li className="nav-item dropdown">
+                                    {/* <li className="nav-item dropdown">
                                         <a
                                             className={`nav-link dropdown-toggle
                                                 ${
@@ -356,13 +366,13 @@ const Navbar = () => {
                                             `}
                                             href="/consultation"
                                             role="button"
-                                            // data-bs-toggle="dropdown"
+                                            data-bs-toggle="dropdown"
                                             aria-expanded="false"
                                         >
                                             Consultation
-                                             {/* <i className="fa-solid fa-angle-down"></i> */}
+                                             <i className="fa-solid fa-angle-down"></i>
                                         </a>
-                                        {/* <ul className="dropdown-menu">
+                                        <ul className="dropdown-menu">
                                             <li><NavLink to="#" className="dropdown-item" onClick={closeMenu}>Pricing Plan</NavLink></li>
                                             <li><NavLink to="#" className="dropdown-item" onClick={closeMenu}>Team</NavLink></li>
                                             <li><NavLink to="#" className="dropdown-item" onClick={closeMenu}>Testimonials</NavLink></li>
@@ -370,10 +380,10 @@ const Navbar = () => {
                                             <li><NavLink to="#" className="dropdown-item" onClick={closeMenu}>404 Error</NavLink></li>
                                             <li><NavLink to="#" className="dropdown-item" onClick={closeMenu}>Blog Archive</NavLink></li>
                                             <li><NavLink to="#" className="dropdown-item" onClick={closeMenu}>Single Post</NavLink></li>
-                                        </ul> */}
-                                    </li>
+                                        </ul>
+                                    </li> */}
                                     <li className="nav-item">
-                                        <NavLink to="/portfolio-detail" className="nav-link" onClick={closeMenu}>
+                                        <NavLink to="/portfolio-detail" className="nav-link" >
                                             Blog
                                         </NavLink>
                                     </li>
