@@ -20,7 +20,7 @@ const App = () => {
                 {/* Wrap only the dynamic routes with PageTransition */}
                 <PageTransition>
                     <AppRouters />
-                    {/* <PopupManager/> */}
+                    <PopupManager/>
                 </PageTransition>
             </ModalVideoProvider>
             <Footer />

@@ -2,6 +2,9 @@ import React from "react";
 import { servicedata } from "../../Data/Service";
 import { Link } from "react-router-dom";
 import EnrollBook from "../EnrollBook/enrollBook";
+import img1 from "/assets/images/dummy-img-600x400.jpg"
+import img2 from "/assets/images/dummy-img-600x400.jpg"
+import img3 from "/assets/images/dummy-img-600x600.jpg"
 
 const SingleServiceSection = () => {
     return (
@@ -12,7 +15,7 @@ const SingleServiceSection = () => {
                         <div className="service-details">
                             <div className="image-container">
                                 <img
-                                src="./assets/images/dummy-img-600x400.jpg"
+                                src={img1}
                                 alt="Service Overview"
                                 className="post-detail-img"
                                 />
@@ -42,7 +45,7 @@ const SingleServiceSection = () => {
                                 <div className="col">
                                     <div className="image-container">
                                         <img
-                                        src="./assets/images/dummy-img-600x400.jpg"
+                                        src={img2}
                                         alt="Teamwork"
                                         className="img-fluid"
                                         />
@@ -74,7 +77,7 @@ const SingleServiceSection = () => {
 
                     <div className="col col-lg-4 ">
                         <div >
-                            <img src="./assets/images/dummy-img-600x600.jpg" alt="Book Overview" className="img-fluid"/>
+                            <img src={img3} alt="Book Overview" className="img-fluid"/>
                         </div>
                         <div className="card other-services">
                             <div className="other-services-content">

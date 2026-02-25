@@ -48,6 +48,7 @@ function AppRouters(){
             <Route path="e_books" element={<BookPage />}/>
             <Route path="consultation" element={<ConsultantPage />}/>
             <Route path="blog-page" element={<BlogSection />}/>
+            
 
         </Routes>
     );

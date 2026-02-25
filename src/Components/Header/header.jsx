@@ -283,7 +283,7 @@ const Navbar = () => {
                             <div className={`collapse navbar-collapse ${isMenuOpen ? 'show' : ''}`} id="navbarNav">
                                 <ul className="navbar-nav my-4 my-lg-0">
                                     <li className="nav-item">
-                                        <NavLink to="/" className="nav-link" onClick={closeMenu} end>
+                                        <NavLink to="/Siddiui.digital" className="nav-link" onClick={closeMenu} end>
                                             Home
                                         </NavLink>
                                     </li>
@@ -419,7 +419,7 @@ const Navbar = () => {
                         </button>
 
                         <div className="navbar-cta">
-                            <a href="#" className="btn btn-accent">Get Started</a>
+                            <a href="/contact" className="btn btn-accent">Get Started</a>
                         </div>
                     </div>
                 </nav>
