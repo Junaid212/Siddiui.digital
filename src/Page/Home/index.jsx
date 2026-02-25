@@ -13,6 +13,7 @@ import TestimonialSection from "../../Components/Testimonial/TestimonialSection"
 import AchievementSection from "../../Components/Achievement";
 import Hero from "../../Components/Hero/hero";
 import HeroThree from "../../Components/HeroThree/heroThree";
+import EbookCardPage from "../../Components/EbookCardPage";
 
 const HomePage = () => {
     return(
@@ -23,7 +24,8 @@ const HomePage = () => {
             {/* <ModalVideoSection /> */}
             {/* <PartnersipSection /> */}
             <AboutSection />
-            <ServiceSection />
+            {/* <ServiceSection /> */}
+            <EbookCardPage/>
             {/* <AchievementSection /> */}
             {/* <ProcessSection /> */}
             {/* <WhyChooseUsSection /> */}

@@ -19,6 +19,7 @@ import BookPage from "./Page/Book";
 import ConsultantPage from "./Page/Consultant";
 import Questionnaire from "./Page/Questionnaire";
 import PopupPage from "./Page/PopupManager";
+import BlogSection from "./Page/Blogs";
 // import BookAppointment from "./Page/BookAppointment";
 
 function AppRouters(){
@@ -29,7 +30,7 @@ function AppRouters(){
             <Route path="/" element={<HomePage />} />
             <Route path="about" element={<AboutPage />} />
             <Route path="services" element={<ServicePage />} />
-            <Route path="e-book" element={<SingleServicePage />} />
+            <Route path="book1" element={<SingleServicePage />} />
             <Route path="portfolio" element={<PortfolioPage />} />
             <Route path="portfolio-detail" element={<SinglePortfolioPage/>}/>
             <Route path="pricing" element={<PricingPage />} />
@@ -46,6 +47,7 @@ function AppRouters(){
             <Route path="ebooks" element={<EbookPage />}/>
             <Route path="e_books" element={<BookPage />}/>
             <Route path="consultation" element={<ConsultantPage />}/>
+            <Route path="blog-page" element={<BlogSection />}/>
 
         </Routes>
     );

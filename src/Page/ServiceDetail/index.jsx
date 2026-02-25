@@ -10,7 +10,7 @@ import EnrollBook from "../../Components/EnrollBook/enrollBook";
 const SingleServicePage = () => {
     return(
         <>
-            <HeadTitle title="Service Detail - Aspire - SEO & Digital Marketing Agency" />
+            <HeadTitle title="E-Book" />
             {/* <BannerInnerSection title="On-Page SEO" currentPage="On page SEO" /> */}
             <SingleServiceSection />
             {/* <EnrollBook /> */}

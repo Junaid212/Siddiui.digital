@@ -3,7 +3,7 @@ import img1 from "/assets/images/dummy-img-600x800.jpg";
 export const portfoliodata = [
     {
         id: 1,
-        image: img1,
+        image: "https://snu.edu.in/site/assets/files/18305/asian-businessman-blurred-office_1.1600x0.webp",
         logo: "/assets/images/partner-4-65f90f1a4e273.webp",
         category: "Price",
         title: "Course1",
@@ -13,7 +13,7 @@ export const portfoliodata = [
     },
     {
         id: 2,
-        image: img1,
+        image: "https://i.pinimg.com/736x/31/41/ed/3141ed864a2ea40d55cd3be78adfad72.jpg",
         logo: "/assets/images/partner-5-65f90f1ae5cd3.webp",
         category: "Price",
         title: "Course2",

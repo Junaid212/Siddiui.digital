@@ -297,14 +297,14 @@ function CoursPage() {
             caseNumber="01"
             hashtag="#Social Media Management"
             title="BOOSTING BRAND VISIBILITY: A SOCIAL MEDIA REVAMP SUCCESS STORY"
-            imageUrl="/assets/images/dummy-img-600x600.jpg"
+            imageUrl="./assets/images/dummy-img-600x600.jpg"
           />
 
           <CaseStudyCard
             caseNumber="02"
             hashtag="#Content Creation and Strategy"
             title=" INCREASED CONVERSIONS: A COMPREHENSIVE APPROACH"
-            imageUrl="/assets/images/dummy-img-600x600.jpg"
+            imageUrl="./assets/images/dummy-img-600x600.jpg"
           />
         </div>
       </div>

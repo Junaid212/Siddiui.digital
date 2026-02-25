@@ -12,7 +12,7 @@ const AboutSection = () => {
                         <div className="d-flex flex-column flex-md-row h-100 gspace-3">
                             <div className="about-image-wrapper">
                                 <div className="image-container">
-                                    <img src={image} alt="About Image" className="img-fluid animate-box animated animate__animated" data-animate="animate__fadeInRight" />
+                                    <img src="https://cdn.corporatefinanceinstitute.com/assets/marketing.jpeg" alt="About Image" className="img-fluid animate-box animated animate__animated" data-animate="animate__fadeInRight" />
                                 </div>
                                 <div className="card about-traffic-card animate-box animated animate__animated" data-animate="animate__zoomIn">
                                     <div className="d-flex flex-column gspace-2 align-self-center text-center">

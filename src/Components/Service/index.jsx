@@ -19,7 +19,7 @@ const ServiceSection = () => {
                             </div>
                             <h2 className="text-center animate-box animated animate__animated" data-animate="animate__fadeInUp">Practical Marketing & Management for  Success</h2>
                         </div>
-                        <div className="row row-cols-lg-3 row-cols-md-2 row-cols-1 grid-spacer-2">
+                        <div className="row row-cols-lg-3 row-cols-md-2 row-cols-1 grid-spacer-2 no-dark">
                             {servicedata.slice(0, 3).map((item) => (
                                     <div className="col" key={item.id}>
                                         <ServiceCard

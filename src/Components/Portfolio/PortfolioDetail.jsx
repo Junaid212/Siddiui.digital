@@ -16,7 +16,7 @@ const PortfolioDetailSection = () => {
                             </div> */}
                             <div className="image-container">
                             <img
-                                src="/assets/images/dummy-img-600x800.jpg"
+                                src="./assets/images/dummy-img-600x800.jpg"
                                 alt="Portfolio Image"
                                 className="img-fluid"
                             />

@@ -15,7 +15,7 @@ const PortfolioSection = () => {
                             </div>
                             <h2 className="animate-box animated animate__animated" data-animate="animate__fadeInUp">Expert-Led Marketing &  Management Courses</h2>
                         </div>
-                        <div className="row row-cols-lg-2 row-cols-md-2 row-cols-1 grid-spacer-2">
+                        <div className="row row-cols-lg-2 row-cols-md-2 row-cols-1 grid-spacer-2 no-dark">
                             {portfoliodata.map((item) => (
                                 <div className="col" key={item.id}>
                                     <PortfolioCard

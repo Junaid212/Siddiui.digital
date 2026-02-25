@@ -506,15 +506,15 @@ export default function Hero({ onBookConsultation }) {
               </div>
               
               <h1 className="hero-title">
-                <AnimatedCharacters text="Expert Guidance." />
+                <AnimatedCharacters text="Marketing," />
                 <span className="hero-title-accent">
                   <br />
-                  <AnimatedCharacters text="Real Results" isAccent={true} />
+                  <AnimatedCharacters text="Reclassified." isAccent={true} />
                 </span>
               </h1>
               
               <p className="hero-description">
-                18+ years of global experience insight shaping the future leaders in marketing and business education.
+                Marketing is not a department. It is strategic intelligence.
               </p>
               
               <div className="button-group">
@@ -526,7 +526,7 @@ export default function Hero({ onBookConsultation }) {
                   className="btn-outline"
                   onClick={() => document.getElementById('courses')?.scrollIntoView({ behavior: 'smooth' })}
                 >
-                  Explore Courses
+                  Get the Book
                 </button>
               </div>
 

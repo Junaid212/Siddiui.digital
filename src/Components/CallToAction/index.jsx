@@ -13,11 +13,11 @@ const CtaSection = () => {
         className="section py-0 animate-box animated animate__animated"
         data-animate="animate__zoomIn"
       >
-        <div className="hero-container">
-          <div className="cta-banner">
+        <div className="hero-container ">
+          <div className="cta-banner ">
             <div className="cta-content">
               <div className="cta-container">
-                <h2 className="secondary-accent">
+                <h2 className="secondary-accent no-dark">
                   Schedule a Free Consultation
                 </h2>
 
@@ -27,10 +27,10 @@ const CtaSection = () => {
                   and solutions with practical industry expertise at no cost.
                 </p>
 
-                <div>
+                <div >
                   <button
                     onClick={() => setIsDrawerOpen(true)}
-                    className="btn btn-secondary-accent"
+                    className="btn btn-secondary-accent no-lght"
                   >
                     Book Free Consultation
                   </button>

@@ -12,7 +12,7 @@ const SingleServiceSection = () => {
                         <div className="service-details">
                             <div className="image-container">
                                 <img
-                                src="/assets/images/dummy-img-600x400.jpg"
+                                src="./assets/images/dummy-img-600x400.jpg"
                                 alt="Service Overview"
                                 className="post-detail-img"
                                 />
@@ -42,7 +42,7 @@ const SingleServiceSection = () => {
                                 <div className="col">
                                     <div className="image-container">
                                         <img
-                                        src="/assets/images/dummy-img-600x400.jpg"
+                                        src="./assets/images/dummy-img-600x400.jpg"
                                         alt="Teamwork"
                                         className="img-fluid"
                                         />
@@ -74,7 +74,7 @@ const SingleServiceSection = () => {
 
                     <div className="col col-lg-4 ">
                         <div >
-                            <img src="/assets/images/dummy-img-600x600.jpg" alt="Book Overview" className="img-fluid"/>
+                            <img src="./assets/images/dummy-img-600x600.jpg" alt="Book Overview" className="img-fluid"/>
                         </div>
                         <div className="card other-services">
                             <div className="other-services-content">

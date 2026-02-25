@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const books = [
   {
@@ -49,6 +50,7 @@ const slideDirections = [
 
 function BookCard({ book, index, direction }) {
   const [isHovered, setIsHovered] = useState(false);
+  const navigate=useNavigate();
 
   return (
     <motion.div
@@ -137,7 +139,7 @@ function BookCard({ book, index, direction }) {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              <button onClick={() => window.location.href = '/e-book'}
+              <button onClick={() => navigate("/book1")}
               style={{
                 width: '100%',
                 background: 'linear-gradient(to right, #f50b0b, #f91616)',

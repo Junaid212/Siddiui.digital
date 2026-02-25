@@ -62,9 +62,7 @@ const ContactForm = () => {
                         </div>
                         <h2 className="animate-box animate__animated animated" data-animate="animate__fadeInUp">Let's Discuss How We Can Support Your Success</h2>
                         <p>
-                            Parturient nunc montes, habitasse ligula habitant facilisi. 
-                            Luctus dis penatibus ad augue rutrum. Non gravida sociosqu pellentesque cursus dictum.
-                            Gravida at luctus sollicitudin sagittis odio venenatis adipiscing mus sem.
+                            We’d love to hear from you! Whether you have a question about our services, pricing, or anything else, feel free to contact us.
                         </p>
                         <div className="section p-0">
                             <iframe loading="lazy" className="maps"

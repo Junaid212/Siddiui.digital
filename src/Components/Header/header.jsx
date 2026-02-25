@@ -383,7 +383,7 @@ const Navbar = () => {
                                         </ul>
                                     </li> */}
                                     <li className="nav-item">
-                                        <NavLink to="/portfolio-detail" className="nav-link" >
+                                        <NavLink to="/blog-page" className="nav-link" >
                                             Blog
                                         </NavLink>
                                     </li>

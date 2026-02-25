@@ -9,7 +9,7 @@ import HeadTitle from "../../Components/Head/HeadTitle";
 const SinglePortfolioPage = () => {
     return(
         <>
-            <HeadTitle title="Portfolio Detail - Aspire - SEO & Digital Marketing Agency" />
+            <HeadTitle title="Portfolio Detail" />
             <BannerInnerSection title="Digital Marketing Strategy" currentPage=" Blogs" />
             <PortfolioDetailSection />
             {/* <CtaSection /> */}

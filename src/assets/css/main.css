@@ -886,7 +886,7 @@ textarea.error-border{
 
 .card-service.card-service--highlight {
     background-color: var(--accent-color-4);
-    background-image: url('/assets/images/dummy-img-600x600.jpg');
+    background-image: url('https://i.pinimg.com/1200x/30/f3/cb/30f3cb0f6343e4e735c762082065d4aa.jpg');
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
@@ -2183,7 +2183,7 @@ textarea.error-border{
 /* 28. About Styles */
 
 .about-traffic-card{
-    background-image: url('/assets/images/dummy-img-600x600.jpg');
+    background-image: url('https://regent.ac.za/wp-content/uploads/2022/05/shutterstock_2090541781-1800x1013-1.jpg.webp');
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
@@ -2919,7 +2919,7 @@ textarea.error-border{
 
 .footer-info-container{
     display: grid;
-    grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    grid-template-columns: 1.5fr 1fr 1fr ;
     overflow: hidden;
     gap: 20px;
     padding: 2em 1em 2em 1em;
@@ -3291,7 +3291,7 @@ textarea.error-border{
           --accent-color-2: #f0f0f0;
           --accent-color-3: #8f0a0a;
           --accent-color-4: #00000010;
-          --accent-color-5: #00000020;
+          --accent-color-5: #00000073;
           --accent-color-6: rgba(0, 0, 0, 0.05);
           --accent-border-1: #e0e0e0;
           --dropdown-box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
@@ -3388,7 +3388,7 @@ footer {
   --accent-color-2: #f0f0f0;
   --accent-color-3: #8f0a0a;
   /* --accent-color-4: #63626210; */
-  --accent-color-5: #00000020;
+  --accent-color-5: #00000073;
   --accent-color-6: rgba(0, 0, 0, 0.05);
   --accent-border-1: #e0e0e0;
   --dropdown-box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);

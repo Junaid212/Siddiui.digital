@@ -17,20 +17,19 @@ const Footer = () => {
                                         className="logo"
                                     /> */}
                                     <p className="accent-color-2">
-                                        Quam lacus suspendisse faucibus interdum posuere lorem
-                                        ipsum dolor sit. Vel quam elementum pulvinar etiam.
+                                        Siddiqui.digital – Reclassifying marketing as strategic intelligence.
                                     </p>
                                     <ul className="footer-list">
                                         <li>
                                             <div className="d-flex flex-row align-items-center gspace-2 secondary-accent">
                                                 <i className="fa-solid fa-location-dot"></i>
-                                                <span>Somewhere, Earth</span>
+                                                <span>Ajman, UAE</span>
                                             </div>
                                         </li>
                                         <li>
                                             <div className="d-flex flex-row align-items-center gspace-2 secondary-accent">
                                                 <i className="fa-solid fa-envelope-open-text "></i>
-                                                <span>aspire@dummy.com</span>
+                                                <span>example@domain.com</span>
                                             </div>
                                         </li>
                                         <li>
@@ -51,7 +50,7 @@ const Footer = () => {
                                         <li><a href="/contact">Contact</a></li>
                                     </ul>
                                 </div>
-                                <div className="footer-services">
+                                {/* <div className="footer-services">
                                     <h4 className="accent-color">Services</h4>
                                     <ul className="footer-list">
                                         <li><a href="/services">On-Page SEO</a></li>
@@ -61,12 +60,11 @@ const Footer = () => {
                                         <li><a href="/services">Analytics & Reporting</a></li>
                                         <li><a href="/services">Influencer Marketing</a></li>
                                     </ul>
-                                </div>
+                                </div> */}
                                 <div className="footer-cta">
                                     <h4 className="accent-color">Work Days</h4>
                                     <p>
-                                        Euismod elementum nisi quis eleifend quam adipiscing
-                                        vitae proin sagittis.
+                                        Feel free to reach out during working hours!
                                     </p>
                                     <div className="d-flex gspace-2">
                                         <i className="fa-solid accent-color-2 fa-clock"></i>
