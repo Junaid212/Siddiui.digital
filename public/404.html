@@ -4,10 +4,26 @@
     <meta charset="utf-8">
     <title>Siddiui Digital</title>
     <script type="text/javascript">
-      // Redirect to index.html with the path preserved
-      var pathSegments = window.location.pathname.split('/');
-      var path = pathSegments.slice(2).join('/');
-      window.location.replace('/Siddiui.digital/?redirect=' + encodeURIComponent('/' + path + window.location.search));
+      // Get the exact path that was requested
+      var fullPath = window.location.pathname + window.location.search + window.location.hash;
+      var baseUrl = '/Siddiui.digital';
+      
+      // Extract the path after the base URL
+      if (fullPath.startsWith(baseUrl)) {
+        var path = fullPath.substring(baseUrl.length);
+      } else {
+        var path = fullPath;
+      }
+      
+      // Preserve query strings and hash
+      var search = window.location.search;
+      var hash = window.location.hash;
+      
+      // Build the redirect URL with query parameter
+      var redirectUrl = baseUrl + '/?redirect=' + encodeURIComponent(path + search + hash);
+      
+      // Redirect to index.html with path preserved
+      window.location.replace(redirectUrl);
     </script>
   </head>
   <body>

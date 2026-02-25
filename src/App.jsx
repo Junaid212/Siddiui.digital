@@ -1,6 +1,6 @@
 import { BrowserRouter as Router } from "react-router-dom";
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import AppRouters from "./Router";
 import { ModalVideoProvider } from "./Components/Video/ModalVideoContext";
 import Navbar from "./Components/Header/header";
@@ -13,14 +13,21 @@ import PopupManager from "./Page/PopupManager";
 
 const AppContent = () => {
     const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
         // Handle GitHub Pages 404 redirect
         const redirect = new URLSearchParams(window.location.search).get('redirect');
         if (redirect) {
-            // Remove the query parameter from history and navigate
+            // Remove the query parameter from history
             window.history.replaceState(null, '', window.location.pathname);
-            navigate(redirect);
+            try {
+                // Navigate to the redirect path
+                navigate(redirect, { replace: true });
+            } catch (e) {
+                // Fallback to home if navigation fails
+                navigate('/', { replace: true });
+            }
         }
     }, [navigate]);
 
