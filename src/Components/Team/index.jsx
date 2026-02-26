@@ -25,11 +25,11 @@ const TeamSection = () => {
   modules={[Navigation, Pagination, Autoplay]}
   spaceBetween={12}
   slidesPerView={1}                                              
-  autoplay={{ delay: 20000, disableOnInteraction: false }}
+  autoplay={{ delay: 2000, disableOnInteraction: false }}
 //   pagination={{ clickable: true, color: "#f10808" }}
 //   navigation
   breakpoints={{
-    768: { slidesPerView: 2 },
+    768: { slidesPerView: 1 },
     992: { slidesPerView: 4 },
   }}
 >

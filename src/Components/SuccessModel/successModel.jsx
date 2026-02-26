@@ -18,7 +18,7 @@ export default function SuccessModal({ isOpen, onClose, date, time }) {
               inset: 0,
               backgroundColor: 'rgba(0, 0, 0, 0.4)',
               backdropFilter: 'blur(4px)',
-              zIndex: 60
+              zIndex: 9999
             }}
           />
 
@@ -34,8 +34,8 @@ export default function SuccessModal({ isOpen, onClose, date, time }) {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              zIndex: 70,
-              padding: '1.5rem'
+              zIndex: 10000,
+              padding: '1.5rem',
             }}
           >
             <div style={{
@@ -46,7 +46,7 @@ export default function SuccessModal({ isOpen, onClose, date, time }) {
               width: '100%',
               textAlign: 'center',
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-              position: 'relative'
+              position: 'relative',
             }}>
               <button
                 onClick={onClose}

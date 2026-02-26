@@ -16,7 +16,7 @@ const AchievementSection = () => {
         <div className="section py-0">
             <div className="hero-container">
                 <div className="counter-container">
-                    <div className="row row-cols-lg-4 row-cols-md-2 row-cols-1 grid-spacer-2">
+                    <div className="row row-cols-lg-4 row-cols-md-2 row-cols-1  grid-spacer-2">
                         <div className="col">
                             <div className="counter-box">
                                 <div className="d-flex flex-row align-items-center justify-content-center">

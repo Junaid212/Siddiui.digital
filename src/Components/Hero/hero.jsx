@@ -399,6 +399,9 @@ export default function Hero({ onBookConsultation }) {
             max-width: 20rem;
             height: 30rem;
           }
+            .hero-title {
+              line-height: 0.5 ;
+        }
         }
         
         @media (min-width: 1024px) {

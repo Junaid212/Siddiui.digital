@@ -11,6 +11,13 @@ import "swiper/css/pagination";
 import "swiper/css/autoplay";
 import "animate.css";
 
+const params = new URLSearchParams(window.location.search);
+const redirect = params.get("redirect");
+
+if (redirect) {
+  window.history.replaceState(null, null, redirect);
+}
+
 createRoot(document.getElementById('root')).render(
     <StrictMode>
         <App />

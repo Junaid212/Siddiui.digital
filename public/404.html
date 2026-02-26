@@ -2,30 +2,21 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Siddiui Digital</title>
-    <script type="text/javascript">
-      // Get the exact path that was requested
-      var fullPath = window.location.pathname + window.location.search + window.location.hash;
-      var baseUrl = '/Siddiui.digital';
-      
-      // Extract the path after the base URL
-      if (fullPath.startsWith(baseUrl)) {
-        var path = fullPath.substring(baseUrl.length);
-      } else {
-        var path = fullPath;
-      }
-      
-      // Preserve query strings and hash
-      var search = window.location.search;
-      var hash = window.location.hash;
-      
-      // Build the redirect URL with query parameter
-      var redirectUrl = baseUrl + '/?redirect=' + encodeURIComponent(path + search + hash);
-      
-      // Redirect to index.html with path preserved
-      window.location.replace(redirectUrl);
+    <title>Redirecting...</title>
+    <script>
+      const repoName = "Siddiui.digital"; // 👈 must match exactly
+
+      const fullPath = window.location.pathname + window.location.search + window.location.hash;
+      const baseUrl = "/" + repoName;
+
+      const path = fullPath.startsWith(baseUrl)
+        ? fullPath.slice(baseUrl.length)
+        : fullPath;
+
+      window.location.replace(
+        baseUrl + "/?redirect=" + encodeURIComponent(path)
+      );
     </script>
   </head>
-  <body>
-  </body>
+  <body></body>
 </html>

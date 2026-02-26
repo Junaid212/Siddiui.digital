@@ -8,35 +8,40 @@ const books = [
     title: "The Silent Echo",
     price: "AED 24.99",
     description: "A gripping tale of mystery and redemption in modern Tokyo.",
-    image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=600&h=800&fit=crop"
+    image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=600&h=800&fit=crop",
+    link:"/book1"
   },
   {
     id: 2,
     title: "Midnight Gardens",
     price: "AED 19.99",
     description: "Romance blooms under the stars in this enchanting novel.",
-    image: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=600&h=800&fit=crop"
+    image: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=600&h=800&fit=crop",
+    link:"/book1"
   },
   {
     id: 3,
     title: "Beyond The Horizon",
     price: "AED 29.99",
     description: "An epic adventure across uncharted worlds and dimensions.",
-    image: "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=600&h=800&fit=crop"
+    image: "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=600&h=800&fit=crop",
+    link:"/book1"
   },
   {
     id: 4,
     title: "The Last Algorithm",
     price: "AED 22.99",
     description: "When AI awakens, humanity faces its greatest challenge.",
-    image: "https://images.unsplash.com/photo-1532012197267-da84d127e765?w=600&h=800&fit=crop"
+    image: "https://images.unsplash.com/photo-1532012197267-da84d127e765?w=600&h=800&fit=crop",
+    link:"/book1"
   },
   {
     id: 5,
     title: "Whispers of Time",
     price: "AED 27.99",
     description: "A historical saga spanning three generations of love.",
-    image: "https://images.unsplash.com/photo-1476275466078-4007374efbbe?w=600&h=800&fit=crop"
+    image: "https://images.unsplash.com/photo-1476275466078-4007374efbbe?w=600&h=800&fit=crop",
+    link:"/book1"
   }
 ];
 
@@ -50,7 +55,7 @@ const slideDirections = [
 
 function BookCard({ book, index, direction }) {
   const [isHovered, setIsHovered] = useState(false);
-  const navigate=useNavigate();
+  const navigate = useNavigate();
 
   return (
     <motion.div
@@ -60,6 +65,7 @@ function BookCard({ book, index, direction }) {
       style={{ position: 'relative', cursor: 'pointer' }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={() => navigate(book.link)} // 👈 Navigate when clicking anywhere on the card
     >
       <div className="bg-accent-color-2" style={{ position: 'relative', overflow: 'hidden', borderRadius: '16px', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)', aspectRatio: '1/1' }}>
         {/* Book Image */}
@@ -139,23 +145,27 @@ function BookCard({ book, index, direction }) {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              <button onClick={() => navigate("/book1")}
-              style={{
-                width: '100%',
-                background: 'linear-gradient(to right, #f50b0b, #f91616)',
-                color: 'white',
-                fontWeight: '600',
-                padding: '10px 16px',
-                borderRadius: '6px',
-                border: 'none',
-                cursor: 'pointer',
-                boxShadow: '0 10px 15px -3px rgba(245, 11, 11, 0.25)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '14px'
-              }}>
-                {/* <ShoppingCart style={{ width: '16px', height: '16px', marginRight: '8px' }} /> */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation(); // 👈 Prevent card click from firing
+                  navigate(book.link);  // 👈 Use book.link
+                }}
+                style={{
+                  width: '100%',
+                  background: 'linear-gradient(to right, #f50b0b, #f91616)',
+                  color: 'white',
+                  fontWeight: '600',
+                  padding: '10px 16px',
+                  borderRadius: '6px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  boxShadow: '0 10px 15px -3px rgba(245, 11, 11, 0.25)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '14px'
+                }}
+              >
                 <i className="fa-solid fa-cart-shopping" style={{ marginRight: '8px' }}></i>
                 Buy Book
               </button>

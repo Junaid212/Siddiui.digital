@@ -196,7 +196,7 @@ export default function BookConsultation() {
                 <div className="bc-calendar-header">
                   <div className="bc-calendar-title">
                     <h2>Select Date</h2>
-                    <p className="bc-calendar-subtitle">Choose your preferred consultation date</p>
+                    {/* <p className="bc-calendar-subtitle">Choose your preferred consultation date</p> */}
                   </div>
                   <div className="bc-calendar-nav">
                     <button 

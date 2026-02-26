@@ -1179,6 +1179,29 @@ textarea.error-border{
     color: var(--secondary);
 }
 
+@media  (max-width:768px) {
+    .client-rating-card-content span{
+        font-size: 24px;
+    }
+    .client-rating-card-content i{
+        font-size: 10px;
+    }
+    .client-rating-card-content h5{
+        font-size: 10px;
+    }
+    .client-rating-card-content{
+        gap: 5px;
+    }
+    .client-rating-card{
+        top: 140px;
+        bottom: 100px;
+    }
+    .whychooseus-details{
+        margin-top: -130px;
+    }
+    
+}
+
 /* 13.8 */
 
 .form-card{
@@ -1323,6 +1346,17 @@ textarea.error-border{
     position: relative;
     overflow: hidden;
     z-index: 1;
+}
+
+@media screen and (max-width:768px){
+    .banner-inner{
+        padding: 1em 2em 1em 2em;
+    }
+    .banner-inner-content{
+        padding: 1em 1em 1em 1em;
+        gap: 10px;
+    }
+    
 }
 
 .banner-inner::before{
@@ -2342,7 +2376,7 @@ textarea.error-border{
     content: '';
     position: absolute;
     background-color: var(--accent-color);
-    opacity: 0.6;
+    opacity: 0.4;
     top: 0;
     left: 0;
     width: 100%;
@@ -3451,6 +3485,12 @@ footer {
           display: grid;
           gap: 2rem;
         }
+        @media (max-width: 768px) {
+       .bc-profile-col {
+          margin-right: -60px;
+        }
+        
+    }
         @media (min-width: 1024px) {
           .bc-grid {
             grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -4051,6 +4091,7 @@ footer {
           padding: 1rem;
           background-color: #fafafa;
           border-radius: 1rem;
+          z-index: 999;
         }
         .bc-success-row {
           display: flex;

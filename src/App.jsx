@@ -11,7 +11,7 @@ import PopupManager from "./Page/PopupManager";
 
 const App = () => {
     return (
-        <Router>
+        <Router basename={import.meta.env.BASE_URL}>
             <CustomCursor />
             <Navbar />
             <Sidebar />

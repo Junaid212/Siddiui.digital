@@ -134,6 +134,12 @@ advice.
                         border-radius: var(--global-border-radius);
                         margin-bottom: 2em;
                         }
+
+                        @media screen and(max-width:768px){
+                            .cta-content {
+                            width:95%;
+                }
+                        }
                 `}</style>
 
                 {/* <p>

@@ -1,6 +1,7 @@
 import React from 'react'
 import BlogCard from '../../Components/BlogCard';
 import BannerInnerSection from '../../Components/Banner/inner';
+import { link } from 'framer-motion/client';
 
 
 const blogPosts = [
@@ -10,6 +11,7 @@ const blogPosts = [
     description: "Discover proven strategies for leading high-performing teams and driving business results in competitive markets.",
     rating: 4.8,
     tags: ["Leadership", "Management"],
+    link:'/portfolio-detail'
   },
   {
     image: 'https://i.pinimg.com/736x/29/cf/3d/29cf3d41f716f6ca16ee137215b8986b.jpg',
@@ -17,6 +19,7 @@ const blogPosts = [
     description: "Learn how to leverage analytics dashboards to make smarter marketing decisions and maximize your ROI.",
     rating: 4.7,
     tags: ["Analytics", "Strategy"],
+    link:'/portfolio-detail'
   },
   {
     image: 'https://i.pinimg.com/1200x/8f/0f/02/8f0f023dbca52a0c9ed1673fe38f221f.jpg',
@@ -24,6 +27,7 @@ const blogPosts = [
     description: "Key insights on scaling operations, managing growth, and presenting compelling business cases to stakeholders.",
     rating: 4.9,
     tags: ["Growth", "Operations"],
+    link:'/portfolio-detail'
   },
   // {
   //   image: blog4,

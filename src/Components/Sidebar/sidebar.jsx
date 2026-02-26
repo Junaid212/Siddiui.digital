@@ -12,27 +12,40 @@ function Sidebar() {
         const sidebar = sidebarRef.current;
 
         function openSidebar() {
-        overlay.classList.add("active");
-        setTimeout(() => {
-            sidebar.classList.add("active");
-        }, 200);
+            overlay.classList.add("active");
+            setTimeout(() => {
+                sidebar.classList.add("active");
+            }, 200);
         }
 
         function closeSidebar() {
-        sidebar.classList.remove("active");
-        setTimeout(() => {
-            overlay.classList.remove("active");
-        }, 200);
+            sidebar.classList.remove("active");
+            setTimeout(() => {
+                overlay.classList.remove("active");
+            }, 200);
         }
 
+        // Open/close via menu button, close button, and overlay
         menuBtn?.addEventListener("click", openSidebar);
         closeBtn?.addEventListener("click", closeSidebar);
         overlay?.addEventListener("click", closeSidebar);
 
+        // Close sidebar when any link inside it is clicked
+        const links = sidebar?.querySelectorAll("a, .nav-link");
+        const handleLinkClick = () => {
+            closeSidebar();
+        };
+        links?.forEach((link) => {
+            link.addEventListener("click", handleLinkClick);
+        });
+
         return () => {
-        menuBtn?.removeEventListener("click", openSidebar);
-        closeBtn?.removeEventListener("click", closeSidebar);
-        overlay?.removeEventListener("click", closeSidebar);
+            menuBtn?.removeEventListener("click", openSidebar);
+            closeBtn?.removeEventListener("click", closeSidebar);
+            overlay?.removeEventListener("click", closeSidebar);
+            links?.forEach((link) => {
+                link.removeEventListener("click", handleLinkClick);
+            });
         };
     }, []);
 
@@ -40,27 +53,27 @@ function Sidebar() {
         const dropdownBtns = sidebarRef.current?.querySelectorAll(".sidebar-dropdown-btn");
 
         function handleDropdownClick(e) {
-        const btn = e.currentTarget;
-        const dropdownMenu = btn.parentElement.nextElementSibling;
-        const isOpen = dropdownMenu.classList.contains("active");
+            const btn = e.currentTarget;
+            const dropdownMenu = btn.parentElement.nextElementSibling;
+            const isOpen = dropdownMenu.classList.contains("active");
 
-        sidebarRef.current
-            .querySelectorAll(".sidebar-dropdown-menu")
-            .forEach((menu) => {
-            menu.classList.remove("active");
-            });
+            sidebarRef.current
+                .querySelectorAll(".sidebar-dropdown-menu")
+                .forEach((menu) => {
+                    menu.classList.remove("active");
+                });
 
-        if (!isOpen) dropdownMenu.classList.add("active");
+            if (!isOpen) dropdownMenu.classList.add("active");
         }
 
         dropdownBtns?.forEach((btn) => {
-        btn.addEventListener("click", handleDropdownClick);
+            btn.addEventListener("click", handleDropdownClick);
         });
 
         return () => {
-        dropdownBtns?.forEach((btn) => {
-            btn.removeEventListener("click", handleDropdownClick);
-        });
+            dropdownBtns?.forEach((btn) => {
+                btn.removeEventListener("click", handleDropdownClick);
+            });
         };
     }, []);
 
@@ -71,64 +84,56 @@ function Sidebar() {
                 <div className="sidebar-header">
                     <div className="logo">
                         <img
-                        src="/assets/images/logo.webp"
-                        className="img-fluid logo"
-                        alt="Logo"
+                            src="/assets/images/logo.webp"
+                            className="img-fluid logo"
+                            alt="Logo"
                         />
                     </div>
                     <button className="close-btn">
                         <span>X</span>
                     </button>
-                    </div>
+                </div>
 
-                    <ul className="menu">
+                <ul className="menu">
                     <li>
                         <NavLink to="/" end>Home</NavLink>
                     </li>
                     <li>
                         <NavLink to="/about">About Us</NavLink>
                     </li>
-
-                    <li className="sidebar-dropdown">
-                        <div className="dropdown-header">
-                        <a href="/e_books">E-Book</a>
-                        {/* <button className="sidebar-dropdown-btn">
-                            <i className="fa-solid fa-angle-down"></i>
-                        </button> */}
-                        </div>
-                        {/* <ul className="sidebar-dropdown-menu">
-                            <li>
-                                <NavLink to="/services">Service</NavLink>
-                            </li>
-                            <li>
-                                <NavLink to="/service-detail">Service Details</NavLink>
-                            </li>
-                        </ul> */}
+                    <li>
+                        <NavLink to="/e_books">E-Book</NavLink>
+                    </li>
+                    <li>
+                        <NavLink to="/portfolio">Course</NavLink>
+                    </li>
+                    <li>
+                        <NavLink to="/consultation">Consultation</NavLink>
                     </li>
 
-                    <li className="sidebar-dropdown below-dropdown">
+                    {/* <li className="sidebar-dropdown">
                         <div className="dropdown-header">
-                        <a href="/portfolio">Course</a>
-                        {/* <button className="sidebar-dropdown-btn">
-                            <i className="fa-solid fa-angle-down"></i>
-                        </button> */}
+                            <NavLink to="/e_books">E-Book</NavLink>
+                        </div>
+                    </li> */}
+
+                    {/* <li className="sidebar-dropdown below-dropdown">
+                        <div className="dropdown-header">
+                            <NavLink href="/portfolio">Course</NavLink>
                         </div>
                         <ul className="sidebar-dropdown-menu">
-                        <li>
-                            <NavLink to="/portfolio">Portfolio</NavLink>
-                        </li>
-                        <li>
-                            <NavLink to="/portfolio-detail">Portfolio Details</NavLink>
-                        </li>
+                            <li>
+                                <NavLink to="/portfolio">Portfolio</NavLink>
+                            </li>
+                            <li>
+                                <NavLink to="/portfolio-detail">Portfolio Details</NavLink>
+                            </li>
                         </ul>
-                    </li>
+                    </li> */}
 
-                    <li className="sidebar-dropdown">
+                    {/* <li className="sidebar-dropdown">
                         <div className="dropdown-header">
-                            <a href="#">Consultation</a>
-                            {/* <button className="sidebar-dropdown-btn">
-                                <i className="fa-solid fa-angle-down"></i>
-                            </button> */}
+                            <NavLink href="/consultation">Consultation</NavLink>
                         </div>
                         <ul className="sidebar-dropdown-menu">
                             <li>
@@ -153,10 +158,10 @@ function Sidebar() {
                                 <NavLink to="/single-post">Single Post</NavLink>
                             </li>
                         </ul>
-                    </li>
+                    </li> */}
 
                     <li className="below-dropdown">
-                        <NavLink to="/blog">Blog</NavLink>
+                        <NavLink to="/blog-page">Blog</NavLink>
                     </li>
                     <li className="below-dropdown">
                         <NavLink to="/contact">Contact Us</NavLink>

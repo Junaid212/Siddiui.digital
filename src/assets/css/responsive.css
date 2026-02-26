@@ -261,8 +261,9 @@
         padding: 0em 1em 10em 0em;
     }
     .client-rating-card{
-        width: 80%;
+        width: 40%;
     }
+
     .banner-client-rating{
         display: flex;
         flex-direction: column;
@@ -586,5 +587,11 @@
     }
     .grid-spacer-y-md-5 { 
         --bs-gutter-y: 50px; 
+    }
+}
+
+@media screen and (max-width: 991px) {
+    .cta-content {
+        width: 95%;
     }
 }

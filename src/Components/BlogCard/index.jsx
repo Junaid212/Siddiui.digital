@@ -1,7 +1,7 @@
 import { Star, Bookmark } from "lucide-react"; 
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-const BlogCard = ({ image, title, description, rating, tags, delay = 0 }) => {
+const BlogCard = ({ image, title, description, link, tags, delay = 0 }) => {
     const navigate = useNavigate();
   return (
     <>
@@ -223,7 +223,7 @@ const BlogCard = ({ image, title, description, rating, tags, delay = 0 }) => {
           transform: translateY(0);
         }
       `}</style>
-
+<Link to={link}>
       <article
         className="blog-card no-dark"
         style={{ animationDelay: `${delay}ms` }}
@@ -248,21 +248,11 @@ const BlogCard = ({ image, title, description, rating, tags, delay = 0 }) => {
           <h3 className="blog-card-title">{title}</h3>
           <p className="blog-card-description">{description}</p>
 
-          {/* <div className="blog-card-footer">
-            <div className="blog-card-rating">
-              <Star />
-              <span className="blog-card-rating-value">{rating}</span>
-            </div>
-            {tags.map((tag) => (
-              <span key={tag} className="blog-card-tag">
-                {tag}
-              </span>
-            ))}
-          </div> */}
+         
 
-          <button onClick={() => navigate("/portfolio-detail")} className="blog-card-cta">Read More</button>
+          <button onClick={() => navigate(link)} className="blog-card-cta">Read More</button>
         </div>
-      </article>
+      </article></Link>
     </>
   );
 };

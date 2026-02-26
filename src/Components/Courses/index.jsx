@@ -61,7 +61,7 @@ const getStyles = (darkMode) => `
   .mx-auto { margin-left: auto; margin-right: auto; }
   .grid { display: grid; }
   .grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
-  .gap-12 { gap: 3rem; }
+  // .gap-12 { gap: 3rem; }
   .gap-32 { gap: 10rem; }
 
   /* Make cards smaller and add more spacing — on wide screens switch to
@@ -79,7 +79,7 @@ const getStyles = (darkMode) => `
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      // gap: 10rem; /* horizontal and vertical spacing between cards */
+      gap: 10rem !important;
     }
 
     .card-outer {
@@ -105,7 +105,6 @@ const getStyles = (darkMode) => `
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
   }
   .line {
     width: 1px;
@@ -238,6 +237,11 @@ const getStyles = (darkMode) => `
   .project-button:hover .btn-icon {
     transform: translateX(0.25rem);
   }
+    @media (max-width: 768px){
+    .gap-12 {
+      gap: 3rem;
+    }
+    }
 `;
 
 function CoursPage() {
@@ -292,7 +296,7 @@ function CoursPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-20 px-6 ">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg-grid-cols-2 gap-32">
+        <div className="grid grid-cols-1 lg-grid-cols-2 gap-32 gap-12">
           <CaseStudyCard
             caseNumber="01"
             hashtag="#Social Media Management"

@@ -14,7 +14,7 @@ import Awards from "../../Components/Awards/awards";
 const AboutPage = () => {
     return(
         <>
-            <HeadTitle title="About Us - Aspire - SEO & Digital Marketing Agency"/>
+            <HeadTitle title="About Us"/>
             <BannerInnerSection title="About Us" currentPage="About Us" />
             {/* <PartnersipSection /> */}
             <WhyChooseUsSection />

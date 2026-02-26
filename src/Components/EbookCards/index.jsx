@@ -1,8 +1,24 @@
-import { Star, Bookmark, CircleDollarSign } from "lucide-react"; 
-import { useNavigate } from "react-router-dom";
+import { Star, Bookmark, CircleDollarSign } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 
-const EbookCards = ({ image, title, description, rating, tags, delay = 0 }) => {
-    const navigate = useNavigate();
+const EbookCards = ({ image, title, description, rating, tags, delay = 0, link }) => {
+  const navigate = useNavigate();
+
+  const handleCardClick = () => {
+    navigate(link);
+  };
+
+  const handleButtonClick = (e) => {
+    e.stopPropagation(); // Prevent card click from firing
+    navigate(link);
+  };
+
+  const handleBookmarkClick = (e) => {
+    e.stopPropagation(); // Prevent card click
+    // Add bookmark logic here if needed
+    console.log("Bookmark clicked");
+  };
+
   return (
     <>
       <style>{`
@@ -227,19 +243,22 @@ const EbookCards = ({ image, title, description, rating, tags, delay = 0 }) => {
       <article
         className="blog-card no-dark"
         style={{ animationDelay: `${delay}ms` }}
+        onClick={handleCardClick}
       >
-        <img
-          src={image}
-          alt={title}
-          className="blog-card-image"
-          loading="lazy"
-        />
-
-        <div className="blog-card-gradient" />
+        <div className="blog-card-image-wrapper">
+          <img
+            src={image}
+            alt={title}
+            className="blog-card-image"
+            loading="lazy"
+          />
+          <div className="blog-card-gradient" />
+        </div>
 
         <button
           className="blog-card-bookmark"
           aria-label="Bookmark this post"
+          onClick={handleBookmarkClick}
         >
           <Bookmark />
         </button>
@@ -250,7 +269,6 @@ const EbookCards = ({ image, title, description, rating, tags, delay = 0 }) => {
 
           <div className="blog-card-footer">
             <div className="blog-card-rating">
-              {/* <Star /> */}
               <CircleDollarSign />
               <span className="blog-card-rating-value">{rating} AED</span>
             </div>
@@ -261,7 +279,9 @@ const EbookCards = ({ image, title, description, rating, tags, delay = 0 }) => {
             ))}
           </div>
 
-          <button onClick={() => navigate("/book1")} className="blog-card-cta">Read More</button>
+          <button onClick={handleButtonClick} className="blog-card-cta">
+            Read More
+          </button>
         </div>
       </article>
     </>

@@ -9,6 +9,7 @@ const blogPosts = [
     description: "How to build the future in the Marketing Field",
     rating: 100,
     tags: ["Startup", "Management"],
+    link: '/book1'
   },
   {
     image: 'https://i.pinimg.com/1200x/a7/68/9a/a7689ab417c9ca9363d0b9399a209d59.jpg',
@@ -16,6 +17,7 @@ const blogPosts = [
     description: "Perfect for seeking mental growth and empowerment through reading.",
     rating: 125,
     tags: ["Marketing", "Strategy"],
+    link: '/book1'
   },
   {
     image: 'https://i.pinimg.com/736x/ff/cf/31/ffcf314c25eaabbf3f388a4ca99541d4.jpg',
@@ -23,6 +25,7 @@ const blogPosts = [
     description: "Mastery To Influence, inspire ans Succeed",
     rating: 90,
     tags: ["Growth", "Operations"],
+    link: '/book1'
   },
   // {
   //   image: blog4,

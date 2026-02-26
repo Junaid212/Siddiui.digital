@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import TimeSlotPicker from "../TimeSlotPicker/timeSlotPicker";
 import SuccessModal from "../SuccessModel/successModel";
@@ -163,6 +163,15 @@ export default function AppointmentDrawer({ isOpen, onClose }) {
   const [showSuccess, setShowSuccess] = useState(false);
   const [isBooking, setIsBooking] = useState(false);
 
+  const autoCloseTimeoutRef = useRef(null);
+   useEffect(() => {
+    return () => {
+      if (autoCloseTimeoutRef.current) {
+        clearTimeout(autoCloseTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const handleContinue = async () => {
     if (!selectedDate || !selectedTime) return;
 
@@ -185,9 +194,21 @@ export default function AppointmentDrawer({ isOpen, onClose }) {
 
     setIsBooking(false);
     setShowSuccess(true);
+     autoCloseTimeoutRef.current = setTimeout(() => {
+    handleSuccessClose();
+  }, 3000);
   };
 
+  
+      
+    
+  
+
   const handleSuccessClose = () => {
+       if (autoCloseTimeoutRef.current) {
+    clearTimeout(autoCloseTimeoutRef.current);
+    autoCloseTimeoutRef.current = null;
+  }
     setShowSuccess(false);
     setSelectedDate(undefined);
     setSelectedTime("");

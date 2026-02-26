@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import NewsletterForm from "../Form/NewsletterForm";
 
 const Footer = () => {
@@ -43,11 +44,11 @@ const Footer = () => {
                                 <div className="footer-quick-links">
                                     <h4 className="accent-color">Quick Links</h4>
                                     <ul className="footer-list">
-                                        <li><a href="/about">About</a></li>
-                                        <li><a href="/contact">E-Book</a></li>
-                                        <li><a href="/team">Course</a></li>
-                                        <li><a href="/faq">Consultation</a></li>
-                                        <li><a href="/contact">Contact</a></li>
+                                        <li><Link to="/about">About</Link></li>
+                                        <li><Link to="/e_books">E-Book</Link></li>
+                                        <li><Link to="/portfolio">Course</Link></li>
+                                        <li><Link to="/consultation">Consultation</Link></li>
+                                        <li><Link to="/contact">Contact</Link></li>
                                     </ul>
                                 </div>
                                 {/* <div className="footer-services">
