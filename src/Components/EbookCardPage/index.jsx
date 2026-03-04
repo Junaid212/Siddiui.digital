@@ -221,12 +221,12 @@ const EbookCardPage = () => {
           {/* Hero */}
           <section className="index-hero">
             <div className="service-heading-container">
-                            <div className="sub-heading justify-content-center">
-                                <i className="fa-solid fa-circle-notch"></i>
-                                <h6 className="font-family-1 accent-color">E-Book</h6>
-                            </div>
-                            <h2 className="text-center animate-box animated animate__animated" data-animate="animate__fadeInUp">Practical Marketing & Management for  Success</h2>
-                        </div>
+              <div className="sub-heading justify-content-center">
+                <i className="fa-solid fa-circle-notch"></i>
+                <h6 className="font-family-1 accent-color">E-Book</h6>
+              </div>
+              <h2 className="text-center animate-box animated animate__animated" data-animate="animate__fadeInUp">Practical Marketing & Management for  Success</h2>
+            </div>
             {/* <h1 className="index-hero-title">
               Marketing & Business
               <span className="index-hero-highlight">Management</span>

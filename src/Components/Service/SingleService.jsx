@@ -1,12 +1,13 @@
 import React from "react";
 import { servicedata } from "../../Data/Service";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import EnrollBook from "../EnrollBook/enrollBook";
 import img1 from "/assets/images/img/26.png"
 import img2 from "/assets/images/img/27.png"
 import img3 from "/assets/images/img/28.png"
 
 const SingleServiceSection = () => {
+    const navigate = useNavigate();
     return (
         <section className="section">
             <div className="hero-container">
@@ -150,7 +151,7 @@ advice.
 
                 <div>
                   <button
-                    onClick={() => setIsDrawerOpen(true)}
+                    onClick={() => navigate('/buy-book/1')}
                     className="btn btn-secondary-accent"
                   >
                     Enroll Now
