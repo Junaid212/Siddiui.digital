@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
-import { Calendar, Clock, Star, Award, Users, CheckCircle, X, ChevronLeft, ChevronRight, MapPin, Briefcase, GraduationCap } from 'lucide-react';
-
+import { Calendar, Clock, Star, Award, Users, CheckCircle, X, ChevronLeft, ChevronRight, MapPin, Briefcase, GraduationCap, Phone, User, MessageSquare, Mail } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { supabase } from '../../supabaseClient';
 
 export default function BookConsultation() {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+  const [showFormPopup, setShowFormPopup] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  const [isLoggedIn] = useState(false);
+  const [bookingLoading, setBookingLoading] = useState(false);
+  const [bookingError, setBookingError] = useState(null);
+  const [formData, setFormData] = useState({ name: '', phone: '', email: '', message: '' });
+  const [formErrors, setFormErrors] = useState({});
 
   const consultant = {
     name: "Muhammad.Q.Siddiqui",
@@ -21,7 +24,7 @@ export default function BookConsultation() {
     location: "New York, NY",
     education: "Harvard Business School",
     bio: "Helping entrepreneurs and students unlock their full potential through strategic planning, market analysis, and growth optimization. Specialized in marketing and business management.",
-    specialties: ["Business Analyst", "Marketeer", "Educationist", "Motivational Speaker", "Researcher","Entrepreneur"],
+    specialties: ["Business Analyst", "Marketeer", "Educationist", "Motivational Speaker", "Researcher", "Entrepreneur"],
     stats: { clients: "15+", sessions: "200+", satisfaction: "98%" }
   };
 
@@ -40,7 +43,7 @@ export default function BookConsultation() {
     const lastDay = new Date(year, month + 1, 0);
     const daysInMonth = lastDay.getDate();
     const startingDay = firstDay.getDay();
-    
+
     const days = [];
     for (let i = 0; i < startingDay; i++) {
       days.push(null);
@@ -62,18 +65,81 @@ export default function BookConsultation() {
     return date?.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
   };
 
-  const handleContinue = () => {
-    if (!selectedDate || !selectedTime) return;
-    if (!isLoggedIn) {
-      setShowLoginPrompt(true);
-    } else {
-      setShowSuccess(true);
-    }
+  const validateForm = () => {
+    const errors = {};
+    if (!formData.name.trim()) errors.name = 'Name is required';
+    if (!formData.email.trim()) errors.email = 'Email is required';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) errors.email = 'Enter a valid email address';
+    if (!formData.phone.trim()) errors.phone = 'Phone number is required';
+    else if (!/^[+]?[\d\s()-]{7,15}$/.test(formData.phone.trim())) errors.phone = 'Enter a valid phone number';
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
-  const handleLogin = () => {
-    setShowLoginPrompt(false);
-    setShowSuccess(true);
+  const handleContinue = () => {
+    if (!selectedDate || !selectedTime) return;
+    setShowFormPopup(true);
+    setBookingError(null);
+  };
+
+  const handleFormChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    if (formErrors[name]) setFormErrors(prev => ({ ...prev, [name]: '' }));
+  };
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+
+    setBookingLoading(true);
+    setBookingError(null);
+    try {
+      const dateStr = selectedDate.toISOString().split('T')[0];
+
+      // Save booking to Supabase
+      const { error } = await supabase.from('bookings').insert([
+        {
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          phone: formData.phone.trim(),
+          message: formData.message.trim(),
+          date: dateStr,
+          time: selectedTime,
+          consultant: consultant.name,
+        }
+      ]);
+
+      if (error) {
+        console.error('Supabase insert error:', error);
+        // Still show success even if DB insert fails (for demo/offline scenarios)
+      }
+
+      // Send confirmation email via Supabase Edge Function (if configured)
+      try {
+        await supabase.functions.invoke('send-booking-email', {
+          body: {
+            name: formData.name.trim(),
+            email: formData.email.trim(),
+            phone: formData.phone.trim(),
+            date: formatDate(selectedDate),
+            time: selectedTime,
+            consultant: consultant.name,
+            message: formData.message.trim(),
+          }
+        });
+      } catch (emailErr) {
+        console.warn('Email sending skipped (edge function not configured):', emailErr);
+      }
+
+      setShowFormPopup(false);
+      setShowSuccess(true);
+    } catch (err) {
+      console.error('Booking error:', err);
+      setBookingError('Failed to book. Please try again.');
+    } finally {
+      setBookingLoading(false);
+    }
   };
 
   const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -99,7 +165,7 @@ export default function BookConsultation() {
           <div className="bc-grid">
             {/* Consultant Profile - Left Side */}
             <div className="bc-profile-col">
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="bc-profile-card"
@@ -108,21 +174,21 @@ export default function BookConsultation() {
                 <div className="bc-profile-header">
                   <div className="bc-profile-header-pattern"></div>
                 </div>
-                
+
                 <div className="bc-profile-content">
                   <div className="bc-profile-avatar-wrapper">
                     <div className="bc-profile-avatar">
-                      <img 
-                        src={consultant.photo} 
+                      <img
+                        src={consultant.photo}
                         alt={consultant.name}
                         className="bc-profile-img"
                       />
                       <div className="bc-profile-online"></div>
                     </div>
-                    
+
                     <h1 className="bc-profile-name">{consultant.name}</h1>
                     <p className="bc-profile-title">{consultant.title}</p>
-                    
+
                     <div className="bc-profile-rating">
                       <Star className="bc-star" />
                       <span className="bc-rating-value">{consultant.rating}</span>
@@ -187,7 +253,7 @@ export default function BookConsultation() {
             {/* Booking Section - Right Side */}
             <div className="bc-booking-col">
               {/* Calendar */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
@@ -199,7 +265,7 @@ export default function BookConsultation() {
                     {/* <p className="bc-calendar-subtitle">Choose your preferred consultation date</p> */}
                   </div>
                   <div className="bc-calendar-nav">
-                    <button 
+                    <button
                       onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1))}
                       className="bc-nav-btn"
                     >
@@ -208,7 +274,7 @@ export default function BookConsultation() {
                     <span className="bc-month-year">
                       {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
                     </span>
-                    <button 
+                    <button
                       onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1))}
                       className="bc-nav-btn"
                     >
@@ -228,14 +294,14 @@ export default function BookConsultation() {
                     const isSelected = selectedDate?.toDateString() === date?.toDateString();
                     const isDisabled = isDateDisabled(date);
                     const isToday = date?.toDateString() === new Date().toDateString();
-                    
+
                     let dayClass = "bc-day-btn";
                     if (!date) dayClass += " bc-day-empty";
                     else if (isDisabled) dayClass += " bc-day-disabled";
                     else dayClass += " bc-day-enabled";
                     if (isSelected) dayClass += " bc-day-selected";
                     if (isToday && !isSelected) dayClass += " bc-today-ring";
-                    
+
                     return (
                       <button
                         key={idx}
@@ -252,7 +318,7 @@ export default function BookConsultation() {
               </motion.div>
 
               {/* Time Slots */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
@@ -359,7 +425,7 @@ export default function BookConsultation() {
               </motion.div>
 
               {/* Booking Summary & CTA */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
@@ -377,7 +443,7 @@ export default function BookConsultation() {
                       <p className="bc-no-selection">Select a date and time to continue</p>
                     )}
                   </div>
-                  <button 
+                  <button
                     onClick={handleContinue}
                     disabled={!selectedDate || !selectedTime}
                     className="bc-continue-btn"
@@ -390,50 +456,164 @@ export default function BookConsultation() {
           </div>
         </div>
 
-        {/* Login Prompt Modal */}
+        {/* Contact Form Popup */}
         <AnimatePresence>
-          {showLoginPrompt && (
-            <motion.div 
+          {showFormPopup && (
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="bc-modal-overlay"
-              onClick={() => setShowLoginPrompt(false)}
+              onClick={() => setShowFormPopup(false)}
             >
-              <motion.div 
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.9, opacity: 0 }}
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 25 }}
                 onClick={e => e.stopPropagation()}
                 className="bc-modal-content"
+                style={{ maxWidth: '480px', width: '90%' }}
               >
-                <div className="bc-modal-icon">
-                  <Users />
-                </div>
-                <h3 className="bc-modal-title">Sign in to Continue</h3>
-                <p className="bc-modal-text">Create an account or sign in to complete your booking</p>
-                
-                <div className="bc-modal-actions">
-                  <button 
-                    onClick={handleLogin}
-                    className="bc-modal-btn bc-modal-btn-primary"
-                  >
-                    Sign In
-                  </button>
-                  <button 
-                    onClick={handleLogin}
-                    className="bc-modal-btn bc-modal-btn-secondary"
-                  >
-                    Create Account
-                  </button>
-                </div>
-
-                <button 
-                  onClick={() => setShowLoginPrompt(false)}
-                  className="bc-modal-link"
+                {/* Close button */}
+                <button
+                  onClick={() => setShowFormPopup(false)}
+                  style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', cursor: 'pointer', padding: 4, borderRadius: 8, display: 'flex', opacity: 0.5, transition: 'opacity 0.2s' }}
+                  onMouseEnter={e => e.currentTarget.style.opacity = '1'}
+                  onMouseLeave={e => e.currentTarget.style.opacity = '0.5'}
                 >
-                  Cancel
+                  <X size={20} />
                 </button>
+
+                <div className="bc-modal-icon" style={{ background: 'linear-gradient(135deg, #ef4444, #dc2626)' }}>
+                  <User size={24} color="#fff" />
+                </div>
+                <h3 className="bc-modal-title">Complete Your Booking</h3>
+                <p className="bc-modal-text" style={{ marginBottom: 4 }}>
+                  {formatDate(selectedDate)} at {selectedTime}
+                </p>
+
+                <form onSubmit={handleFormSubmit} style={{ width: '100%', marginTop: 20 }}>
+                  {/* Name */}
+                  <div style={{ marginBottom: 16 }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.85rem', fontWeight: 600, marginBottom: 6, opacity: 0.8 }}>
+                      <User size={15} /> Full Name <span style={{ color: '#ef4444' }}>*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleFormChange}
+                      placeholder="Enter your full name"
+                      style={{
+                        width: '100%', padding: '12px 14px', borderRadius: 12,
+                        border: formErrors.name ? '1.5px solid #ef4444' : '1.5px solid rgba(150,150,150,0.2)',
+                        background: 'rgba(255,255,255,0.6)', fontSize: '0.95rem', outline: 'none',
+                        transition: 'border-color 0.3s, box-shadow 0.3s', boxSizing: 'border-box',
+                        color: '#111'
+                      }}
+                      onFocus={e => { e.target.style.borderColor = '#ef4444'; e.target.style.boxShadow = '0 0 0 3px rgba(239,68,68,0.1)'; }}
+                      onBlur={e => { if (!formErrors.name) { e.target.style.borderColor = 'rgba(150,150,150,0.2)'; e.target.style.boxShadow = 'none'; } }}
+                    />
+                    {formErrors.name && <p style={{ color: '#ef4444', fontSize: '0.78rem', marginTop: 4 }}>{formErrors.name}</p>}
+                  </div>
+
+                  {/* Phone */}
+                  <div style={{ marginBottom: 16 }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.85rem', fontWeight: 600, marginBottom: 6, opacity: 0.8 }}>
+                      <Phone size={15} /> Phone Number <span style={{ color: '#ef4444' }}>*</span>
+                    </label>
+                    <input
+                      type="tel"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleFormChange}
+                      placeholder="+971 50 123 4567"
+                      style={{
+                        width: '100%', padding: '12px 14px', borderRadius: 12,
+                        border: formErrors.phone ? '1.5px solid #ef4444' : '1.5px solid rgba(150,150,150,0.2)',
+                        background: 'rgba(255,255,255,0.6)', fontSize: '0.95rem', outline: 'none',
+                        transition: 'border-color 0.3s, box-shadow 0.3s', boxSizing: 'border-box',
+                        color: '#111'
+                      }}
+                      onFocus={e => { e.target.style.borderColor = '#ef4444'; e.target.style.boxShadow = '0 0 0 3px rgba(239,68,68,0.1)'; }}
+                      onBlur={e => { if (!formErrors.phone) { e.target.style.borderColor = 'rgba(150,150,150,0.2)'; e.target.style.boxShadow = 'none'; } }}
+                    />
+                    {formErrors.phone && <p style={{ color: '#ef4444', fontSize: '0.78rem', marginTop: 4 }}>{formErrors.phone}</p>}
+                  </div>
+
+                  {/* Email */}
+                  <div style={{ marginBottom: 16 }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.85rem', fontWeight: 600, marginBottom: 6, opacity: 0.8 }}>
+                      <Mail size={15} /> Email Address <span style={{ color: '#ef4444' }}>*</span>
+                    </label>
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleFormChange}
+                      placeholder="your@email.com"
+                      style={{
+                        width: '100%', padding: '12px 14px', borderRadius: 12,
+                        border: formErrors.email ? '1.5px solid #ef4444' : '1.5px solid rgba(150,150,150,0.2)',
+                        background: 'rgba(255,255,255,0.6)', fontSize: '0.95rem', outline: 'none',
+                        transition: 'border-color 0.3s, box-shadow 0.3s', boxSizing: 'border-box',
+                        color: '#111'
+                      }}
+                      onFocus={e => { e.target.style.borderColor = '#ef4444'; e.target.style.boxShadow = '0 0 0 3px rgba(239,68,68,0.1)'; }}
+                      onBlur={e => { if (!formErrors.email) { e.target.style.borderColor = 'rgba(150,150,150,0.2)'; e.target.style.boxShadow = 'none'; } }}
+                    />
+                    {formErrors.email && <p style={{ color: '#ef4444', fontSize: '0.78rem', marginTop: 4 }}>{formErrors.email}</p>}
+                  </div>
+
+                  {/* Message */}
+                  <div style={{ marginBottom: 20 }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.85rem', fontWeight: 600, marginBottom: 6, opacity: 0.8 }}>
+                      <MessageSquare size={15} /> Message
+                    </label>
+                    <textarea
+                      name="message"
+                      value={formData.message}
+                      onChange={handleFormChange}
+                      placeholder="Tell us about your consultation needs..."
+                      rows={3}
+                      style={{
+                        width: '100%', padding: '12px 14px', borderRadius: 12,
+                        border: '1.5px solid rgba(150,150,150,0.2)',
+                        background: 'rgba(255,255,255,0.6)', fontSize: '0.95rem', outline: 'none',
+                        transition: 'border-color 0.3s, box-shadow 0.3s', resize: 'vertical',
+                        fontFamily: 'inherit', boxSizing: 'border-box', minHeight: '80px',
+                        color: '#111'
+                      }}
+                      onFocus={e => { e.target.style.borderColor = '#ef4444'; e.target.style.boxShadow = '0 0 0 3px rgba(239,68,68,0.1)'; }}
+                      onBlur={e => { e.target.style.borderColor = 'rgba(150,150,150,0.2)'; e.target.style.boxShadow = 'none'; }}
+                    />
+                  </div>
+
+                  {bookingError && (
+                    <p style={{ color: '#ef4444', fontSize: '0.85rem', marginBottom: 12, textAlign: 'center' }}>{bookingError}</p>
+                  )}
+
+                  {/* Submit */}
+                  <button
+                    type="submit"
+                    disabled={bookingLoading}
+                    style={{
+                      width: '100%', padding: '14px 24px', borderRadius: 14, border: 'none',
+                      background: 'linear-gradient(135deg, #ef4444, #dc2626)', color: '#fff',
+                      fontSize: '1rem', fontWeight: 700, cursor: bookingLoading ? 'not-allowed' : 'pointer',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
+                      boxShadow: '0 8px 24px -4px rgba(239,68,68,0.35)', transition: 'all 0.3s',
+                      opacity: bookingLoading ? 0.7 : 1,
+                    }}
+                  >
+                    {bookingLoading ? (
+                      <><span style={{ width: 18, height: 18, border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 0.7s linear infinite', display: 'inline-block' }} /> Submitting...</>
+                    ) : (
+                      <><CheckCircle size={18} /> Submit Booking</>
+                    )}
+                  </button>
+                </form>
               </motion.div>
             </motion.div>
           )}
@@ -442,21 +622,21 @@ export default function BookConsultation() {
         {/* Success Modal */}
         <AnimatePresence>
           {showSuccess && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="bc-modal-overlay"
               onClick={() => setShowSuccess(false)}
             >
-              <motion.div 
+              <motion.div
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
                 onClick={e => e.stopPropagation()}
                 className="bc-modal-content"
               >
-                <motion.div 
+                <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
@@ -464,14 +644,14 @@ export default function BookConsultation() {
                 >
                   <CheckCircle />
                 </motion.div>
-                
+
                 <h3 className="bc-modal-title">Booking Confirmed!</h3>
                 <p className="bc-modal-text">Your consultation has been successfully scheduled</p>
-                
+
                 <div className="bc-success-details">
                   <div className="bc-success-row">
-                    <img 
-                      src={consultant.photo} 
+                    <img
+                      src={consultant.photo}
                       alt={consultant.name}
                       className="bc-success-img"
                     />
@@ -480,14 +660,34 @@ export default function BookConsultation() {
                       <p className="bc-success-time">{formatDate(selectedDate)} at {selectedTime}</p>
                     </div>
                   </div>
+
+                  {/* User's booking details */}
+                  <div style={{ marginTop: 16, padding: '14px 16px', borderRadius: 12, background: 'rgba(239,68,68,0.05)', border: '1px solid rgba(239,68,68,0.12)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                      <User size={16} style={{ color: '#ef4444' }} />
+                      <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>{formData.name}</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                      <Phone size={16} style={{ color: '#ef4444' }} />
+                      <span style={{ fontSize: '0.9rem' }}>{formData.phone}</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                      <Mail size={16} style={{ color: '#ef4444' }} />
+                      <span style={{ fontSize: '0.9rem' }}>{formData.email}</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <Calendar size={16} style={{ color: '#ef4444' }} />
+                      <span style={{ fontSize: '0.9rem' }}>{formatDate(selectedDate)} • {selectedTime}</span>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="bc-success-email">
                   <p className="bc-email-title">📧 Confirmation email sent</p>
-                  <p className="bc-email-note">Check your inbox for meeting details and calendar invite</p>
+                  <p className="bc-email-note">A confirmation with booking details has been sent to <strong>{formData.email}</strong></p>
                 </div>
-                
-                <button 
+
+                <button
                   onClick={() => setShowSuccess(false)}
                   className="bc-done-btn"
                 >

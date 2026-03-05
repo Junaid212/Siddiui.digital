@@ -1,48 +1,79 @@
 import { useState, useEffect } from "react";
 import { ChevronRight, CheckCircle } from "lucide-react";
+import { api } from "../../api";
 
-const questions = [
+// Fallback data if backend is unavailable
+const fallbackQuestions = [
   {
     id: 1,
     question: "What's your preferred work environment?",
     options: [
-      { text: "Remote from home", percentage: 42, votes: 847 },
-      { text: "Hybrid (2-3 days office)", percentage: 31, votes: 625 },
-      { text: "Full-time office", percentage: 15, votes: 302 },
-      { text: "Coworking space", percentage: 12, votes: 241 },
+      { id: "f1", text: "Remote from home", percentage: 42, votes: 847 },
+      { id: "f2", text: "Hybrid (2-3 days office)", percentage: 31, votes: 625 },
+      { id: "f3", text: "Full-time office", percentage: 15, votes: 302 },
+      { id: "f4", text: "Coworking space", percentage: 12, votes: 241 },
     ],
   },
   {
     id: 2,
     question: "Which technology are you most excited about?",
     options: [
-      { text: "Artificial Intelligence", percentage: 38, votes: 1254 },
-      { text: "Quantum Computing", percentage: 28, votes: 923 },
-      { text: "Blockchain & Web3", percentage: 19, votes: 627 },
-      { text: "Extended Reality (AR/VR)", percentage: 15, votes: 495 },
+      { id: "f5", text: "Artificial Intelligence", percentage: 38, votes: 1254 },
+      { id: "f6", text: "Quantum Computing", percentage: 28, votes: 923 },
+      { id: "f7", text: "Blockchain & Web3", percentage: 19, votes: 627 },
+      { id: "f8", text: "Extended Reality (AR/VR)", percentage: 15, votes: 495 },
     ],
   },
   {
     id: 3,
     question: "How do you prefer to learn new skills?",
     options: [
-      { text: "Online courses & tutorials", percentage: 45, votes: 1823 },
-      { text: "Reading documentation", percentage: 27, votes: 1094 },
-      { text: "Building projects", percentage: 20, votes: 810 },
-      { text: "Attending workshops", percentage: 8, votes: 324 },
+      { id: "f9", text: "Online courses & tutorials", percentage: 45, votes: 1823 },
+      { id: "f10", text: "Reading documentation", percentage: 27, votes: 1094 },
+      { id: "f11", text: "Building projects", percentage: 20, votes: 810 },
+      { id: "f12", text: "Attending workshops", percentage: 8, votes: 324 },
     ],
   },
 ];
 
 export default function Questionnaire({ onClose }) {
+  const [questions, setQuestions] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
   const [showResults, setShowResults] = useState(false);
   const [showThankYou, setShowThankYou] = useState(false);
   const [particles, setParticles] = useState([]);
+  const [liveResults, setLiveResults] = useState(null);
+  const [usingFallback, setUsingFallback] = useState(false);
+
+  // Fetch questions from backend on mount
+  useEffect(() => {
+    api.getQuestions()
+      .then((data) => {
+        if (data.questions && data.questions.length > 0) {
+          const mapped = data.questions.map((q) => ({
+            id: q.id,
+            question: q.question_text,
+            options: (q.question_options || []).map((opt) => ({
+              id: opt.id,
+              text: opt.option_text,
+              percentage: 0,
+              votes: opt.votes || 0,
+            })),
+          }));
+          setQuestions(mapped);
+        } else {
+          setQuestions(fallbackQuestions);
+          setUsingFallback(true);
+        }
+      })
+      .catch(() => {
+        setQuestions(fallbackQuestions);
+        setUsingFallback(true);
+      });
+  }, []);
 
   useEffect(() => {
-    // FIXED: Use Array.from instead of just "from"
     const newParticles = Array.from({ length: 20 }, (_, i) => ({
       id: i,
       x: Math.random() * 100,
@@ -53,8 +84,22 @@ export default function Questionnaire({ onClose }) {
     setParticles(newParticles);
   }, []);
 
-  const handleOptionSelect = (index) => {
+  const handleOptionSelect = async (index) => {
     setSelectedOption(index);
+    const currentQ = questions[currentQuestion];
+    const selectedOpt = currentQ.options[index];
+
+    if (!usingFallback) {
+      try {
+        const result = await api.submitVote(currentQ.id, selectedOpt.id);
+        if (result.results) {
+          setLiveResults(result.results);
+        }
+      } catch (err) {
+        console.error("Vote submit error:", err);
+      }
+    }
+
     setTimeout(() => setShowResults(true), 300);
   };
 
@@ -62,6 +107,7 @@ export default function Questionnaire({ onClose }) {
     if (currentQuestion < questions.length - 1) {
       setShowResults(false);
       setSelectedOption(null);
+      setLiveResults(null);
       setTimeout(() => setCurrentQuestion(currentQuestion + 1), 300);
     }
   };
@@ -74,8 +120,25 @@ export default function Questionnaire({ onClose }) {
     setTimeout(() => onClose(), 3000);
   };
 
+  if (questions.length === 0) {
+    return (
+      <div className="app-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
+        <p style={{ color: '#555', fontSize: '1.2rem' }}>Loading questions...</p>
+      </div>
+    );
+  }
+
   const currentQ = questions[currentQuestion];
   const progress = ((currentQuestion + 1) / questions.length) * 100;
+
+  // Helper: get percentage for an option (prefer liveResults from API)
+  const getOptionPercentage = (option) => {
+    if (liveResults) {
+      const found = liveResults.find((r) => r.id === option.id);
+      if (found) return found.percentage;
+    }
+    return option.percentage;
+  };
 
   if (showThankYou) {
     return (
@@ -222,8 +285,10 @@ export default function Questionnaire({ onClose }) {
             <div className="options-container">
               {currentQ.options.map((option, index) => {
                 const isSelected = selectedOption === index;
-                const maxPercentage = Math.max(...currentQ.options.map((o) => o.percentage));
-                const isTopChoice = option.percentage === maxPercentage;
+                const pct = getOptionPercentage(option);
+                const allPcts = currentQ.options.map((o) => getOptionPercentage(o));
+                const maxPercentage = Math.max(...allPcts);
+                const isTopChoice = pct === maxPercentage;
 
                 return (
                   <button
@@ -239,9 +304,8 @@ export default function Questionnaire({ onClose }) {
                       </div>
                       {showResults && (
                         <div className="results-info">
-                          {/* <span className="vote-count">{option.votes.toLocaleString()} votes</span> */}
                           <span className={`percentage ${isTopChoice ? "highlight" : ""}`}>
-                            {option.percentage}%
+                            {pct}%
                           </span>
                         </div>
                       )}
@@ -250,7 +314,7 @@ export default function Questionnaire({ onClose }) {
                       <div className="bar-container">
                         <div
                           className={`bar-fill ${isTopChoice ? "highlight" : "normal"}`}
-                          style={{ width: `${option.percentage}%` }}
+                          style={{ width: `${pct}%` }}
                         />
                       </div>
                     )}

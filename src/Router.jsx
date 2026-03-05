@@ -33,7 +33,7 @@ function AppRouters() {
             <Route path="services" element={<ServicePage />} />
             <Route path="book1" element={<SingleServicePage />} />
             <Route path="portfolio" element={<PortfolioPage />} />
-            <Route path="portfolio-detail" element={<SinglePortfolioPage />} />
+            <Route path="portfolio-detail" element={<SinglePortfolioPage/>}/>
             <Route path="pricing" element={<PricingPage />} />
             <Route path="team" element={<TeamPage />} />
             <Route path="testimonial" element={<TestimonialPage />} />

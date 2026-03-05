@@ -68,11 +68,25 @@ export default function BuyBookCheckout() {
         e.preventDefault();
         if (!user) return;
         setPaymentProcessing(true);
-        // Simulate payment processing (replace with real Stripe integration)
-        setTimeout(() => {
+        try {
+            const { api } = await import("../../api");
+            const result = await api.createCheckout({
+                bookName: book.title,
+                amount: book.priceNum,
+                userId: user.id,
+                email: user.email,
+            });
+            if (result.url) {
+                window.location.href = result.url;
+            } else {
+                alert("Failed to create checkout session. Please try again.");
+            }
+        } catch (err) {
+            console.error("Payment error:", err);
+            alert("Payment failed. Please try again.");
+        } finally {
             setPaymentProcessing(false);
-            alert("Payment successful! Thank you for your purchase.");
-        }, 2500);
+        }
     };
 
     if (!book) {
