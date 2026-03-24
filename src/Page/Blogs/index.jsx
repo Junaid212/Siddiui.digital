@@ -1,61 +1,37 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react';
+import { supabase } from '../../supabaseClient';
 import BlogCard from '../../Components/BlogCard';
 import BannerInnerSection from '../../Components/Banner/inner';
-import { link } from 'framer-motion/client';
-
-
-const blogPosts = [
-  {
-    image: 'https://i.pinimg.com/736x/32/21/39/32213931101976e91f09205027f84e5c.jpg',
-    title: "Mastering Team Leadership",
-    description: "Discover proven strategies for leading high-performing teams and driving business results in competitive markets.",
-    rating: 4.8,
-    tags: ["Leadership", "Management"],
-    link:'/portfolio-detail'
-  },
-  {
-    image: 'https://i.pinimg.com/736x/29/cf/3d/29cf3d41f716f6ca16ee137215b8986b.jpg',
-    title: "Data-Driven Marketing",
-    description: "Learn how to leverage analytics dashboards to make smarter marketing decisions and maximize your ROI.",
-    rating: 4.7,
-    tags: ["Analytics", "Strategy"],
-    link:'/portfolio-detail'
-  },
-  {
-    image: 'https://i.pinimg.com/1200x/8f/0f/02/8f0f023dbca52a0c9ed1673fe38f221f.jpg',
-    title: "Scaling Your Business",
-    description: "Key insights on scaling operations, managing growth, and presenting compelling business cases to stakeholders.",
-    rating: 4.9,
-    tags: ["Growth", "Operations"],
-    link:'/portfolio-detail'
-  },
-  // {
-  //   image: blog4,
-  //   title: "Social Media Mastery",
-  //   description: "Build a powerful social media presence that converts followers into loyal customers and brand advocates.",
-  //   rating: 4.6,
-  //   tags: ["Social Media", "Branding"],
-  // },
-  // {
-  //   image: blog5,
-  //   title: "Building Brand Identity",
-  //   description: "Craft a memorable brand identity that resonates with your audience and stands out in crowded markets.",
-  //   rating: 4.8,
-  //   tags: ["Branding", "Design"],
-  // },
-  // {
-  //   image: blog6,
-  //   title: "Agile Project Management",
-  //   description: "Implement agile methodologies to boost team productivity, innovation, and project delivery speed.",
-  //   rating: 4.7,
-  //   tags: ["Agile", "Productivity"],
-  // },
-];
 
 const BlogSection = () => {
+  const [blogs, setBlogs] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('blogs')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        setBlogs(data || []);
+      } catch (err) {
+        console.error("Error fetching blogs for list page:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBlogs();
+  }, []);
+
+  if (loading) return <BannerInnerSection title='Loading...' currentPage='Blogs' />;
+
   return (
     <>
-    <BannerInnerSection title='Blogs' currentPage='Blogs'/>
+      <BannerInnerSection title='Blogs' currentPage='Blogs' />
       <style>{`
         /* Index.css - internal styles */
 
@@ -235,8 +211,17 @@ const BlogSection = () => {
           {/* Blog Grid */}
           <div className="index-main">
             <div className="index-grid">
-              {blogPosts.map((post, i) => (
-                <BlogCard key={post.title} {...post} delay={i * 100} />
+              {blogs.map((post, i) => (
+                <BlogCard
+                  key={post.id}
+                  title={post.title}
+                  image={post.image_url}
+                  description={post.content.substring(0, 150) + '...'}
+                  id={post.id}
+                  tags={[post.topic]}
+                  link={`/blog/${post.topic ? post.topic.toLowerCase().replace(/\s+/g, '-') : 'general'}`}
+                  delay={i * 100}
+                />
               ))}
             </div>
           </div>

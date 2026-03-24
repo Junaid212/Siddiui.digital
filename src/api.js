@@ -53,4 +53,15 @@ export const api = {
         fetch(`${API_BASE}/questionnaire/results/${questionId}`).then((res) =>
             res.json()
         ),
+
+    // Blog Comments
+    getComments: (blogId) =>
+        fetch(`${API_BASE}/blog/comments/${blogId}`).then((res) => res.json()),
+
+    postComment: (data) =>
+        fetch(`${API_BASE}/blog/comment`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        }).then((res) => res.json()),
 };

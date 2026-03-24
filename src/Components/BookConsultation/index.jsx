@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, Star, Award, Users, CheckCircle, X, ChevronLeft, ChevronRight, MapPin, Briefcase, GraduationCap, Phone, User, MessageSquare, Mail } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../../supabaseClient';
@@ -13,6 +13,68 @@ export default function BookConsultation() {
   const [bookingError, setBookingError] = useState(null);
   const [formData, setFormData] = useState({ name: '', phone: '', email: '', message: '' });
   const [formErrors, setFormErrors] = useState({});
+  const [user, setUser] = useState(null);
+  const [signingIn, setSigningIn] = useState(false);
+  const [bookedSlots, setBookedSlots] = useState([]);
+
+  const API_BASE = "http://localhost:5000/api";
+
+  // Auth logic (shared pattern)
+  useEffect(() => {
+    const getSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        setUser({
+          id: session.user.id,
+          name: session.user.user_metadata?.full_name || session.user.email,
+          email: session.user.email,
+        });
+        setFormData(prev => ({
+          ...prev,
+          name: session.user.user_metadata?.full_name || prev.name,
+          email: session.user.email || prev.email
+        }));
+      }
+    };
+    getSession();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setUser({
+          id: session.user.id,
+          name: session.user.user_metadata?.full_name || session.user.email,
+          email: session.user.email,
+        });
+        setFormData(prev => ({
+          ...prev,
+          name: session.user.user_metadata?.full_name || prev.name,
+          email: session.user.email || prev.email
+        }));
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => subscription?.unsubscribe();
+  }, []);
+
+  const handleGoogleSignIn = async () => {
+    setSigningIn(true);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.href,
+        },
+      });
+      if (error) throw error;
+    } catch (err) {
+      console.error('Sign-in error:', err);
+      setBookingError('Sign-in failed. Please try again.');
+    } finally {
+      setSigningIn(false);
+    }
+  };
 
   const consultant = {
     name: "Muhammad.Q.Siddiqui",
@@ -34,7 +96,27 @@ export default function BookConsultation() {
     evening: ["5:00 PM", "5:30 PM", "6:00 PM", "6:30 PM", "7:00 PM"]
   };
 
-  const unavailableSlots = ["10:00 AM", "2:00 PM", "6:00 PM"];
+  // Convert 12-hour display time to 24-hour format for API comparison
+  const to24Hour = (time12) => {
+    const [time, period] = time12.split(' ');
+    let [h, m] = time.split(':').map(Number);
+    if (period === 'PM' && h !== 12) h += 12;
+    if (period === 'AM' && h === 12) h = 0;
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+  };
+
+  // Fetch booked slots whenever selectedDate changes
+  useEffect(() => {
+    if (!selectedDate) return;
+    const dateStr = selectedDate.toISOString().split('T')[0];
+    fetch(`${API_BASE}/consultation/slots?date=${dateStr}`)
+      .then(res => res.json())
+      .then(data => setBookedSlots(data.bookedSlots || []))
+      .catch(err => console.error('Failed to fetch slots:', err));
+  }, [selectedDate]);
+
+  // Check if a display time is booked (compare in 24h format)
+  const isSlotBooked = (displayTime) => bookedSlots.includes(to24Hour(displayTime));
 
   const getDaysInMonth = (date) => {
     const year = date.getFullYear();
@@ -78,6 +160,13 @@ export default function BookConsultation() {
 
   const handleContinue = () => {
     if (!selectedDate || !selectedTime) return;
+
+    // Require Google Auth before showing the form
+    if (!user) {
+      handleGoogleSignIn();
+      return;
+    }
+
     setShowFormPopup(true);
     setBookingError(null);
   };
@@ -96,47 +185,33 @@ export default function BookConsultation() {
     setBookingError(null);
     try {
       const dateStr = selectedDate.toISOString().split('T')[0];
+      const timeStr = to24Hour(selectedTime);
 
-      // Save booking to Supabase
-      const { error } = await supabase.from('bookings').insert([
-        {
+      const response = await fetch(`${API_BASE}/consultation/book`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user?.id || null,
           name: formData.name.trim(),
           email: formData.email.trim(),
           phone: formData.phone.trim(),
           message: formData.message.trim(),
           date: dateStr,
-          time: selectedTime,
-          consultant: consultant.name,
-        }
-      ]);
+          time: timeStr,
+        }),
+      });
 
-      if (error) {
-        console.error('Supabase insert error:', error);
-        // Still show success even if DB insert fails (for demo/offline scenarios)
-      }
+      const result = await response.json();
 
-      // Send confirmation email via Supabase Edge Function (if configured)
-      try {
-        await supabase.functions.invoke('send-booking-email', {
-          body: {
-            name: formData.name.trim(),
-            email: formData.email.trim(),
-            phone: formData.phone.trim(),
-            date: formatDate(selectedDate),
-            time: selectedTime,
-            consultant: consultant.name,
-            message: formData.message.trim(),
-          }
-        });
-      } catch (emailErr) {
-        console.warn('Email sending skipped (edge function not configured):', emailErr);
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to book consultation');
       }
 
       setShowFormPopup(false);
       setShowSuccess(true);
     } catch (err) {
       console.error('Booking error:', err);
-      setBookingError('Failed to book. Please try again.');
+      setBookingError(err.message || 'Failed to book. Please try again.');
     } finally {
       setBookingLoading(false);
     }
@@ -342,7 +417,7 @@ export default function BookConsultation() {
                     </div>
                     <div className="bc-slots-grid bc-slots-grid-morning">
                       {timeSlots.morning.map((time) => {
-                        const isUnavailable = unavailableSlots.includes(time);
+                        const isUnavailable = isSlotBooked(time);
                         const isSelected = selectedTime === time;
                         let slotClass = "bc-slot-btn";
                         if (isUnavailable) slotClass += " bc-slot-unavailable";
@@ -372,7 +447,7 @@ export default function BookConsultation() {
                     </div>
                     <div className="bc-slots-grid bc-slots-grid-afternoon">
                       {timeSlots.afternoon.map((time) => {
-                        const isUnavailable = unavailableSlots.includes(time);
+                        const isUnavailable = isSlotBooked(time);
                         const isSelected = selectedTime === time;
                         let slotClass = "bc-slot-btn";
                         if (isUnavailable) slotClass += " bc-slot-unavailable";
@@ -402,7 +477,7 @@ export default function BookConsultation() {
                     </div>
                     <div className="bc-slots-grid bc-slots-grid-evening">
                       {timeSlots.evening.map((time) => {
-                        const isUnavailable = unavailableSlots.includes(time);
+                        const isUnavailable = isSlotBooked(time);
                         const isSelected = selectedTime === time;
                         let slotClass = "bc-slot-btn";
                         if (isUnavailable) slotClass += " bc-slot-unavailable";
@@ -489,6 +564,18 @@ export default function BookConsultation() {
                   <User size={24} color="#fff" />
                 </div>
                 <h3 className="bc-modal-title">Complete Your Booking</h3>
+
+                {user ? (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', background: 'rgba(52, 168, 83, 0.1)', borderRadius: 10, marginBottom: 16, border: '1px solid rgba(52, 168, 83, 0.2)' }}>
+                    <CheckCircle size={16} color="#34A853" />
+                    <span style={{ fontSize: '0.85rem', color: '#111' }}>Signed in as <strong>{user.email}</strong></span>
+                  </div>
+                ) : (
+                  <div style={{ padding: '8px 12px', background: 'rgba(239, 68, 68, 0.1)', borderRadius: 10, marginBottom: 16, border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+                    <span style={{ fontSize: '0.85rem', color: '#ef4444' }}>Please sign in to continue</span>
+                  </div>
+                )}
+
                 <p className="bc-modal-text" style={{ marginBottom: 4 }}>
                   {formatDate(selectedDate)} at {selectedTime}
                 </p>

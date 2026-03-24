@@ -1,12 +1,36 @@
-import React from "react";
-import { blogdata } from "../../Data/Blog";
+import React, { useEffect, useState } from "react";
+import { supabase } from "../../supabaseClient";
 import BlogCard from "../Card/BlogCard";
 import useAnimateOnScroll from "../Hooks/useAnimateOnScroll";
 
-const BlogSectionExtend =() => {
+const BlogSectionExtend = () => {
+    const [blogs, setBlogs] = useState([]);
+    const [loading, setLoading] = useState(true);
     useAnimateOnScroll();
 
-    return(
+    useEffect(() => {
+        const fetchBlogs = async () => {
+            try {
+                const { data, error } = await supabase
+                    .from('blogs')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+                setBlogs(data || []);
+            } catch (err) {
+                console.error("Error fetching archive blogs:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchBlogs();
+    }, []);
+
+    if (loading) return null;
+
+    return (
         <>
             <div className="section">
                 <div className="hero-container">
@@ -19,15 +43,14 @@ const BlogSectionExtend =() => {
                             <h2 className="animate-box animated animate__animated" data-animate="animate__fadeInUp">Access Our Comprehensive Blog Archive</h2>
                         </div>
                         <div className="row row-cols-lg-3 row-cols-md-2 row-cols-1 grid-spacer-2">
-                            {blogdata.map((item) => (
+                            {blogs.map((item) => (
                                 <div className="col" key={item.id}>
                                     <BlogCard
-                                        image={item.image}
+                                        image={item.image_url}
                                         title={item.title}
-                                        content={item.content}
-                                        link={item.link}
-                                        date={item.date}
-                                        comment={item.comment}
+                                        topic={item.topic}
+                                        id={item.id}
+                                        date={item.published_date || item.created_at}
                                     />
                                 </div>
                             ))}

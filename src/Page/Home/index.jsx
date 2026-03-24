@@ -33,7 +33,7 @@ const HomePage = () => {
             <PortfolioSection />
             <CtaSection />
             {/* <TestimonialSection /> */}
-            <BlogSection />
+            {/* <BlogSection /> */}
         </>
     );
 }

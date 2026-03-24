@@ -27,6 +27,7 @@ export default function TimeSlotPicker({
   onPeriodChange,
   selectedTime,
   onTimeChange,
+  isSlotBooked,
 }) {
   const activePeriod = periods.find((p) => p.key === selectedPeriod) || periods[0];
 
@@ -84,21 +85,25 @@ export default function TimeSlotPicker({
       }}>
         {activePeriod.slots.map((slot) => {
           const isSelected = selectedTime === slot;
+          const isBooked = isSlotBooked ? isSlotBooked(slot) : false;
           return (
             <button
               key={slot}
-              onClick={() => onTimeChange(slot)}
+              onClick={() => !isBooked && onTimeChange(slot)}
+              disabled={isBooked}
               style={{
                 padding: '0.625rem',
                 borderRadius: '0.75rem',
                 fontSize: '0.8125rem',
                 fontWeight: '500',
                 border: 'none',
-                cursor: 'pointer',
+                cursor: isBooked ? 'not-allowed' : 'pointer',
                 transition: 'all 0.2s',
-                backgroundColor: isSelected ? '#f59e0b' : '#fafaf9',
-                color: isSelected ? 'white' : '#78716c',
-                boxShadow: isSelected ? '0 4px 6px -1px rgba(245, 158, 11, 0.25)' : 'none'
+                backgroundColor: isBooked ? '#fee2e2' : isSelected ? '#f59e0b' : '#fafaf9',
+                color: isBooked ? '#ef4444' : isSelected ? 'white' : '#78716c',
+                boxShadow: isSelected && !isBooked ? '0 4px 6px -1px rgba(245, 158, 11, 0.25)' : 'none',
+                opacity: isBooked ? 0.6 : 1,
+                textDecoration: isBooked ? 'line-through' : 'none',
               }}
             >
               {slot}

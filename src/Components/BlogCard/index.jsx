@@ -1,8 +1,8 @@
-import { Star, Bookmark } from "lucide-react"; 
+import { Star, Bookmark } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
 const BlogCard = ({ image, title, description, link, tags, delay = 0 }) => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   return (
     <>
       <style>{`
@@ -223,36 +223,40 @@ const BlogCard = ({ image, title, description, link, tags, delay = 0 }) => {
           transform: translateY(0);
         }
       `}</style>
-<Link to={link}>
-      <article
-        className="blog-card no-dark"
-        style={{ animationDelay: `${delay}ms` }}
-      >
-        <img
-          src={image}
-          alt={title}
-          className="blog-card-image"
-          loading="lazy"
-        />
-
-        <div className="blog-card-gradient" />
-
-        <button
-          className="blog-card-bookmark"
-          aria-label="Bookmark this post"
+      <Link to={link}>
+        <article
+          className="blog-card no-dark"
+          style={{ animationDelay: `${delay}ms` }}
         >
-          <Bookmark />
-        </button>
+          <img
+            src={image}
+            alt={title}
+            className="blog-card-image"
+            loading="lazy"
+          />
 
-        <div className="blog-card-content">
-          <h3 className="blog-card-title">{title}</h3>
-          <p className="blog-card-description">{description}</p>
+          <div className="blog-card-gradient" />
 
-         
+          <button
+            className="blog-card-bookmark"
+            aria-label="Bookmark this post"
+          >
+            <Bookmark />
+          </button>
 
-          <button onClick={() => navigate(link)} className="blog-card-cta">Read More</button>
-        </div>
-      </article></Link>
+          <div className="blog-card-content">
+            <h3 className="blog-card-title">{title}</h3>
+            <p className="blog-card-description">{description}</p>
+
+            <div className="blog-card-footer">
+              {tags && tags.map(tag => (
+                <span key={tag} className="blog-card-tag">{tag}</span>
+              ))}
+            </div>
+
+            <button onClick={(e) => { e.preventDefault(); navigate(link); }} className="blog-card-cta">Read More</button>
+          </div>
+        </article></Link>
     </>
   );
 };

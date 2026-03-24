@@ -1,8 +1,8 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle2, X } from "lucide-react";
+import { CheckCircle2, X, User, Phone, Mail, Calendar } from "lucide-react";
 
-export default function SuccessModal({ isOpen, onClose, date, time }) {
+export default function SuccessModal({ isOpen, onClose, date, time, formData }) {
   return (
     <AnimatePresence>
       {isOpen && (
@@ -106,17 +106,45 @@ export default function SuccessModal({ isOpen, onClose, date, time }) {
                   padding: '1rem',
                   borderRadius: '1rem',
                   backgroundColor: '#fafaf9',
-                  border: '1px solid #f5f5f4'
+                  border: '1px solid #f5f5f4',
+                  textAlign: 'left'
                 }}>
-                  <p style={{ fontSize: '0.8125rem', color: '#a8a29e' }}>Appointment</p>
-                  <p style={{
-                    fontSize: '0.9375rem',
-                    fontWeight: '600',
-                    color: '#44403c',
-                    marginTop: '0.25rem'
-                  }}>
-                    {date} · {time}
-                  </p>
+                  <p style={{ fontSize: '0.8125rem', color: '#a8a29e', marginBottom: '0.75rem', textAlign: 'center' }}>Appointment Details</p>
+
+                  {formData && (
+                    <>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                        <User size={16} style={{ color: '#10b981' }} />
+                        <span style={{ fontWeight: 600, fontSize: '0.9rem', color: '#44403c' }}>{formData.name}</span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                        <Phone size={16} style={{ color: '#10b981' }} />
+                        <span style={{ fontSize: '0.9rem', color: '#44403c' }}>{formData.phone}</span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                        <Mail size={16} style={{ color: '#10b981' }} />
+                        <span style={{ fontSize: '0.9rem', color: '#44403c' }}>{formData.email}</span>
+                      </div>
+                    </>
+                  )}
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: formData ? 8 : 0, paddingTop: formData ? 8 : 0, borderTop: formData ? '1px solid #e5e7eb' : 'none' }}>
+                    <Calendar size={16} style={{ color: '#10b981' }} />
+                    <span style={{
+                      fontSize: '0.9375rem',
+                      fontWeight: '600',
+                      color: '#44403c',
+                    }}>
+                      {date} · {time}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {formData?.email && (
+                <div style={{ marginTop: '1rem', padding: '0.75rem', borderRadius: '0.5rem', backgroundColor: '#ecfdf5', border: '1px solid #d1fae5', textAlign: 'center' }}>
+                  <p style={{ fontSize: '0.85rem', color: '#065f46', marginBottom: 2 }}>📧 Confirmation email sent</p>
+                  <p style={{ fontSize: '0.75rem', color: '#047857' }}>A confirmation with booking details has been sent to <strong>{formData.email}</strong></p>
                 </div>
               )}
 
