@@ -168,6 +168,7 @@ const EbookCards = ({ image, title, description, rating, tags, delay = 0, link }
         .blog-card-rating {
           display: flex;
           align-items: center;
+          flex-wrap: wrap;
           gap: 0.375rem;
           background-color: rgba(255, 255, 255, 0.15);
           backdrop-filter: blur(8px);
@@ -189,20 +190,20 @@ const EbookCards = ({ image, title, description, rating, tags, delay = 0, link }
         }
 
         .blog-card-rating-value {
-          font-size: 0.875rem;
-          font-weight: 600;
-          color: white;
+          font-size: 0.65rem;
+          font-weight: 500;
+          color: white !important;
         }
 
         .blog-card-tag {
-          border-radius: 0.625rem;
+          border-radius: 0.65rem;
           border: 1px solid rgba(255, 255, 255, 0.2);
           background-color: rgba(255, 255, 255, 0.15);
           backdrop-filter: blur(8px);
           padding: 0.375rem 0.875rem;
-          font-size: 0.8125rem;
-          font-weight: 500;
-          color: white;
+          font-size: 0.65rem;
+          font-weight: 300 !important;
+          color: #ffffff !important ;
           transition: all 0.3s;
           display: inline-block;
         }

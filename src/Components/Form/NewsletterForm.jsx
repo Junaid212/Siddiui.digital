@@ -29,7 +29,7 @@ const NewsletterForm = () => {
     };
 
     return (
-        <div className="newsletter-bg no-light">
+        <div className="newsletter-bg no-light ">
             <div className="card newsletter-card ">
                 <h2 className="secondary-accent">Subscribe Our Newsletter</h2>
                 {/* <p className="secondary-accent">

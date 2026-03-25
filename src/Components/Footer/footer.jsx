@@ -4,13 +4,13 @@ import NewsletterForm from "../Form/NewsletterForm";
 
 const Footer = () => {
     return (
-        <footer>
+        <footer data-theme="dark" style={{ backgroundColor: '#121212', color: '#FCFCFC' }}>
             <div className="section section-footer dark">
                 <div className="hero-container ">
-                    <div className="d-flex flex-column gspace-2 ">
+                    <div className="d-flex flex-column gspace-2">
                         <NewsletterForm/>
-                        <div className="footer-content-container">
-                            <div className="footer-info-container">    
+                        <div className="footer-content-container ">
+                            <div className="footer-info-container ">    
                                 <div className="footer-info">
                                     {/* <img
                                         src="/assets/images/logo.webp"
@@ -20,10 +20,10 @@ const Footer = () => {
                                     <p className="accent-color-2">
                                         Siddiqui.digital – Reclassifying marketing as strategic intelligence.
                                     </p>
-                                    <ul className="footer-list">
+                                    <ul className="footer-list no-dark">
                                         <li>
                                             <div className="d-flex flex-row align-items-center gspace-2 secondary-accent">
-                                                <i className="fa-solid fa-location-dot"></i>
+                                                <i className="fa-solid fa-location-dot "></i>
                                                 <span>Ajman, UAE</span>
                                             </div>
                                         </li>
@@ -43,7 +43,7 @@ const Footer = () => {
                                 </div>
                                 <div className="footer-quick-links">
                                     <h4 className="accent-color">Quick Links</h4>
-                                    <ul className="footer-list">
+                                    <ul className="footer-list no-dark">
                                         <li><Link to="/about">About</Link></li>
                                         <li><Link to="/e_books">E-Book</Link></li>
                                         <li><Link to="/portfolio">Course</Link></li>
@@ -65,13 +65,13 @@ const Footer = () => {
                                 <div className="footer-cta">
                                     <h4 className="accent-color">Work Days</h4>
                                     <p>
-                                        Feel free to reach out during working hours!
-                                    </p>
-                                    <div className="d-flex gspace-2">
+                                            Feel free to reach out during working hours!
+                                        </p>
+                                        <div className="d-flex gspace-2">
                                         <i className="fa-solid accent-color-2 fa-clock"></i>
                                         <p className="accent-color-2">
-                                        Mon to Fri, 09:00 - 17:00
-                                        </p>
+                                            Mon to Fri, 09:00 - 17:00
+                                            </p>
                                     </div>
                                     <div>
                                         <a href="/contact" className="btn btn-accent">Contact Us</a>

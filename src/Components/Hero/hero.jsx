@@ -311,6 +311,10 @@ export default function Hero({ onBookConsultation }) {
         
         .stat-item {
           text-align: center;
+          // border-color: #f902022a ;
+          // border-width: 1px;
+          // border-style: solid;
+          // padding: 0.5rem;
         }
         
         @media (min-width: 1024px) {
@@ -537,7 +541,7 @@ export default function Hero({ onBookConsultation }) {
               <div className="stats-grid">
                 {[
                   { icon: BookOpen, label: "E-Books", value: "Published" },
-                  { icon: GraduationCap, label: "Students", value: "Mentored" },
+                  { icon: GraduationCap, label: "5000+ Students", value: "Mentored" },
                   { icon: CalendarCheck, label: "Experience", value: "18+ Years" },
                 ].map((stat, i) => (
                   <motion.div

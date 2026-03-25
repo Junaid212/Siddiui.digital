@@ -1143,7 +1143,7 @@ textarea.error-border{
     position: absolute;
     right: 0;
     bottom: 0;
-    width: 50%;
+    width: auto;
     border: 1px solid var(--accent-color-2);
     border-radius: var(--global-border-radius);
     overflow: hidden;
@@ -1168,13 +1168,13 @@ textarea.error-border{
     justify-content: center;
     text-align: center;
     align-items: center;
-    gap: 20px;
+    gap: 10px;
 }
 
 .client-rating-card-content span{
-    font-size: 50px;
+    font-size: 30px;
     font-weight: 700;
-    line-height: 1em;
+    line-height: 0.5em;
     font-family: var(--font-family-1);
     color: var(--secondary);
 }

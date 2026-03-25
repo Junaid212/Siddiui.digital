@@ -12,6 +12,7 @@ const CtaSection = () => {
       <div
         className="section py-0 animate-box animated animate__animated"
         data-animate="animate__zoomIn"
+        style={{marginBottom:'50px'}}
       >
         <div className="hero-container ">
           <div className="cta-banner ">
@@ -21,11 +22,11 @@ const CtaSection = () => {
                   Schedule a Free Consultation
                 </h2>
 
-                <p>
+                <h6 className="no-dark" style={{color:'white !important',fontSize:'16px',fontWeight:'100',lineHeight:'1.5'}}>
                   Reserve your appointment with an experienced marketing and
                   business professional. Discuss challenges, growth strategies,
                   and solutions with practical industry expertise at no cost.
-                </p>
+                </h6>
 
                 <div >
                   <button

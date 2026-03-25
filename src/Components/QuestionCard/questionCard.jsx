@@ -44,6 +44,10 @@ export default function QuestionCard({ question, questionIndex, onNext, isLast, 
     setTotalVotes(total);
     setIsSubmitting(false);
     setAnswered(true);
+
+    setTimeout(() => {
+      if (onNext) onNext();
+    }, 1000);
   };
 
   return (
@@ -62,7 +66,7 @@ export default function QuestionCard({ question, questionIndex, onNext, isLast, 
           position: relative;
           border-radius: 1.5rem; /* rounded-3xl */
           border: 1px solid rgba(255, 255, 255, 0.31);
-          background-color: rgba(211, 211, 211, 0.24);
+          background-color: rgba(211, 211, 211, 1);
           backdrop-filter: blur(40px); /* backdrop-blur-2xl (approx) */
           box-shadow: 0 25px 50px -12px rgba(239, 68, 68, 0.18); /* shadow-2xl shadow-red-500/5 */
           overflow: hidden;
@@ -393,7 +397,7 @@ export default function QuestionCard({ question, questionIndex, onNext, isLast, 
                         className={`qc-option-bar ${isSelected ? "qc-option-bar-selected" : ""}`}
                         initial={{ width: 0 }}
                         animate={{ width: `${pct}%` }}
-                        transition={{ delay: i * 0.1 + 0.1, duration: 0.8, ease: "easeOut" }}
+                        transition={{ delay: i * 0.1 + 0.1, duration: 0.5, ease: "easeOut" }}
                         style={{ originX: 0 }}
                       />
                     )}
@@ -433,25 +437,6 @@ export default function QuestionCard({ question, questionIndex, onNext, isLast, 
               })}
             </div>
 
-            {/* Next button */}
-            <AnimatePresence>
-              {answered && (
-                <motion.button
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ delay: 0.6 }}
-                  onClick={onNext}
-                  className="qc-next-btn"
-                >
-                  <div className="qc-next-btn-gradient" />
-                  <div className="qc-next-btn-glow" />
-                  <span className="qc-next-btn-text">
-                    {isLast ? "See Summary →" : "Next Question →"}
-                  </span>
-                </motion.button>
-              )}
-            </AnimatePresence>
           </div>
         </div>
       </motion.div>

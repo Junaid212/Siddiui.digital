@@ -100,7 +100,18 @@ export default function Questionnaire({ onClose }) {
       }
     }
 
-    setTimeout(() => setShowResults(true), 300);
+    setTimeout(() => {
+      setShowResults(true);
+      
+      // Auto-advance to next question or submit after 2 seconds
+      setTimeout(() => {
+        if (currentQuestion < questions.length - 1) {
+          handleNext();
+        } else {
+          handleSubmit();
+        }
+      }, 2000);
+    }, 300);
   };
 
   const handleNext = () => {
@@ -293,8 +304,8 @@ export default function Questionnaire({ onClose }) {
                 return (
                   <button
                     key={index}
-                    onClick={() => !showResults && handleOptionSelect(index)}
-                    disabled={showResults}
+                    onClick={() => !showResults && selectedOption === null && handleOptionSelect(index)}
+                    disabled={showResults || selectedOption !== null}
                     className={`option-card ${isSelected ? "selected" : ""}`}
                   >
                     <div className="option-card-content">
@@ -322,18 +333,6 @@ export default function Questionnaire({ onClose }) {
                 );
               })}
             </div>
-
-            {showResults && currentQuestion < questions.length - 1 && (
-              <button onClick={handleNext} className="next-button">
-                Next Question <ChevronRight className="w-5 h-5" />
-              </button>
-            )}
-
-            {showResults && currentQuestion === questions.length - 1 && (
-              <button onClick={handleSubmit} className="next-button">
-                Submit <ChevronRight className="w-5 h-5" />
-              </button>
-            )}
           </div>
         </div>
       </div>
@@ -342,7 +341,7 @@ export default function Questionnaire({ onClose }) {
       <style>{`
         .app-container {
           min-height: 80vh;
-          background: linear-gradient(to bottom right, #bababa, #cdcdcd, #ababab);
+          background: linear-gradient(to bottom right, #ffffffff, #cdcdcd, #ababab);
           position: relative;
           overflow: hidden;
           // opacity:0.7;
@@ -370,6 +369,7 @@ export default function Questionnaire({ onClose }) {
           align-items: center;
           justify-content: center;
           padding: 1rem;
+          background-color: #fff;
         }
         .inner-container {
           width: 100%;
