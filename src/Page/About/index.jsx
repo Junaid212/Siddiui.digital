@@ -14,8 +14,8 @@ import Awards from "../../Components/Awards/awards";
 const AboutPage = () => {
     return(
         <>
-            <HeadTitle title="About Us"/>
-            <BannerInnerSection title="About Us" currentPage="About Us" />
+            <HeadTitle title="About Siddiqui"/>
+            <BannerInnerSection title="About Siddiqui" currentPage="About Siddiqui" />
             {/* <PartnersipSection /> */}
             {/* <WhyChooseUsSection /> */}
             <Awards />

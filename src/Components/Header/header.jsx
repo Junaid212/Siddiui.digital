@@ -290,7 +290,7 @@ const Navbar = () => {
 
                                     <li className="nav-item">
                                         <NavLink to="/about" className="nav-link" onClick={closeMenu}>
-                                            About Siddiqui
+                                            About 
                                         </NavLink>
                                     </li>
                                     <li className="nav-item">
