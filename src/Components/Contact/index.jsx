@@ -18,7 +18,7 @@ const ContactSection = () =>{
                                         <i className="fa-solid fa-phone"></i>
                                     </div>
                                     <span>Phone Number</span>
-                                    <p className="description">+123 123 123</p>
+                                    <p className="description" style={{fontSize: '14px', textAlign: 'center'}}>+123 123 123</p>
                                 </div>
                             </div>
                             <div className="col">
@@ -27,7 +27,7 @@ const ContactSection = () =>{
                                         <i className="fa-solid fa-envelope"></i>
                                     </div>
                                     <span>Mail Address</span>
-                                    <p className="description">example@domain.com</p>
+                                    <p className="description" style={{fontSize: '14px', textAlign: 'center'}}>example@domain.com</p>
                                 </div>
                             </div>
                             <div className="col">
@@ -36,7 +36,7 @@ const ContactSection = () =>{
                                         <i className="fa-solid fa-location-dot"></i>
                                     </div>
                                     <span>Location</span>
-                                    <p className="description">Ajman, UAE</p>
+                                    <p className="description" style={{fontSize: '14px', textAlign: 'center'}}>Business Centre, Sharjah<br/> Publishing City Free Zone, Sharjah, United Arab Emirates</p>
                                 </div>
                             </div>
                             <div className="col">
@@ -45,7 +45,7 @@ const ContactSection = () =>{
                                         <i className="fa-solid fa-clock"></i>
                                     </div>
                                     <span>Work Days</span>
-                                    <p className="description">Mon to Fri, 09:00 - 17:00</p>
+                                    <p className="description" style={{fontSize: '14px', textAlign: 'center'}}>Sun to Fri, 09:00 - 17:00</p>
                                 </div>
                             </div>
                         </div>

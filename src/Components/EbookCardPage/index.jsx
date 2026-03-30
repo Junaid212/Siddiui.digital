@@ -4,24 +4,24 @@ import EbookCards from '../EbookCards';
 
 const blogPosts = [
   {
-    image: 'https://i.pinimg.com/736x/80/28/6d/80286dbd6f046d5e22f752dc3200ffa2.jpg',
-    title: "Zero to One",
+    image: "./assets/images/img/30.webp",
+    title: "The Marketing Book",
     description: "How to build the future in the Marketing Field",
     rating: 100,
     tags: ["Startup", "Management"],
     link: '/book1'
   },
   {
-    image: 'https://i.pinimg.com/1200x/a7/68/9a/a7689ab417c9ca9363d0b9399a209d59.jpg',
-    title: "Laws of Marketing",
+    image: "./assets/images/img/31.webp",
+    title: " Zero to One",
     description: "Perfect for seeking mental growth and empowerment through reading.",
     rating: 125,
     tags: ["Marketing", "Strategy"],
     link: '/book1'
   },
   {
-    image: 'https://i.pinimg.com/736x/ff/cf/31/ffcf314c25eaabbf3f388a4ca99541d4.jpg',
-    title: "The Power of First Impression",
+    image: "./assets/images/img/32.webp",
+    title: "Laws of Marketing",
     description: "Mastery To Influence, inspire ans Succeed",
     rating: 90,
     tags: ["Growth", "Operations"],

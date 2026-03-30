@@ -2,9 +2,9 @@ import React from "react";
 import { servicedata } from "../../Data/Service";
 import { Link, useNavigate } from "react-router-dom";
 import EnrollBook from "../EnrollBook/enrollBook";
-import img1 from "/assets/images/img/26.png"
-import img2 from "/assets/images/img/27.png"
-import img3 from "/assets/images/img/28.png"
+import img1 from "/assets/images/img/38.webp"
+import img2 from "/assets/images/img/39.webp"
+import img3 from "/assets/images/img/40.webp"
 
 const SingleServiceSection = () => {
     const navigate = useNavigate();

@@ -1,6 +1,6 @@
 import React from "react";
 import useAnimateOnScroll from "../Hooks/useAnimateOnScroll";
-import img1 from "/assets/images/img/25.png"
+import img1 from "/assets/images/img/37.webp"
 
 const WhyChooseUsSection = () => {
     useAnimateOnScroll();

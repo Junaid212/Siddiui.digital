@@ -1,23 +1,24 @@
-import img1 from "/assets/images/dummy-img-600x800.jpg";
+import img1 from "/assets/images/img/35.webp";
+import img2 from "/assets/images/img/36.webp";
 
 export const portfoliodata = [
     {
         id: 1,
-        image: "https://snu.edu.in/site/assets/files/18305/asian-businessman-blurred-office_1.1600x0.webp",
+        image: img1,
         logo: "/assets/images/partner-4-65f90f1a4e273.webp",
         category: "Price",
         title: "Digital marketing",
-        content: "Essential skills in SEO, social media, content marketing, and analytics to prepare individuals for roles like managers or specialists.",
+        content: "Essential SEO, social media, content, and analytics skills for marketing roles.",
         link: "#",
         speed: "animated-fast"
     },
     {
         id: 2,
-        image: "https://i.pinimg.com/736x/31/41/ed/3141ed864a2ea40d55cd3be78adfad72.jpg",
+        image: img2,
         logo: "/assets/images/partner-5-65f90f1ae5cd3.webp",
         category: "Price",
         title: "Business Management",
-        content: "An educational program designed to teach students how to plan, direct, and coordinate operational activities within an organization.",
+        content: "Course focused on planning and overseeing business operations.",
         link: "#",
         speed: ""
     },

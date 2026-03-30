@@ -1,6 +1,7 @@
 import React from "react";
 import { portfoliodata } from "../../Data/Portfolio";
 import PortfolioCard from "../Card/PortfolioCard";
+import { Link } from "react-router-dom";
 
 const PortfolioSection = () => {
     return(
@@ -31,7 +32,7 @@ const PortfolioSection = () => {
                             ))}
                         </div>
                          <div className="cta-container" style={{marginTop:'30px'}}>
-                                    <a href="#" className="btn btn-secondary-accent ">Explore Courses</a>
+                                    <Link to="/courses" className="btn btn-secondary-accent ">Explore Courses</Link>
                                 </div>
                     </div>
                 </div>

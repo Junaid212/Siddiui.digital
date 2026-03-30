@@ -299,7 +299,7 @@ const Navbar = () => {
                                         </NavLink>
                                     </li>
                                     <li className="nav-item">
-                                        <NavLink to="/portfolio" className="nav-link" onClick={closeMenu}>
+                                        <NavLink to="/courses" className="nav-link" onClick={closeMenu}>
                                             Course
                                         </NavLink>
                                     </li>

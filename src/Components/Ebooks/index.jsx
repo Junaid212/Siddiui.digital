@@ -8,7 +8,7 @@ const books = [
     title: "The Silent Echo",
     price: "AED 24.99",
     description: "A gripping tale of mystery and redemption in modern Tokyo.",
-    image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=600&h=800&fit=crop",
+    image: "./assets/images/img/30.webp",
     link:"/book1"
   },
   {
@@ -16,7 +16,7 @@ const books = [
     title: "Midnight Gardens",
     price: "AED 19.99",
     description: "Romance blooms under the stars in this enchanting novel.",
-    image: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=600&h=800&fit=crop",
+    image: "./assets/images/img/31.webp",
     link:"/book1"
   },
   {
@@ -24,7 +24,7 @@ const books = [
     title: "Beyond The Horizon",
     price: "AED 29.99",
     description: "An epic adventure across uncharted worlds and dimensions.",
-    image: "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=600&h=800&fit=crop",
+    image: "./assets/images/img/32.webp",
     link:"/book1"
   },
   {
@@ -32,7 +32,7 @@ const books = [
     title: "The Last Algorithm",
     price: "AED 22.99",
     description: "When AI awakens, humanity faces its greatest challenge.",
-    image: "https://images.unsplash.com/photo-1532012197267-da84d127e765?w=600&h=800&fit=crop",
+    image: "./assets/images/img/33.webp",
     link:"/book1"
   },
   {
@@ -40,7 +40,7 @@ const books = [
     title: "Whispers of Time",
     price: "AED 27.99",
     description: "A historical saga spanning three generations of love.",
-    image: "https://images.unsplash.com/photo-1476275466078-4007374efbbe?w=600&h=800&fit=crop",
+    image: "./assets/images/img/34.webp",
     link:"/book1"
   }
 ];

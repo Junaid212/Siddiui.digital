@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, BookOpen, GraduationCap, CalendarCheck } from "lucide-react";
 import img from "/assets/images/img/Siddiqui.png"
+import { useNavigate } from "react-router-dom";
 
 // Helper component to render text with character-by-character animation
 const AnimatedCharacters = ({ text, isAccent = false }) => {
@@ -30,6 +31,7 @@ const AnimatedCharacters = ({ text, isAccent = false }) => {
 
 export default function Hero({ onBookConsultation }) {
   const [darkMode, setDarkMode] = useState(true);
+  const navigate = useNavigate();
 
   // Listen for theme changes from navbar
   useEffect(() => {
@@ -525,13 +527,13 @@ export default function Hero({ onBookConsultation }) {
               </p>
               
               <div className="button-group">
-                <button onClick={onBookConsultation} className="btn-primary">
+                <button onClick={() => navigate("/consultation", { state: { type: "consultation" } })} className="btn-primary">
                   Book Free Consultation
                   <ArrowRight className="icon-arrow" />
                 </button>
                 <button
                   className="btn-outline"
-                  onClick={() => document.getElementById('courses')?.scrollIntoView({ behavior: 'smooth' })}
+                  onClick={() => navigate("/e_books", { state: { type: "ebook" } })}
                 >
                   Get the Book
                 </button>

@@ -24,7 +24,7 @@ const Footer = () => {
                                         <li>
                                             <div className="d-flex flex-row align-items-center gspace-2 secondary-accent">
                                                 <i className="fa-solid fa-location-dot "></i>
-                                                <span>Ajman, UAE</span>
+                                                <span>Business Centre, Sharjah<br/> Publishing City Free Zone, Sharjah, United Arab Emirates</span>
                                             </div>
                                         </li>
                                         <li>
@@ -46,7 +46,7 @@ const Footer = () => {
                                     <ul className="footer-list no-dark">
                                         <li><Link to="/about">About</Link></li>
                                         <li><Link to="/e_books">E-Book</Link></li>
-                                        <li><Link to="/portfolio">Course</Link></li>
+                                        <li><Link to="/courses">Course</Link></li>
                                         <li><Link to="/consultation">Consultation</Link></li>
                                         <li><Link to="/contact">Contact</Link></li>
                                     </ul>
@@ -70,11 +70,11 @@ const Footer = () => {
                                         <div className="d-flex gspace-2">
                                         <i className="fa-solid accent-color-2 fa-clock"></i>
                                         <p className="accent-color-2">
-                                            Mon to Fri, 09:00 - 17:00
+                                            Sunday to Friday
                                             </p>
                                     </div>
                                     <div>
-                                        <a href="/contact" className="btn btn-accent">Contact Us</a>
+                                        <Link to="/contact" className="btn btn-accent">Contact Us</Link>
                                     </div>
                                 </div>
                             </div>

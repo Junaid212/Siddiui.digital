@@ -1,6 +1,7 @@
 import React from "react";
 import useAnimateOnScroll from "../Hooks/useAnimateOnScroll";
-import image from "/assets/images/dummy-img-600x400.jpg";
+import img1 from "/assets/images/img/29.webp";
+import { Link } from "react-router-dom";
 
 const AboutSection = () => {
     useAnimateOnScroll();
@@ -12,7 +13,7 @@ const AboutSection = () => {
                         <div className="d-flex flex-column flex-md-row h-100 gspace-3">
                             <div className="about-image-wrapper">
                                 <div className="image-container">
-                                    <img src="https://cdn.corporatefinanceinstitute.com/assets/marketing.jpeg" alt="About Image" className="img-fluid animate-box animated animate__animated" data-animate="animate__fadeInRight" />
+                                    <img src={img1}alt="About Image" className="img-fluid animate-box animated animate__animated" data-animate="animate__fadeInRight" />
                                 </div>
                                 <div className="card about-traffic-card animate-box animated animate__animated" data-animate="animate__zoomIn">
                                     <div className="d-flex flex-column gspace-2 align-self-center text-center">
@@ -34,7 +35,7 @@ const AboutSection = () => {
                                 <h2 className="animate-box animated animate__animated" data-animate="animate__fadeInUp">Expert in Marketing and Business Management</h2>
                                 <p>Marketing and management expert with over eighteen years of corporate and academic experience, former adjunct lecturer at City University of New York, faculty at PAF KIET and Bahria University, currently Head of Marketing at Ajman University.</p>
                                 <div>
-                                    <a href="#" className="btn btn-accent">Learn More</a>
+                                    <Link to="/about" className="btn btn-accent">Learn More</Link>
                                 </div>
                             </div>
                             

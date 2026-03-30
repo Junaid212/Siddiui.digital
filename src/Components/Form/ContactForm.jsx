@@ -35,18 +35,34 @@ const ContactForm = () => {
         };
     }, [showSuccess, showError]);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         
         setShowSuccess(false);
         setShowError(false);
         
         // Check if name and email are filled
-        if (formData.name.trim() && formData.email.trim()) {
-            setShowSuccess(true);
-            setShowError(false);
-        } else {
-            setShowSuccess(false);
+        if (!formData.name.trim() || !formData.email.trim()) {
+            setShowError(true);
+            return;
+        }
+
+        try {
+            const res = await fetch('http://localhost:5001/api/public/contact', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData),
+            });
+
+            if (res.ok) {
+                setShowSuccess(true);
+                // Reset form data
+                setFormData({ name: '', email: '', subject: '', message: '' });
+            } else {
+                setShowError(true);
+            }
+        } catch (err) {
+            console.error('Contact form submission error:', err);
             setShowError(true);
         }
     };
@@ -66,8 +82,8 @@ const ContactForm = () => {
                         </p>
                         <div className="section p-0">
                             <iframe loading="lazy" className="maps"
-                                    src="https://maps.google.com/maps?q=London%20Eye%2C%20London%2C%20United%20Kingdom&amp;t=m&amp;z=14&amp;output=embed&amp;iwloc=near"
-                                    title="London Eye, London, United Kingdom" aria-label="London Eye, London, United Kingdom">
+                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d230817.5800078407!2d55.24248632748857!3d25.320168800000012!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f5f004abf0ebf%3A0xbbce34d7cec171d6!2sSharjah%20Publishing%20City%20Free%20Zone!5e0!3m2!1sen!2sin!4v1774866349950!5m2!1sen!2sin" 
+                                    title="Sharjah Publishing City Free Zone, Sharjah, United Arab Emirates" aria-label="Sharjah Publishing City Free Zone, Sharjah, United Arab Emirates">
                             </iframe>
                         </div>
                     </div>

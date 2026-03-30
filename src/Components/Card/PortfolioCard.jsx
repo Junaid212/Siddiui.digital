@@ -11,8 +11,8 @@ const PortfolioCard = ({logo, image, category, title, content, link, speed = ""}
                 </div> */}
                 <div className="portfolio-content">
                     {/* <p className="accent-color">{category}</p> */}
-                    <h3 className="secondary-accent">{title}</h3>
-                    <p className="secondary-accent">{content}</p>
+                    <h4 className="secondary-accent">{title}</h4>
+                    <p className="secondary-accent" style={{fontSize: '14px'}}>{content}</p>
                     <div>
                         <a href={link} className="btn btn-accent">Enroll Now</a>
                     </div>
