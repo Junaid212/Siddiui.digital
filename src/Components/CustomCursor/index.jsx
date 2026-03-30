@@ -136,93 +136,100 @@ export default function CustomCursor() {
       let mouseY = 0;
       let currentScale = 1;
 
+      let rafId = null;
+
       const handleMouseMove = (e) => {
         mouseX = e.clientX;
         mouseY = e.clientY;
 
-        gsap.to([outerEl, innerEl, dotsEl], {
-          opacity: 1,
-          duration: 0.2,
-          overwrite: true,
-        });
+        if (rafId) return;
+        rafId = requestAnimationFrame(() => {
+          rafId = null;
 
-        [outerEl, innerEl, dotsEl].forEach(el => {
-          if (el) {
-            el.style.opacity = '1';
-            el.style.display = 'block';
-            el.style.visibility = 'visible';
-          }
-        });
+          gsap.to([outerEl, innerEl, dotsEl], {
+            opacity: 1,
+            duration: 0.2,
+            overwrite: true,
+          });
 
-        const magneticElements = document.querySelectorAll('[data-magnetic]');
-        let isMagnetic = false;
+          [outerEl, innerEl, dotsEl].forEach(el => {
+            if (el) {
+              el.style.opacity = '1';
+              el.style.display = 'block';
+              el.style.visibility = 'visible';
+            }
+          });
 
-        magneticElements.forEach((el) => {
-          const rect = el.getBoundingClientRect();
-          const centerX = rect.left + rect.width / 2;
-          const centerY = rect.top + rect.height / 2;
-          const distance = Math.sqrt(
-            Math.pow(mouseX - centerX, 2) + Math.pow(mouseY - centerY, 2)
-          );
+          const magneticElements = document.querySelectorAll('[data-magnetic]');
+          let isMagnetic = false;
 
-          if (distance < 120) {
-            isMagnetic = true;
-            const pullX = (centerX - mouseX) * 0.3;
-            const pullY = (centerY - mouseY) * 0.3;
+          magneticElements.forEach((el) => {
+            const rect = el.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            const distance = Math.sqrt(
+              Math.pow(mouseX - centerX, 2) + Math.pow(mouseY - centerY, 2)
+            );
 
+            if (distance < 120) {
+              isMagnetic = true;
+              const pullX = (centerX - mouseX) * 0.3;
+              const pullY = (centerY - mouseY) * 0.3;
+
+              gsap.to(innerEl, {
+                x: mouseX + pullX,
+                y: mouseY + pullY,
+                xPercent: -50,
+                yPercent: -50,
+                duration: 0.3,
+                ease: 'power3.out',
+              });
+
+              gsap.to(outerEl, {
+                x: mouseX + pullX * 0.5,
+                y: mouseY + pullY * 0.5,
+                xPercent: -50,
+                yPercent: -50,
+                duration: 0.5,
+                ease: 'power3.out',
+              });
+            }
+          });
+
+          if (!isMagnetic) {
             gsap.to(innerEl, {
-              x: mouseX + pullX,
-              y: mouseY + pullY,
+              x: mouseX,
+              y: mouseY,
               xPercent: -50,
               yPercent: -50,
-              duration: 0.3,
+              duration: 0.1,
               ease: 'power3.out',
+              overwrite: true,
             });
 
             gsap.to(outerEl, {
-              x: mouseX + pullX * 0.5,
-              y: mouseY + pullY * 0.5,
+              x: mouseX,
+              y: mouseY,
               xPercent: -50,
               yPercent: -50,
-              duration: 0.5,
+              duration: 0.4,
               ease: 'power3.out',
+              overwrite: true,
+            });
+          }
+
+          if (dotsEl) {
+            gsap.to(dotsEl, {
+              x: mouseX,
+              y: mouseY,
+              xPercent: -50,
+              yPercent: -50,
+              duration: 0.8,
+              ease: 'power3.out',
+              overwrite: true,
             });
           }
         });
-
-        if (!isMagnetic) {
-          gsap.to(innerEl, {
-            x: mouseX,
-            y: mouseY,
-            xPercent: -50,
-            yPercent: -50,
-            duration: 0.1,
-            ease: 'power3.out',
-            overwrite: true,
-          });
-
-          gsap.to(outerEl, {
-            x: mouseX,
-            y: mouseY,
-            xPercent: -50,
-            yPercent: -50,
-            duration: 0.4,
-            ease: 'power3.out',
-            overwrite: true,
-          });
-        }
-
-        if (dotsEl) {
-          gsap.to(dotsEl, {
-            x: mouseX,
-            y: mouseY,
-            xPercent: -50,
-            yPercent: -50,
-            duration: 0.8,
-            ease: 'power3.out',
-            overwrite: true,
-          });
-        }
       };
 
       const handleMouseDown = () => {

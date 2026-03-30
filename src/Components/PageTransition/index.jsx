@@ -15,13 +15,13 @@ export default function PageTransition({ children }) {
     // After wipe-in finishes, start wipe-out
     const wipeOutTimer = setTimeout(() => {
       setWipeDirection('out');
-    }, 600);
+    }, 350);
 
     // After whole transition, clean up and prepare for next
     const resetTimer = setTimeout(() => {
       setWipeDirection(null);
-      setWipeKey(k => k + 1); // only for wipe layers, not for content
-    }, 1200);
+      setWipeKey(k => k + 1);
+    }, 700);
 
     return () => {
       clearTimeout(wipeOutTimer);
@@ -42,7 +42,7 @@ export default function PageTransition({ children }) {
             initial={{ scaleX: 0, originX: 0 }}
             animate={{ scaleX: 1, originX: 0 }}
             exit={{}}
-            transition={{ duration: 0.6, ease: [0.77, 0, 0.175, 1] }}
+            transition={{ duration: 0.35, ease: [0.77, 0, 0.175, 1] }}
             style={{
               position: "fixed",
               top: 0,
@@ -52,7 +52,8 @@ export default function PageTransition({ children }) {
               background: "#C21410",
               zIndex: 9999,
               pointerEvents: "none",
-              transformOrigin: "left"
+              transformOrigin: "left",
+              willChange: "transform",
             }}
           />
         )}
@@ -62,7 +63,7 @@ export default function PageTransition({ children }) {
             initial={{ scaleX: 1, originX: 1 }}
             animate={{ scaleX: 0, originX: 1 }}
             exit={{}}
-            transition={{ duration: 0.6, ease: [0.77, 0, 0.175, 1] }}
+            transition={{ duration: 0.35, ease: [0.77, 0, 0.175, 1] }}
             style={{
               position: "fixed",
               top: 0,
@@ -72,7 +73,8 @@ export default function PageTransition({ children }) {
               background: "#c72020",
               zIndex: 9999,
               pointerEvents: "none",
-              transformOrigin: "right"
+              transformOrigin: "right",
+              willChange: "transform",
             }}
           />
         )}

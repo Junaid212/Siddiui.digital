@@ -149,10 +149,31 @@ Table of Contents
 
 /* 04. Base Styles */
 
+html {
+    scroll-behavior: smooth;
+}
+
 *{
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+}
+
+/* GPU-accelerated animations for smoother performance */
+.animate-box,
+.animate__animated {
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+}
+
+/* Ensure animate-on-scroll elements are visible but ready to animate */
+.animate-box {
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+img {
+    content-visibility: auto;
 }
 
 body{
