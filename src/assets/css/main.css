@@ -166,12 +166,6 @@ html {
     backface-visibility: hidden;
 }
 
-/* Ensure animate-on-scroll elements are visible but ready to animate */
-.animate-box {
-    opacity: 0;
-    transition: opacity 0.4s ease;
-}
-
 img {
     content-visibility: auto;
 }

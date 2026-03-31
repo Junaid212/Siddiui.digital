@@ -1,4 +1,5 @@
-import { BrowserRouter as Router } from "react-router-dom";
+import { BrowserRouter as Router, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import AppRouters from "./Router";
 import { ModalVideoProvider } from "./Components/Video/ModalVideoContext";
 import Navbar from "./Components/Header/header";
@@ -9,9 +10,23 @@ import PageTransition from "./Components/PageTransition"; // <-- import the tran
 import CustomCursor from "./Components/CustomCursor";
 import PopupManager from "./Page/PopupManager";
 
+// Handles GitHub Pages SPA redirect (pairs with 404.html + index.html script)
+const RedirectHandler = () => {
+    const navigate = useNavigate();
+    useEffect(() => {
+        const redirect = sessionStorage.getItem('gh-pages-redirect');
+        if (redirect) {
+            sessionStorage.removeItem('gh-pages-redirect');
+            navigate(redirect, { replace: true });
+        }
+    }, [navigate]);
+    return null;
+};
+
 const App = () => {
     return (
         <Router basename={import.meta.env.BASE_URL}>
+            <RedirectHandler />
             <CustomCursor />
             <Navbar />
             <Sidebar />
