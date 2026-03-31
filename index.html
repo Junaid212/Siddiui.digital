@@ -9,9 +9,21 @@
   rel="stylesheet"
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 />
+    <!-- GitHub Pages SPA redirect handler (pairs with 404.html) -->
+    <script>
+      (function() {
+        var redirect = new URLSearchParams(window.location.search).get('redirect');
+        if (redirect) {
+          sessionStorage.setItem('gh-pages-redirect', redirect);
+          // Clean the URL by removing the ?redirect= param
+          var cleanUrl = window.location.pathname;
+          window.history.replaceState(null, '', cleanUrl);
+        }
+      })();
+    </script>
 <script>(function(w, d) { w.CollectId = "69c21e9673a76d9d07e4b048"; var h = d.head || d.getElementsByTagName("head")[0]; var s = d.createElement("script"); s.setAttribute("type", "text/javascript"); s.async=true; s.setAttribute("src", "https://collectcdn.com/launcher.js"); h.appendChild(s); })(window, document);</script>
-      <script type="module" crossorigin src="/Siddiui.digital/assets/index-Due2za0w.js"></script>
-      <link rel="stylesheet" crossorigin href="/Siddiui.digital/assets/index-CtNrO0xP.css">
+      <script type="module" crossorigin src="/Siddiui.digital/assets/index-Dk5doVHz.js"></script>
+      <link rel="stylesheet" crossorigin href="/Siddiui.digital/assets/index-R-NjPgki.css">
     </head>
     <body>
         <div id="root"></div>
