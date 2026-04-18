@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, BookOpen, GraduationCap, CalendarCheck } from "lucide-react";
-import img from "/assets/images/img/Siddiqui.png"
+import img from "/assets/images/img/Muhammad.Q.Siddiqui-2.webp"
 import { useNavigate } from "react-router-dom";
 
 // Helper component to render text with character-by-character animation
@@ -81,7 +81,7 @@ export default function Hero({ onBookConsultation }) {
           --text-color: #121212;
           --accent-color: #C80808;
           --accent-color-2: #f0f0f0;
-          --accent-color-3: #0a8f3c;
+          --accent-color-3: #a5a4a4ff;
           --accent-color-4: #00000010;
           --accent-color-5: #00000020;
           --accent-color-6: rgba(0, 0, 0, 0.05);
@@ -209,9 +209,10 @@ export default function Hero({ onBookConsultation }) {
         .badge-text {
           color: var(--accent-color);
           font-family: var(--font-family-2);
-          font-size: 0.875rem;
+          font-size: 0.65rem;
           font-weight: 600;
           letter-spacing: 0.025em;
+          text-transform: uppercase;
         }
         
         .hero-title {
@@ -247,7 +248,7 @@ export default function Hero({ onBookConsultation }) {
         
         .hero-description {
           margin-top: 1.5rem;
-          font-size: 1.125rem;
+          font-size: 1rem;
           color: ${darkMode ? 'rgba(218, 250, 244, 0.7)' : 'rgba(18, 18, 18, 0.8)'};
           line-height: 1.625;
           max-width: 32rem;
@@ -511,20 +512,25 @@ export default function Hero({ onBookConsultation }) {
             >
               <div className="badge">
                 <span className="badge-dot" />
-                <span className="badge-text">18+ Years of Excellence</span>
+                <span className="badge-text">Marketing Consultant · Educator · Advisor </span>
               </div>
               
               <h1 className="hero-title">
+                <span style={{display:'none'}}>Marketing Consultant, Courses & Business Growth Solutions</span>
+
                 <AnimatedCharacters text="Marketing," />
                 <span className="hero-title-accent">
                   <br />
                   <AnimatedCharacters text="Reclassified." isAccent={true} />
                 </span>
               </h1>
+              <p style={{ display: "none" }}>
+  marketing consultant, online marketing courses, business strategy training, digital marketing ebooks, marketing mentor, business growth advisor
+</p>
               
               <p className="hero-description">
-                Marketing is not a department. It is strategic intelligence.
-              </p>
+  Accelerate your business with expert marketing consultation, industry-focused courses, and powerful e-books designed to transform strategy into measurable growth.
+</p>
               
               <div className="button-group">
                 <button onClick={() => navigate("/consultation", { state: { type: "consultation" } })} className="btn-primary">
@@ -535,7 +541,7 @@ export default function Hero({ onBookConsultation }) {
                   className="btn-outline"
                   onClick={() => navigate("/e_books", { state: { type: "ebook" } })}
                 >
-                  Get the Book
+                  Get E-Books
                 </button>
               </div>
 
@@ -543,8 +549,8 @@ export default function Hero({ onBookConsultation }) {
               <div className="stats-grid">
                 {[
                   { icon: BookOpen, label: "E-Books", value: "Published" },
-                  { icon: GraduationCap, label: "5000+ Students", value: "Mentored" },
-                  { icon: CalendarCheck, label: "Experience", value: "18+ Years" },
+                  { icon: GraduationCap, label: "15000+ Students", value: "Mentored" },
+                  { icon: CalendarCheck, label: "Experience", value: "39 Years" },
                 ].map((stat, i) => (
                   <motion.div
                     key={stat.label}
@@ -576,7 +582,7 @@ export default function Hero({ onBookConsultation }) {
                   
                   <img
                     src={img}
-                    alt="Mr. Siddiqui"
+                    alt="Muhammad Siddiqui"
                     style={{ position: 'relative', zIndex: 1 }}
                   />
                   <div className="image-overlay" />

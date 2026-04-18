@@ -14,9 +14,9 @@ const PortfolioSection = () => {
                                 <i className="fa-solid fa-circle-notch"></i>
                                 <h6 className="font-family-1 accent-color-1">Courses</h6>
                             </div>
-                            <h2 className="animate-box animated animate__animated" data-animate="animate__fadeInUp">Expert-Led Marketing &  Management Courses</h2>
+                            <h2 className="animate-box animated animate__animated" data-animate="animate__fadeInUp">Learn from Industry Experts</h2>
                         </div>
-                        <div className="row row-cols-lg-2 row-cols-md-2 row-cols-1 grid-spacer-2 no-dark">
+                        <div className="row row-cols-lg-3 row-cols-md-2 row-cols-1 grid-spacer-2 no-dark">
                             {portfoliodata.map((item) => (
                                 <div className="col" key={item.id}>
                                     <PortfolioCard

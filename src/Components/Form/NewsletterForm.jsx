@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 const NewsletterForm = () => {
     const [email, setEmail] = useState("");
@@ -31,7 +32,8 @@ const NewsletterForm = () => {
     return (
         <div className="newsletter-bg no-light ">
             <div className="card newsletter-card ">
-                <h2 className="secondary-accent">Subscribe Our Newsletter</h2>
+                {/* <h2 className="secondary-accent">Subscribe Our Newsletter</h2> */}
+                <h2 className="secondary-accent">Ready to think more strategically?</h2>
                 {/* <p className="secondary-accent">
                     A diam maecenas sed enim ut sem viverra. Vulputate ut pharetra
                     sit amet aliquam id diam maecenas ultricies. Ultricies mi quis
@@ -39,7 +41,7 @@ const NewsletterForm = () => {
                     tempus quam.
                 </p> */}
 
-                {success && (
+                {/* {success && (
                     <div id="newsletter-success" className="alert success">
                         <span className="check-icon">
                             <i className="fa-solid fa-2xl fa-check"></i>
@@ -48,9 +50,9 @@ const NewsletterForm = () => {
                             Thank you! Form submitted successfully.
                         </p>
                     </div>
-                )}
+                )} */}
 
-                {error && (
+                {/* {error && (
                     <div id="newsletter-error" className="alert error">
                         <span className="cross-icon">
                             <i className="fa-solid fa-2xl fa-xmark"></i>
@@ -59,9 +61,9 @@ const NewsletterForm = () => {
                             Oops! Form submission failed. Please try again.
                         </p>
                     </div>
-                )}
+                )} */}
 
-                <form
+                {/* <form
                     onSubmit={handleSubmit}
                     id="newsletterForm"
                     className="form gspace-2 needs-validation"
@@ -86,7 +88,10 @@ const NewsletterForm = () => {
                             Subscribe
                         </button>
                     </div>
-                </form>
+                </form> */}
+                <div className="cta-container" >
+                                    <Link to="/courses" className="btn btn-secondary-accent ">Contact Us</Link>
+                                </div>
             </div>
         </div>
     );

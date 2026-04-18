@@ -73,9 +73,9 @@ const Footer = () => {
                                             Sunday to Friday
                                             </p>
                                     </div>
-                                    <div>
+                                    {/* <div>
                                         <Link to="/contact" className="btn btn-accent">Contact Us</Link>
-                                    </div>
+                                    </div> */}
                                 </div>
                             </div>
                         </div>

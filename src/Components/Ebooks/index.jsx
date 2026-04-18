@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 const books = [
   {
     id: 1,
-    title: "The Silent Echo",
+    title: "The Marketing Book",
     price: "AED 24.99",
     description: "A gripping tale of mystery and redemption in modern Tokyo.",
     image: "./assets/images/img/30.webp",
@@ -13,7 +13,7 @@ const books = [
   },
   {
     id: 2,
-    title: "Midnight Gardens",
+    title: "Zero to One",
     price: "AED 19.99",
     description: "Romance blooms under the stars in this enchanting novel.",
     image: "./assets/images/img/31.webp",
@@ -21,7 +21,7 @@ const books = [
   },
   {
     id: 3,
-    title: "Beyond The Horizon",
+    title: "Laws of Marketing",
     price: "AED 29.99",
     description: "An epic adventure across uncharted worlds and dimensions.",
     image: "./assets/images/img/32.webp",
@@ -29,7 +29,7 @@ const books = [
   },
   {
     id: 4,
-    title: "The Last Algorithm",
+    title: "Digital Marketing",
     price: "AED 22.99",
     description: "When AI awakens, humanity faces its greatest challenge.",
     image: "./assets/images/img/33.webp",
@@ -37,7 +37,7 @@ const books = [
   },
   {
     id: 5,
-    title: "Whispers of Time",
+    title: "Business Adventure",
     price: "AED 27.99",
     description: "A historical saga spanning three generations of love.",
     image: "./assets/images/img/34.webp",
