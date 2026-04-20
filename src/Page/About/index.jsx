@@ -14,19 +14,27 @@ import Awards from "../../Components/Awards/awards";
 const AboutPage = () => {
     return(
         <>
-            <HeadTitle title="About Siddiqui"/>
+            <HeadTitle title="Siddiqui"/>
             <BannerInnerSection title="About Siddiqui" currentPage="About Siddiqui" />
             {/* <PartnersipSection /> */}
-            {/* <WhyChooseUsSection /> */}
-            <Awards />
-            <AchievementSection />
+            <section className="seo-content container" style={{display:'none'}}>
+              <h1>About Siddiqui Digital</h1>
+              <p>
+                Marketing thought leader, educator, and strategic advisor
+              </p>
+            </section>
             <WhyChooseUsSection />
+            
+            <AchievementSection />
+            <ProcessSection />
+            <Awards />
+            {/* <WhyChooseUsSection /> */}
             {/* <AboutSection /> */}
             {/* <AchievementSection /> */}
             {/* <TeamSection /> */}
             {/* <WhyChooseUsSection /> */}
             {/* <CtaSection /> */}
-            <ProcessSection />
+            
             
             <TeamSection />
             {/* <TestimonialSection /> */}

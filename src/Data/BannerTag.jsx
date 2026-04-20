@@ -1,26 +1,26 @@
 export const BannerTag = [
     {
         id: 1,
-        title: "On-Page SEO",
+        title: "Signature Frameworks & Flagship Concepts",
     },
     {
         id: 2,
-        title: "Digital Marketing",
+        title: "Core Marketing & Strategy",
     },
     {
         id: 3,
-        title: "Off-Page SEO",
+        title: "Sales & Market Development",
     },
     {
         id: 4,
-        title: "Social Media Marketing",
+        title: "Innovation & New Product Development",
     },
     {
         id: 5,
-        title: "Analytic and Reporting",
+        title: "Analytical & Decision Support",
     },
     {
         id: 6,
-        title: "Influencer Marketing",
+        title: "Emerging & Cross-Functional",
     },
 ];

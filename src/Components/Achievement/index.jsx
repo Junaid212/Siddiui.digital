@@ -7,9 +7,9 @@ const AchievementSection = () => {
     const clientRef = useRef(null);
     const teamRef = useRef(null);
 
-    const { suffix: expSuffix } = useCounterOnScroll(expRef, 18, 2000);
+    const { suffix: expSuffix } = useCounterOnScroll(expRef, 39, 2000);
     const { suffix: projSuffix } = useCounterOnScroll(projRef, 15, 2000);
-    const { suffix: clientSuffix } = useCounterOnScroll(clientRef, 4, 2000);
+    const { suffix: clientSuffix } = useCounterOnScroll(clientRef, 15000, 2000);
     const { suffix: teamSuffix } = useCounterOnScroll(teamRef, 5, 2000);
 
     return (
@@ -46,7 +46,7 @@ const AchievementSection = () => {
                                     <span>{clientSuffix}</span>
                                     <span>+</span>
                                 </div>
-                                <p className="counter-text">Books</p>
+                                <p className="counter-text">Mentored Students</p>
                             </div>
                         </div>
 

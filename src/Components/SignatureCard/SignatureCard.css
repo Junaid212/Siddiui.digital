@@ -1,0 +1,169 @@
+/* CSS variables – adjust to match your theme */
+:root {
+  --card-bg: #ffffff;
+  --gold: 40, 80%, 50%;          /* HSL values for gold */
+  --foreground: #111827;
+  --muted-foreground: #6b7280;
+  /* --font-serif: Georgia, 'Times New Roman', serif;
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; */
+}
+
+/* Card button base */
+.signature-card {
+  position: relative;
+  text-align: left;
+  width: 100%;
+  height: 100%;
+  background-color: var(--card-bg);
+  border: 1px solid hsla(var(--gold), 0.25);
+  border-radius: 0.125rem;        /* rounded-sm */
+  overflow: hidden;
+  transition: border-color 0.5s ease, transform 0.2s ease;
+  cursor: pointer;
+}
+
+.signature-card:hover {
+  border-color: hsla(var(--gold), 0.6);
+}
+
+/* Gold corner accent (top-right) */
+.card-corner-accent {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 5rem;                    /* w-20 = 5rem */
+  height: 5rem;
+  background: linear-gradient(
+    to bottom left,
+    hsla(var(--gold), 0.1),
+    transparent
+  );
+}
+
+/* Top subtle line */
+.card-top-line {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    hsla(var(--gold), 0.5),
+    transparent
+  );
+}
+
+/* Inner content padding */
+.card-inner {
+  padding: 2rem;                  /* p-8 = 2rem */
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+@media (min-width: 768px) {
+  .card-inner {
+    padding: 2.5rem;              /* md:p-10 = 2.5rem */
+  }
+}
+
+/* Header row with code, separator, label */
+.card-header-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;                   /* gap-3 = 0.75rem */
+  margin-bottom: 1.5rem;          /* mb-6 = 1.5rem */
+}
+
+.card-code {
+  font-size: 0.625rem;            /* text-[10px] */
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  font-weight: 500;
+}
+
+.card-separator {
+  height: 1px;
+  width: 1.25rem;                 /* w-5 = 1.25rem */
+  background-color: hsla(var(--gold), 0.5);
+}
+
+.card-label {
+  font-size: 0.625rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: hsl(var(--gold));
+  font-weight: 600;
+}
+
+/* Title */
+.card-title {
+  /* font-family: var(--font-serif); */
+  font-size: 1.875rem;            /* text-3xl = 1.875rem */
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  color: var(--foreground);
+  line-height: 1.1;
+  margin-bottom: 0.75rem;         /* mb-3 = 0.75rem */
+}
+
+@media (min-width: 768px) {
+  .card-title {
+    font-size: 2.25rem;           /* md:text-4xl = 2.25rem */
+  }
+}
+
+/* Subtitle (optional) */
+.card-subtitle {
+  /* font-family: var(--font-serif); */
+  /* font-style: italic; */
+  color: var(--muted-foreground);
+  font-size: 1.125rem;            /* text-lg = 1.125rem */
+  margin-bottom: 1.5rem;
+  line-height: 1.5;          /* mb-6 = 1.5rem */
+}
+
+/* Description */
+.card-description {
+  color: var(--foreground);
+  opacity: 0.7;                   /* text-foreground/70 */
+  line-height: 1.625;             /* leading-relaxed */
+  font-size: 0.9375rem;           /* text-[15px] */
+  margin-bottom: 2rem;            /* mb-8 = 2rem */
+  flex: 1;
+}
+
+/* Call to action row */
+.card-cta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;                    /* gap-2 = 0.5rem */
+  font-size: 0.875rem;            /* text-sm */
+  font-weight: 500;
+  color: var(--foreground);
+  opacity: 0.8;                   /* text-foreground/80 */
+  transition: color 0.2s ease;
+}
+
+.signature-card:hover .card-cta {
+  color: hsl(var(--gold));
+}
+
+.card-cta span {
+  letter-spacing: 0.025em;        /* tracking-wide */
+}
+
+.card-cta-icon {
+  width: 1rem;                    /* w-4 = 1rem */
+  height: 1rem;
+  transition: transform 0.5s ease;
+}
+
+.signature-card:hover .card-cta-icon {
+  transform: translate(0.125rem, -0.125rem); /* translate-x-0.5 (-y-0.5) */
+}

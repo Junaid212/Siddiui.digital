@@ -1150,7 +1150,7 @@ textarea.error-border{
 /* 13.7. Client Rating Card */
 
 .client-rating-card{
-    background-image: url('/assets/images/dummy-img-600x600.jpg');
+    background-image: url('/assets/images/img/red-bg.webp');
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
@@ -1322,7 +1322,7 @@ textarea.error-border{
 /* 15. Banner Styles */
 
 .banner-home{
-    background-image: url('/assets/images/dummy-img-1920x900.jpg');
+    background-image: url('/assets/images/img/red-bg.webp');
     background-size: cover;
     position: relative;
     background-repeat: no-repeat;

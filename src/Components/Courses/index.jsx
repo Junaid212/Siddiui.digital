@@ -299,8 +299,11 @@ function CoursPage() {
         <div className="grid grid-cols-1 lg-grid-cols-2 gap-32 gap-12">
           <CaseStudyCard
             caseNumber="01"
-            hashtag="#Social Media Management"
-            title="BOOSTING BRAND VISIBILITY: A SOCIAL MEDIA REVAMP SUCCESS STORY"
+            hashtag="These should be treated differently from ordinary course topics because they represent proprietary or signature intellectual assets associated with Mr. Siddiqui’s strategic thinking.
+From Purpose to Profit, DNA for Business 
+AVF
+VDI"
+            title="Signature Frameworks and Flagship Learning Concepts"
             imageUrl="https://i.pinimg.com/736x/dd/5c/60/dd5c606657cc8d9b5095644914825d8d.jpg"
           />
 
@@ -328,12 +331,12 @@ function CaseStudyCard({ caseNumber, hashtag, title, imageUrl }) {
 
       <div className="content">
         {/* Hashtag with pulsing dot */}
+        <h2 className="title animate-slide-up">{title}</h2>
         <div className="hashtag-wrapper">
           <div className="pulse-dot animate-pulse-slow"></div>
           <span className="hashtag animate-slide-down">{hashtag}</span>
         </div>
 
-        <h2 className="title animate-slide-up">{title}</h2>
 
         {/* Image with overlay */}
         <div className="image-container group-image">

@@ -21,6 +21,7 @@ import ConsultantPage from "./Page/Consultant";
 import Questionnaire from "./Page/Questionnaire";
 import PopupPage from "./Page/PopupManager";
 import BlogSection from "./Page/Blogs";
+import Courses from "./Page/Courses";
 // import BookAppointment from "./Page/BookAppointment";
 
 function AppRouters() {
@@ -32,7 +33,7 @@ function AppRouters() {
             <Route path="about" element={<AboutPage />} />
             <Route path="services" element={<ServicePage />} />
             <Route path="book1" element={<SingleServicePage />} />
-            <Route path="courses" element={<PortfolioPage />} />
+            <Route path="course" element={<PortfolioPage />} />
             <Route path="portfolio-detail" element={<SinglePortfolioPage />} />
             <Route path="pricing" element={<PricingPage />} />
             <Route path="team" element={<TeamPage />} />
@@ -50,6 +51,7 @@ function AppRouters() {
             <Route path="buy-book/:id" element={<BuyBookPage />} />
             <Route path="consultation" element={<ConsultantPage />} />
             <Route path="blog-page" element={<BlogSection />} />
+            <Route path="courses" element={<Courses />} />
 
 
         </Routes>

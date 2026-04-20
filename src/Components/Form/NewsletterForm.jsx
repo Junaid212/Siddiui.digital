@@ -90,7 +90,7 @@ const NewsletterForm = () => {
                     </div>
                 </form> */}
                 <div className="cta-container" >
-                                    <Link to="/courses" className="btn btn-secondary-accent ">Contact Us</Link>
+                                    <Link to="/contact" className="btn btn-secondary-accent ">Contact Us</Link>
                                 </div>
             </div>
         </div>

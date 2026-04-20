@@ -57,9 +57,10 @@ const Awards = () => {
   `}</style>
 </div>
 
-                                <p>Awarded as the best teacher in College of Business, Ajman University.</p>
+                                <p>r. Muhammad Q. Siddiqui was recognised as the Best Teacher in the College of Business at Ajman University — one of the UAE's leading institutions and ranked among the top 2.8% of universities worldwide. This award reflects not only teaching excellence but a sustained commitment to student development, intellectual depth, and the transformation of how marketing and business are understood by learners.</p>
                                 <div>
-                                    <a href="#" className="btn btn-accent">Learn More</a>
+                                    <a href="#" className="btn btn-accent">
+Ranked among the top 2.8% of universities worldwide</a>
                                 </div>
                             </div>
                             <div className="about-image-wrapper">

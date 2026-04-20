@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, BookOpen, GraduationCap, CalendarCheck } from "lucide-react";
-import img from "/assets/images/img/Muhammad.Q.Siddiqui-2.webp"
+import img from "/assets/images/img/M.Q.Siddiqui.webp"
 import { useNavigate } from "react-router-dom";
 
 // Helper component to render text with character-by-character animation

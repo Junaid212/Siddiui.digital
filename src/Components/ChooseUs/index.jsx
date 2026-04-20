@@ -16,15 +16,15 @@ const WhyChooseUsSection = () => {
                             </div>
                             <div className="client-rating-card animate-box animated animate__animated" data-animate="animate__zoomIn">
                                 <div className="client-rating-card-content">
-                                    <span>4.9</span>
-                                    <div className="stars">
+                                    <span>39</span>
+                                    {/* <div className="stars">
                                         <i className="fa-solid fa-star"></i>
                                         <i className="fa-solid fa-star"></i>
                                         <i className="fa-solid fa-star"></i>
                                         <i className="fa-solid fa-star"></i>
                                         <i className="fa-solid fa-star"></i>
-                                    </div>
-                                    <h5 className="secondary-accent">Client Ratings</h5>
+                                    </div> */}
+                                    <h5 className="secondary-accent">Years Experience</h5>
                                     {/* <p>Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.</p> */}
                                 </div>
                             </div>
