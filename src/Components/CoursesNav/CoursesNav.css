@@ -1,6 +1,6 @@
 /* CSS variables – adjust to match your theme */
 :root {
-  --background: #ffffff;
+  --background: dark-mode ? #ffffff : #000000;
   --border: #e5e7eb;
   --muted-foreground: #6b7280;
   --foreground: #111827;
@@ -13,7 +13,7 @@
   top: 80px;                        /* offset below the site Navbar */
   z-index: 30;
   backdrop-filter: blur(12px);      /* backdrop-blur-md = 12px blur */
-  background-color: rgba(255, 255, 255, 0.92);
+  background-color: var(--background);
   border-bottom: 1px solid rgba(229, 231, 235, 0.6);
 }
 

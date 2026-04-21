@@ -1430,7 +1430,7 @@ textarea.error-border{
     align-items: center;
     padding: 8px 32px;
     background-color:var(--accent-color-4);
-    color: var(--text-color);
+    color: whitesmoke;
     border-radius: var(--global-border-radius);
     display: flex;
     flex-direction: row;

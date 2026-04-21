@@ -82,7 +82,7 @@ export default function BookConsultation() {
     photo: "https://siddiqui.digital/wp-content/uploads/2021/12/my-pic-8.jpg",
     rating: 4.9,
     reviews: 127,
-    experience: "18+ years",
+    experience: "39 years",
     location: "New York, NY",
     education: "Harvard Business School",
     bio: "Helping entrepreneurs and students unlock their full potential through strategic planning, market analysis, and growth optimization. Specialized in marketing and business management.",
@@ -265,8 +265,8 @@ export default function BookConsultation() {
                     <p className="bc-profile-title">{consultant.title}</p>
 
                     <div className="bc-profile-rating">
-                      <Star className="bc-star" />
-                      <span className="bc-rating-value">{consultant.rating}</span>
+                      {/* <Star className="bc-star" /> */}
+                      {/* <span className="bc-rating-value">{consultant.rating}</span> */}
                       {/* <span className="bc-rating-count">({consultant.reviews} reviews)</span> */}
                     </div>
                   </div>

@@ -1,7 +1,7 @@
 /* CSS variables – adjust to match your theme */
 :root {
   --gold: 40, 80%, 50%;          /* HSL values for gold */
-  --foreground: #111827;
+  --foreground: .dark-mode?  #111827 : #ffffff;
   --muted-foreground: #6b7280;
   /* --font-serif: Georgia, 'Times New Roman', serif;
   --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; */

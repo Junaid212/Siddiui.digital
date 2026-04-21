@@ -19,7 +19,7 @@ export default function Courses() {
 
   return (
     <div className="courses-page">
-        <BannerHome />
+      <BannerHome />
       <CoursesNav categories={CATEGORIES} />
 
       <main className="courses-main">
@@ -56,7 +56,7 @@ export default function Courses() {
       <style>{`
       /* CSS Custom Properties (design tokens) – adjust values to match your theme */
 :root {
-  --background: #ffffff;
+  --background: dark-mode ? #ffffff : #000000;
   --border: #e5e7eb;
   --muted-foreground: #6b7280;
 //   --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;

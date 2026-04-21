@@ -112,7 +112,7 @@ export default function Hero({ onBookConsultation }) {
         /* Hero Section Styles */
         #hero-section {
           position: relative;
-          min-height: 90vh;
+          min-height: 90vh !important;
           display: flex;
           align-items: center;
           overflow: hidden;
@@ -306,7 +306,7 @@ export default function Hero({ onBookConsultation }) {
         }
         
         .stats-grid {
-          margin-top: 3.5rem;
+          margin-top: 4.5rem;
           display: grid;
           grid-template-columns: repeat(3, 1fr);
           gap: 2rem;
@@ -365,8 +365,9 @@ export default function Hero({ onBookConsultation }) {
         }
         
         @media (min-width: 1024px) {
-          .image-container {
+          #image-container {
             justify-content: flex;
+            margin-top: -10rem;
           }
         }
         
@@ -414,7 +415,7 @@ export default function Hero({ onBookConsultation }) {
         @media (min-width: 1024px) {
           .image-frame {
             width: 100%;
-            height: 650px;
+            height: 570px;
           }
         }
         
@@ -573,6 +574,7 @@ export default function Hero({ onBookConsultation }) {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
               className="image-container"
+              id="image-container"
             >
               
               <div className="image-wrapper">
@@ -582,7 +584,7 @@ export default function Hero({ onBookConsultation }) {
                   
                   <img
                     src={img}
-                    alt="Muhammad Siddiqui"
+                    alt="Muhammad Q. Siddiqui"
                     style={{ position: 'relative', zIndex: 1 }}
                   />
                   <div className="image-overlay" />

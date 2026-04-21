@@ -105,7 +105,7 @@ function Sidebar() {
                         <NavLink to="/e_books">E-Book</NavLink>
                     </li>
                     <li>
-                        <NavLink to="/portfolio">Course</NavLink>
+                        <NavLink to="/courses">Course</NavLink>
                     </li>
                     <li>
                         <NavLink to="/consultation">Consultation</NavLink>
