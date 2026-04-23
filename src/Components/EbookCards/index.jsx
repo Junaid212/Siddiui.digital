@@ -129,7 +129,7 @@ const EbookCards = ({ image, title, description, rating, tags, delay = 0, link }
           z-index: 5;
           display: flex;
           flex-direction: column;
-          gap: 0.875rem;
+          gap: 0.1rem;
           padding: 1.75rem;
         }
 
@@ -268,7 +268,7 @@ const EbookCards = ({ image, title, description, rating, tags, delay = 0, link }
           <h3 className="blog-card-title">{title}</h3>
           <p className="blog-card-description">{description}</p>
 
-          <div className="blog-card-footer">
+          {/* <div className="blog-card-footer">
             <div className="blog-card-rating">
               <CircleDollarSign />
               <span className="blog-card-rating-value">{rating} AED</span>
@@ -278,7 +278,7 @@ const EbookCards = ({ image, title, description, rating, tags, delay = 0, link }
                 {tag}
               </span>
             ))}
-          </div>
+          </div> */}
 
           <button onClick={handleButtonClick} className="blog-card-cta">
             Read More
