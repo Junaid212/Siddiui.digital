@@ -20,23 +20,35 @@ export default function SignatureCard({ course, onOpen, index }) {
       <span className="card-top-line" />
 
       <div className="card-inner">
-        <div className="card-header-row">
-          <span className="card-code">{course.code}</span>
-          <span className="card-separator" />
-          <span className="card-label">{course.label}</span>
-        </div>
-
-        <h3 className="card-title">{course.title}</h3>
-
-        {course.subtitle && (
-          <p className="card-subtitle">{course.subtitle}</p>
+        {course.image && (
+          <div className="card-image-container">
+            <img 
+              src={`${import.meta.env.BASE_URL}${course.image.replace(/^\//, '')}`} 
+              alt={course.title} 
+              className="card-image"
+            />
+            <div className="card-image-overlay" />
+          </div>
         )}
+        <div className="card-content-wrapper">
+          <div className="card-header-row">
+            <span className="card-code">{course.code}</span>
+            <span className="card-separator" />
+            <span className="card-label">{course.label}</span>
+          </div>
 
-        <p className="card-description">{course.short}</p>
+          <h3 className="card-title">{course.title}</h3>
 
-        <div className="card-cta">
-          <span>Learn more</span>
-          <ArrowUpRight className="card-cta-icon" />
+          {course.subtitle && (
+            <p className="card-subtitle">{course.subtitle}</p>
+          )}
+
+          <p className="card-description">{course.short}</p>
+
+          <div className="card-cta">
+            <span>Learn more</span>
+            <ArrowUpRight className="card-cta-icon" />
+          </div>
         </div>
       </div>
     </motion.button>

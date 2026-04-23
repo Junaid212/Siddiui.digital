@@ -1,6 +1,9 @@
-import img1 from "/assets/images/img/35.webp";
-import img2 from "/assets/images/img/36.webp";
-import img3 from "/assets/images/img/29.webp";
+import img1 from "/assets/images/img/67.webp";
+import img2 from "/assets/images/img/68.webp";
+import img3 from "/assets/images/img/69.webp";
+import img4 from "/assets/images/img/70.webp";
+import img5 from "/assets/images/img/71.webp";
+import img6 from "/assets/images/img/72.webp";
 
 export const portfoliodata = [
     {
@@ -33,34 +36,34 @@ export const portfoliodata = [
         link: "#",
         speed: "animated-slow"
     },
-    // {
-    //     id: 4,
-    //     image: "/assets/images/dummy-img-600x800.jpg",
-    //     logo: "/assets/images/partner-7-65f90f1bc7da0.webp",
-    //     category: "Price",
-    //     title: "Course4",
-    //     content: "Habitasse curae suscipit fringilla himenaeos dis lectus mattis ultrices. Praesent maximus sollicitudin duis eu sit id curae.",
-    //     link: "#",
-    //     speed: "animated-fast"
-    // },
-    // {
-    //     id: 5,
-    //     image: "/assets/images/dummy-img-600x800.jpg",
-    //     logo: "/assets/images/partner-8-65f90f1847992.webp",
-    //     category: "Analylics and Reporting",
-    //     title: "Audience Insights",
-    //     content: "Habitasse curae suscipit fringilla himenaeos dis lectus mattis ultrices. Praesent maximus sollicitudin duis eu sit id curae.",
-    //     link: "#",
-    //     speed: ""
-    // },
-    // {
-    //     id: 6,
-    //     image: "/assets/images/dummy-img-600x800.jpg",
-    //     logo: "/assets/images/partner-9-65f90f351af88.webp",
-    //     category: "Content Marketing",
-    //     title: "PPC Advertising",
-    //     content: "Habitasse curae suscipit fringilla himenaeos dis lectus mattis ultrices. Praesent maximus sollicitudin duis eu sit id curae.",
-    //     link: "#",
-    //     speed: "animated-slow"
-    // },
+    {
+        id: 4,
+        image: img4,
+        logo: "/assets/images/partner-7-65f90f1bc7da0.webp",
+        category: "Price",
+        title: "Innovation and New Product Development Areas",
+        content: "Generating, evaluating, and transforming ideas into strategically aligned, high-value, customer-focused market solutions.",
+        link: "#",
+        speed: "animated-fast"
+    },
+    {
+        id: 5,
+        image: img5,
+        logo: "/assets/images/partner-8-65f90f1847992.webp",
+        category: "Analylics and Reporting",
+        title: "Analytical and Decision Support Areas",
+        content: "These focus on analysis, simulation, and decision-making support. Business Scenario Analysis and Business Simulation",
+        link: "#",
+        speed: ""
+    },
+    {
+        id: 6,
+        image: img6,
+        logo: "/assets/images/partner-9-65f90f351af88.webp",
+        category: "Content Marketing",
+        title: "Emerging and Cross Functional Areas",
+        content: "Leveraging AI, building professional skills, and advancing through structured, career-focused, growth-oriented learning programs.",
+        link: "#",
+        speed: "animated-slow"
+    },
 ];

@@ -1,8 +1,8 @@
 // Static catalog of learning areas for the Courses page.
 // Not an entity — these are curated offerings, not user data.
-
 export const SIGNATURE_FRAMEWORKS = [
   {
+    image: "/assets/images/img/43.webp",
     code: "SF-101",
     title: "From Purpose to Profit",
     subtitle: "A Conceptual Journey into the DNA of Business",
@@ -13,6 +13,7 @@ export const SIGNATURE_FRAMEWORKS = [
       "This flagship learning concept is designed as a conceptual journey into the deeper logic of business, beginning with purpose and moving toward value creation, strategy, and meaningful outcomes. It is suitable for visitors who want a broader and more integrated view of business and marketing rather than a narrow skills-based course. The learning area is expected to appeal to those interested in big-picture thinking, intellectual depth, and understanding how purpose, direction, and value creation connect over time.",
   },
   {
+    image: "/assets/images/img/44.webp",
     code: "SF-102",
     title: "AVF",
     subtitle: "Adaptive Value Framework",
@@ -23,6 +24,7 @@ export const SIGNATURE_FRAMEWORKS = [
       "This learning area introduces a signature strategic framework centered on adaptability, value creation, and intelligent alignment across marketing and business decisions. It is suitable for learners who want to think beyond routine tactics and understand how different parts of business and marketing can be connected more coherently. Visitors exploring this area should understand that it is intended for those interested in broader strategic thinking, clearer alignment, and a more structured approach to value creation.",
   },
   {
+    image: "/assets/images/img/45.webp",
     code: "SF-103",
     title: "VDI",
     subtitle: "Value Drift Index",
@@ -42,6 +44,7 @@ export const CATEGORIES = [
     tagline: "Foundational categories shaping long-term direction and value.",
     courses: [
       {
+        image: "/assets/images/img/46.webp",
         code: "MS-201",
         title: "Strategic Marketing",
         short:
@@ -50,6 +53,7 @@ export const CATEGORIES = [
           "This learning area focuses on how marketing contributes to long term direction, competitive advantage, and sustainable growth rather than being reduced to promotion alone. It is suitable for learners who want to understand the strategic role of marketing in business performance and decision making. Visitors should expect a perspective that links market understanding, positioning, value creation, and purposeful strategic action.",
       },
       {
+        image: "/assets/images/img/47.webp",
         code: "MS-202",
         title: "Digital Marketing for Marketers",
         short:
@@ -58,6 +62,7 @@ export const CATEGORIES = [
           "This learning area explores digital tools, platforms, and channels from a marketing perspective rather than treating them only as technical tools or platform functions. It is suitable for learners who want to understand how digital marketing supports visibility, engagement, performance, and business goals in an integrated and strategically meaningful way. Visitors should expect emphasis on marketing judgment, customer value, positioning, and purposeful application rather than purely technical instruction.",
       },
       {
+        image: "/assets/images/img/48.webp",
         code: "MS-203",
         title: "Branding",
         short:
@@ -66,6 +71,7 @@ export const CATEGORIES = [
           "This learning area examines branding as the disciplined shaping of value, meaning, trust, and differentiation over time. It is suitable for those who want to understand how strong brands are built and sustained beyond surface level design or communication. Visitors should expect a perspective that connects brand identity to positioning, perception, relevance, and strategic business value.",
       },
       {
+        image: "/assets/images/img/49.webp",
         code: "MS-204",
         title: "Social Media Marketing",
         short:
@@ -74,6 +80,7 @@ export const CATEGORIES = [
           "This learning area focuses on the strategic use of social platforms for awareness, engagement, community building, and growth. It is suitable for learners who want to understand not only how platforms work, but how social media activity can be connected to wider marketing and business objectives. Visitors should expect a more structured and purposeful view of social media, including where relevant the growing role of AI in content support, audience understanding, and decision making, rather than short term content tactics alone.",
       },
       {
+        image: "/assets/images/img/50.webp",
         code: "MS-205",
         title: "Marketing Research & Consumer Insights",
         short:
@@ -82,6 +89,7 @@ export const CATEGORIES = [
           "This learning area is designed around the role of market intelligence and consumer understanding in stronger decision making. It is suitable for those who want to improve their ability to gather, interpret, and use information in support of business and marketing choices. Visitors should expect emphasis on meaningful insight, not just data collection, and on using research, analytics, and where relevant AI supported analysis to reduce uncertainty and improve relevance.",
       },
       {
+        image: "/assets/images/img/51.webp",
         code: "MS-206",
         title: "Advertising & Promotion",
         short:
@@ -90,6 +98,7 @@ export const CATEGORIES = [
           "This learning area examines how promotional tools and communication strategies influence awareness, persuasion, and action as part of a larger strategic system. It is suitable for learners who want to understand where advertising fits within broader market and value creation goals. Visitors should expect more than message creation alone, with attention to purpose, audience, context, alignment, and where relevant the role of AI in idea generation, targeting, testing, and performance improvement.",
       },
       {
+        image: "/assets/images/img/52.webp",
         code: "MS-207",
         title: "Pricing Strategy",
         short:
@@ -98,6 +107,7 @@ export const CATEGORIES = [
           "This learning area explores pricing as a strategic expression of value, positioning, competitiveness, and profitability. It is suitable for those who want to understand how pricing decisions shape customer perception and business outcomes. Visitors should expect a perspective that goes beyond calculations alone and considers strategic fit, market context, and long term implications.",
       },
       {
+        image: "/assets/images/img/53.webp",
         code: "MS-208",
         title: "Business Management & Strategy",
         short:
@@ -114,6 +124,7 @@ export const CATEGORIES = [
     tagline: "Selling, customer engagement, and growth in modern contexts.",
     courses: [
       {
+        image: "/assets/images/img/54.webp",
         code: "SD-301",
         title: "Personal Selling",
         short:
@@ -122,6 +133,7 @@ export const CATEGORIES = [
           "This learning area focuses on the principles and practices of effective relationship based selling, where trust, value, and relevance matter deeply. It is suitable for learners who want to strengthen their understanding of one to one selling in a thoughtful and professional manner. Visitors should expect an approach shaped by substantial real world selling experience, going beyond technique to include relationship quality, customer understanding, and purposeful engagement.",
       },
       {
+        image: "/assets/images/img/55.webp",
         code: "SD-302",
         title: "Social Selling",
         short:
@@ -130,6 +142,7 @@ export const CATEGORIES = [
           "This learning area explores how digital platforms and online interactions can support trust building, prospecting, and sales effectiveness. It is suitable for those who want to understand selling in a more contemporary environment where relationships and visibility often develop online. Visitors should expect a perspective shaped by substantial real world selling experience, connecting digital presence, relationship quality, long term value, and where relevant the growing influence of AI supported selling tools and insight.",
       },
       {
+        image: "/assets/images/img/56.webp",
         code: "SD-303",
         title: "Sales & Customer Relationship Management",
         short:
@@ -138,6 +151,7 @@ export const CATEGORIES = [
           "This learning area examines how sales systems and customer relationships contribute to retention, loyalty, and sustainable business performance. It is suitable for visitors who want to understand not only how to acquire customers, but also how to maintain stronger long term relationships. Learners should expect an integrated view of sales, service, customer value, and organizational effectiveness.",
       },
       {
+        image: "/assets/images/img/57.webp",
         code: "SD-304",
         title: "Entrepreneurship & SME Development",
         short:
@@ -154,6 +168,7 @@ export const CATEGORIES = [
     tagline: "Ideation, evaluation, and the shaping of market offerings.",
     courses: [
       {
+        image: "/assets/images/img/58.webp",
         code: "IN-401",
         title: "Idea Development",
         short:
@@ -162,6 +177,7 @@ export const CATEGORIES = [
           "This learning area explores how ideas can be generated, shaped, and refined in ways that are strategically relevant and value creating. It is suitable for those who want to strengthen the quality of their thinking before moving into action. Visitors should expect a structured and reflective approach to developing better ideas rather than relying only on inspiration.",
       },
       {
+        image: "/assets/images/img/59.webp",
         code: "IN-402",
         title: "Idea Screening",
         short:
@@ -170,6 +186,7 @@ export const CATEGORIES = [
           "This learning area focuses on how ideas are evaluated before significant time, effort, and resources are committed. It is suitable for learners who want to improve judgment and avoid weak or misaligned initiatives. Visitors should expect a more disciplined way of assessing potential, relevance, and fit before moving forward.",
       },
       {
+        image: "/assets/images/img/60.webp",
         code: "IN-403",
         title: "New Product Development",
         short:
@@ -178,6 +195,7 @@ export const CATEGORIES = [
           "This learning area examines how ideas are transformed into meaningful market offerings through strategic alignment, customer understanding, and value creation. It is suitable for those who want to understand the journey from concept to offering in a more integrated way. Visitors should expect attention to both innovation and market relevance.",
       },
       {
+        image: "/assets/images/img/61.webp",
         code: "IN-404",
         title: "Value Frontier",
         short:
@@ -194,6 +212,7 @@ export const CATEGORIES = [
     tagline: "Analysis, simulation, and sharper decision-making.",
     courses: [
       {
+        image: "/assets/images/img/62.webp",
         code: "AD-501",
         title: "Business Scenario Analysis",
         short:
@@ -202,6 +221,7 @@ export const CATEGORIES = [
           "This learning area focuses on evaluating possible business situations in order to support more informed strategic choices. It is suitable for visitors who want to improve their ability to think ahead, assess alternatives, and make better decisions under uncertainty. Learners should expect a practical but thoughtful approach to analysis and judgment.",
       },
       {
+        image: "/assets/images/img/63.webp",
         code: "AD-502",
         title: "Business Simulation",
         short:
@@ -218,6 +238,7 @@ export const CATEGORIES = [
     tagline: "Modern, interdisciplinary learning areas for evolving contexts.",
     courses: [
       {
+        image: "/assets/images/img/64.webp",
         code: "EX-601",
         title: "AI in Marketing and Education",
         short:
@@ -226,6 +247,7 @@ export const CATEGORIES = [
           "This learning area explores the growing role of artificial intelligence in teaching, learning, decision making, and market effectiveness. It is suitable for visitors who want to understand AI not only as a tool, but as a strategic enabler with opportunities and limitations. Learners should expect a balanced perspective that connects innovation with practical relevance.",
       },
       {
+        image: "/assets/images/img/65.webp",
         code: "EX-602",
         title: "Professional Development & Career Skills",
         short:
@@ -234,6 +256,7 @@ export const CATEGORIES = [
           "This learning area focuses on practical capabilities that support professional growth, confidence, and meaningful contribution in the workplace. It is suitable for learners who want to strengthen employability, judgment, communication, and broader professional effectiveness. Visitors should expect relevance to real career development rather than abstract advice alone.",
       },
       {
+        image: "/assets/images/img/66.webp",
         code: "EX-603",
         title: "Academic & Executive Learning Programs",
         short:

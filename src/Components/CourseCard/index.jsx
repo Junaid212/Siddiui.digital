@@ -15,14 +15,27 @@ export default function CourseCard({ course, onOpen, index }) {
       whileHover={{ y: -3 }}
       className="course-card"
     >
-      <div className="card-header">
-        <span className="card-code">{course.code}</span>
-        <ArrowRight className="card-arrow" />
+      {course.image && (
+        <div className="card-image-container">
+          <img 
+            src={`${import.meta.env.BASE_URL}${course.image.replace(/^\//, '')}`} 
+            alt={course.title} 
+            className="card-image"
+          />
+          <div className="card-image-overlay" />
+        </div>
+      )}
+      
+      <div className="card-content-wrapper">
+        <div className="card-header">
+          <span className="card-code">{course.code}</span>
+          <ArrowRight className="card-arrow" />
+        </div>
+
+        <h4 className="card-title">{course.title}</h4>
+
+        <p className="card-description">{course.short}</p>
       </div>
-
-      <h4 className="card-title">{course.title}</h4>
-
-      <p className="card-description">{course.short}</p>
     </motion.button>
   );
 }

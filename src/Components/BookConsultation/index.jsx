@@ -85,7 +85,7 @@ export default function BookConsultation() {
     experience: "39 years",
     location: "New York, NY",
     education: "Harvard Business School",
-    bio: "Helping entrepreneurs and students unlock their full potential through strategic planning, market analysis, and growth optimization. Specialized in marketing and business management.",
+    bio: "Empowering entrepreneurs and ambitious students to realize their highest potential through strategic thinking, data-driven market insights, and scalable growth frameworks. With a strong foundation in business management and modern marketing, I craft intelligent strategies that transform ideas into sustainable success.",
     specialties: ["Business Analyst", "Marketeer", "Educationist", "Motivational Speaker", "Researcher", "Entrepreneur"],
     stats: { clients: "15+", sessions: "200+", satisfaction: "98%" }
   };
@@ -140,7 +140,7 @@ export default function BookConsultation() {
     if (!date) return true;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    return date < today || date.getDay() === 0 || date.getDay() === 6;
+    return date < today ||  date.getDay() === 6;
   };
 
   const formatDate = (date) => {
