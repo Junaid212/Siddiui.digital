@@ -30,7 +30,7 @@ const Footer = () => {
                                         <li>
                                             <div className="d-flex flex-row align-items-center gspace-2 secondary-accent">
                                                 <i className="fa-solid fa-envelope-open-text "></i>
-                                                <span>example@domain.com</span>
+                                                <span>info@siddiqui.digital</span>
                                             </div>
                                         </li>
                                         <li>

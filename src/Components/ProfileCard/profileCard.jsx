@@ -44,7 +44,7 @@ export default function ProfileCard() {
           Head of Marketing, Ajman University
         </p>
       </div>
-      <button style={{
+      {/* <button style={{
         display: 'flex',
         alignItems: 'center',
         gap: '0.25rem',
@@ -59,7 +59,7 @@ export default function ProfileCard() {
       }}>
         View more
         <ChevronRight style={{ width: '0.875rem', height: '0.875rem' }} />
-      </button>
+      </button> */}
     </div>
   );
 }

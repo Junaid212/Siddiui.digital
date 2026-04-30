@@ -27,7 +27,7 @@ const ContactSection = () =>{
                                         <i className="fa-solid fa-envelope"></i>
                                     </div>
                                     <span>Mail Address</span>
-                                    <p className="description" style={{fontSize: '14px', textAlign: 'center'}}>example@domain.com</p>
+                                    <p className="description" style={{fontSize: '14px', textAlign: 'center'}}>info@siddiqui.digital</p>
                                 </div>
                             </div>
                             <div className="col">

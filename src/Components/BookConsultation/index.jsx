@@ -17,7 +17,7 @@ export default function BookConsultation() {
   const [signingIn, setSigningIn] = useState(false);
   const [bookedSlots, setBookedSlots] = useState([]);
 
-  const API_BASE = "http://localhost:5000/api";
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
   // Auth logic (shared pattern)
   useEffect(() => {
@@ -64,7 +64,7 @@ export default function BookConsultation() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: window.location.href,
+          redirectTo: window.location.origin,
         },
       });
       if (error) throw error;
@@ -79,7 +79,7 @@ export default function BookConsultation() {
   const consultant = {
     name: "Muhammad.Q.Siddiqui",
     title: " Head of Marketing, Ajman University",
-    photo: "https://siddiqui.digital/wp-content/uploads/2021/12/my-pic-8.jpg",
+    photo: "/assets/images/img/Siddiqui.webp",
     rating: 4.9,
     reviews: 127,
     experience: "39 years",
