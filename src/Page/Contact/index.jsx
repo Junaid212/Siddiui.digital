@@ -6,7 +6,7 @@ import HeadTitle from "../../Components/Head/HeadTitle";
 const ContactPage = () => {
     return(
         <>
-            <HeadTitle title="Contact Us - Aspire - SEO & Digital Marketing Agency" />
+            <HeadTitle title="Siddiqui.Digital"/>
             <BannerInnerSection title="Contact Us" currentPage="Contact Us" />
             <ContactSection />
         </>

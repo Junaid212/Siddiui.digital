@@ -14,7 +14,7 @@ import Awards from "../../Components/Awards/awards";
 const AboutPage = () => {
     return(
         <>
-            <HeadTitle title="Siddiqui"/>
+            <HeadTitle title="Siddiqui.Digital"/>
             <BannerInnerSection title="About Siddiqui" currentPage="About Siddiqui" />
             {/* <PartnersipSection /> */}
             <section className="seo-content container" style={{display:'none'}}>

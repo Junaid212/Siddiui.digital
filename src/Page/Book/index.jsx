@@ -7,6 +7,7 @@ export default function BookPage() {
   
   return (
     <>
+    <HeadTitle title="Siddiqui.Digital"/>
     <BannerInnerSection title="Featured Books" currentPage="Books" />
     <Ebooks />
     </>

@@ -6,7 +6,7 @@ import HeadTitle from "../../Components/Head/HeadTitle";
 export default function BuyBookPage() {
     return (
         <>
-            <HeadTitle title="Buy Book" />
+            <HeadTitle title="Siddiqui.Digital"/>
             <BannerInnerSection title="Buy Book" currentPage="Checkout" />
             <BuyBookCheckout />
         </>

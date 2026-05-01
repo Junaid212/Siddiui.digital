@@ -83,11 +83,11 @@ function Sidebar() {
             <div ref={sidebarRef} className="sidebar">
                 <div className="sidebar-header">
                     <div className="logo">
-                        <img
+                        {/* <img
                             src="/assets/images/logo.webp"
                             className="img-fluid logo"
                             alt="Logo"
-                        />
+                        /> */}
                     </div>
                     <button className="close-btn">
                         <span>X</span>

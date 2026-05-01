@@ -6,7 +6,7 @@ import HeadTitle from "../../Components/Head/HeadTitle";
 const ConsultantPage= () => {
     return(
         <>
-            <HeadTitle title="Consultant "/>
+            <HeadTitle title="Siddiqui.Digital "/>
             {/* <BannerInnerSection title="Free Consultation" currentPage="Consultant" /> */}
             <BookConsultation />
         </>
