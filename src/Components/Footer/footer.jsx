@@ -84,7 +84,7 @@ const Footer = () => {
                                 Siddiqui.digital © 2026 All Rights Reserved. <a href="https://brightmedia.tech" target="_blank" rel="noopener noreferrer" style={{color:'#C80808'}}>Bright Media</a>
                             </span>
                             <div className="social-footer" >
-                                <a href="#" className="social-item accent-color" id="accent-color">
+                                {/* <a href="#" className="social-item accent-color" id="accent-color">
                                     <i className="fa-brands fa-facebook-f"></i>
                                 </a>
                                 <a href="#" className="social-item accent-color">
@@ -98,7 +98,7 @@ const Footer = () => {
                                 </a>
                                 <a href="#" className="social-item accent-color">
                                     <i className="fa-brands fa-youtube"></i>
-                                </a>
+                                </a> */}
                             </div>
                         </div>
                     </div>
