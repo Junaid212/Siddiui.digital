@@ -513,7 +513,7 @@ export default function Hero({ onBookConsultation }) {
             >
               <div className="badge">
                 <span className="badge-dot" />
-                <span className="badge-text">Marketing Consultant · Educator · Advisor </span>
+                <span className="badge-text">Marketing Thinker · Educator · Advisor </span>
               </div>
               
               <h1 className="hero-title">
@@ -530,19 +530,19 @@ export default function Hero({ onBookConsultation }) {
 </p>
               
               <p className="hero-description">
-  Accelerate your business with expert marketing consultation, industry-focused courses, and powerful e-books designed to transform strategy into measurable growth.
+  strategic thinking for creating value, strengthening relevance and making more purposeful marketing and business decisions.
 </p>
               
               <div className="button-group">
                 <button onClick={() => navigate("/consultation", { state: { type: "consultation" } })} className="btn-primary">
-                  Book Free Consultation
+                  Explore My Thinking
                   <ArrowRight className="icon-arrow" />
                 </button>
                 <button
                   className="btn-outline"
                   onClick={() => navigate("/e_books", { state: { type: "ebook" } })}
                 >
-                  Get E-Books
+                  Discover Learning
                 </button>
               </div>
 

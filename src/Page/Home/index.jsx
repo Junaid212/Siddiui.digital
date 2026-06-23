@@ -14,6 +14,9 @@ import AchievementSection from "../../Components/Achievement";
 import Hero from "../../Components/Hero/hero";
 import HeroThree from "../../Components/HeroThree/heroThree";
 import EbookCardPage from "../../Components/EbookCardPage";
+import PricingPage from "../Pricing";
+import PricingSection from "../../Components/Pricing";
+import SignatureFrameworks from "../../Components/SignatureFrameworks";
 
 const HomePage = () => {
     return(
@@ -24,6 +27,8 @@ const HomePage = () => {
             {/* <ModalVideoSection /> */}
             {/* <PartnersipSection /> */}
             <AboutSection />
+            <PricingSection/>
+            <SignatureFrameworks/>
             {/* <ServiceSection /> */}
             <EbookCardPage/>
             {/* <AchievementSection /> */}

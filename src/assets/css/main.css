@@ -1889,7 +1889,7 @@ textarea.error-border{
 .price-container {
     position: relative;
     overflow: hidden;
-    background-image: url('/assets/images/dummy-img-1920x300.jpg');
+    background-image: url('/assets/images/img/red-bg.webp');
     background-position: center;
     background-size: cover;
     background-repeat: repeat;
@@ -1914,8 +1914,8 @@ textarea.error-border{
     position: absolute;
     top: 0;
     left: 0;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    /* backdrop-filter: blur(10px); */
+    /* -webkit-backdrop-filter: blur(10px); */
     border-radius: var(--global-border-radius);
     border: none;
     z-index: 0;
@@ -1924,7 +1924,7 @@ textarea.error-border{
 .price-container::before{
     content: '';
     position: absolute;
-    background-color: var(--primary);
+    /* background-color: var(--primary); */
     opacity: 0.3;
     inset: 0;
     top: 0;

@@ -54,6 +54,22 @@ export const api = {
             res.json()
         ),
 
+    // Submit full questionnaire response (profile + all answers)
+    submitResponse: (data) =>
+        fetch(`${API_BASE}/questionnaire/submit`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        }).then((res) => res.json()),
+
+    // Get analytics
+    getQuestionnaireAnalytics: () =>
+        fetch(`${API_BASE}/questionnaire/analytics`).then((res) => res.json()),
+
+    // Get live aggregated results from JSONB (no seeded questions needed)
+    getLiveResults: () =>
+        fetch(`${API_BASE}/questionnaire/results-live`).then((res) => res.json()),
+
     // Blog Comments
     getComments: (blogId) =>
         fetch(`${API_BASE}/blog/comments/${blogId}`).then((res) => res.json()),

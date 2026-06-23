@@ -33,7 +33,7 @@ const TeamSection = () => {
     992: { slidesPerView: 4 },
   }}
 >
-  {teamdata.slice(0, 16).map((item) => (
+  {teamdata.slice(0, 17).map((item) => (
     <SwiperSlide key={item.id}>
       <TeamCard {...item} />
     </SwiperSlide>

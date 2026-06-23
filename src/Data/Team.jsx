@@ -14,6 +14,7 @@ import img13 from "/assets/images/img/19.webp"
 import img14 from "/assets/images/img/20.webp"
 import img15 from "/assets/images/img/21.webp"
 import img16 from "/assets/images/img/22.webp"
+import img17 from "/assets/images/img/77.webp"
 
 export const teamdata = [
     {
@@ -154,6 +155,15 @@ export const teamdata = [
     {
         id: 16,
         image: img16,
+        name: "Bruce Parker",
+        designation: "Co-Founder",
+        linkedin: "https://www.linkedin.com/",
+        twitter: "https://x.com/",
+        behance: "https://www.behance.net/"
+    },
+    {
+        id: 17,
+        image: img17,
         name: "Bruce Parker",
         designation: "Co-Founder",
         linkedin: "https://www.linkedin.com/",
