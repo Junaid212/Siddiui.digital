@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Questionnaire API Test</title>
+    <style>
+        body { font-family: monospace; max-width: 900px; margin: 40px auto; padding: 20px; background: #111; color: #eee; }
+        h1 { color: #ef4444; }
+        h2 { color: #f97316; border-bottom: 1px solid #333; padding-bottom: 6px; }
+        pre { background: #1e1e1e; padding: 16px; border-radius: 8px; overflow-x: auto; font-size: 13px; line-height: 1.5; }
+        button { background: #ef4444; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 14px; margin: 6px 4px; }
+        button:hover { background: #dc2626; }
+        .ok { color: #22c55e; }
+        .err { color: #ef4444; }
+        .warn { color: #f97316; }
+        #log { background: #0a0a0a; padding: 16px; border-radius: 8px; min-height: 100px; white-space: pre-wrap; font-size: 12px; line-height: 1.6; border: 1px solid #333; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Questionnaire API Diagnostic</h1>
+    
+    <h2>Step 1: Check current data</h2>
+    <button onclick="checkLiveResults()">Check Live Results (main backend)</button>
+    <button onclick="checkAnalytics()">Check Analytics (main backend)</button>
+    
+    <h2>Step 2: Submit test response</h2>
+    <button onclick="submitTest()">Submit Test Response</button>
+    <button onclick="submitTest(true)">Submit Without New Columns (fallback)</button>
+    
+    <h2>Step 3: Verify data saved</h2>
+    <button onclick="checkLiveResults()">Re-check Live Results</button>
+    
+    <h2>Output Log</h2>
+    <div id="log">Click buttons above to test...</div>
+
+    <script>
+        const BACKEND = 'http://localhost:5000/api';
+        const log = document.getElementById('log');
+        
+        function appendLog(text, type = '') {
+            const colors = { ok: '#22c55e', err: '#ef4444', warn: '#f97316', info: '#60a5fa' };
+            const color = colors[type] || '#eee';
+            log.innerHTML += `\n<span style="color:${color}">${escHtml(text)}</span>`;
+            log.scrollTop = log.scrollHeight;
+        }
+        
+        function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+        
+        async function checkLiveResults() {
+            appendLog('\n=== CHECK: /questionnaire/results-live ===', 'info');
+            try {
+                const r = await fetch(`${BACKEND}/questionnaire/results-live`);
+                const d = await r.json();
+                appendLog(`Status: ${r.status}`, r.ok ? 'ok' : 'err');
+                appendLog(`Total participants: ${d.total_participants}`, d.total_participants > 0 ? 'ok' : 'warn');
+                appendLog(`Questions: ${d.questions?.length || 0}`, 'info');
+                appendLog(JSON.stringify(d, null, 2), 'info');
+            } catch(e) {
+                appendLog(`FETCH ERROR: ${e.message}`, 'err');
+            }
+        }
+        
+        async function checkAnalytics() {
+            appendLog('\n=== CHECK: /questionnaire/analytics ===', 'info');
+            try {
+                const r = await fetch(`${BACKEND}/questionnaire/analytics`);
+                const d = await r.json();
+                appendLog(`Status: ${r.status}`, r.ok ? 'ok' : 'err');
+                appendLog(`Total submissions: ${d.total_submissions}`, d.total_submissions > 0 ? 'ok' : 'warn');
+                appendLog(JSON.stringify(d, null, 2), 'info');
+            } catch(e) {
+                appendLog(`FETCH ERROR: ${e.message}`, 'err');
+            }
+        }
+        
+        async function submitTest(fallback = false) {
+            appendLog(`\n=== SUBMIT: Test response (fallback=${fallback}) ===`, 'info');
+            const payload = {
+                profile: 'Marketing Professional',
+                answers: {
+                    q1: { option_text: 'Enable sustainable value creation and strategic decision-making', question_text: 'What is the primary purpose of marketing?', score: 3, option_index: 4 },
+                    q2: { option_text: 'An outcome of value creation', question_text: 'Profit is primarily:', score: 3, option_index: 3 },
+                    q3: { option_text: 'Understand their purpose, create value, adapt to change, and make better strategic decisions', question_text: 'Marketing should primarily help organizations:', score: 3, option_index: 3 }
+                },
+                session_id: 'test_' + Date.now()
+            };
+            
+            try {
+                const r = await fetch(`${BACKEND}/questionnaire/submit`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const d = await r.json();
+                appendLog(`Status: ${r.status}`, r.ok ? 'ok' : 'err');
+                if (r.ok) {
+                    appendLog(`SUCCESS! Submission ID: ${d.submission_id}`, 'ok');
+                    appendLog('Response: ' + JSON.stringify(d, null, 2), 'ok');
+                } else {
+                    appendLog(`ERROR: ${d.error}`, 'err');
+                    if (d.error && d.error.includes('42703')) {
+                        appendLog('\n⚠️  COLUMN MISSING! You MUST run the ALTER TABLE SQL in Supabase SQL Editor:', 'warn');
+                        appendLog('ALTER TABLE questionnaire_submissions ADD COLUMN IF NOT EXISTS total_score INTEGER NOT NULL DEFAULT 0;', 'warn');
+                        appendLog('ALTER TABLE questionnaire_submissions ADD COLUMN IF NOT EXISTS perception_category TEXT;', 'warn');
+                    }
+                }
+            } catch(e) {
+                appendLog(`FETCH ERROR: ${e.message}`, 'err');
+            }
+        }
+    </script>
+</body>
+</html>
