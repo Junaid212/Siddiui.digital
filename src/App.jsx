@@ -12,7 +12,7 @@ import PopupManager from "./Page/PopupManager";
 const App = () => {
     return (
         <Router>
-            <CustomCursor />
+            {/* <CustomCursor /> */}
             <Navbar />
             <Sidebar />
             <ModalVideoProvider>

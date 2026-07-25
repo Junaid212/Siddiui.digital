@@ -294,18 +294,23 @@ const Navbar = () => {
                                         </NavLink>
                                     </li>
                                     <li className="nav-item">
-                                        <NavLink to="/e_books" className="nav-link" onClick={closeMenu}>
-                                            E-Books
+                                        <NavLink to="/courses" className="nav-link" onClick={closeMenu}>
+                                            Frameworks
                                         </NavLink>
                                     </li>
                                     <li className="nav-item">
-                                        <NavLink to="/courses" className="nav-link" onClick={closeMenu}>
-                                            Course
+                                        <NavLink to="/e_books" className="nav-link" onClick={closeMenu}>
+                                            Learning
+                                        </NavLink>
+                                    </li>
+                                    <li className="nav-item">
+                                        <NavLink to="/blog-page" className="nav-link" >
+                                            Blog
                                         </NavLink>
                                     </li>
                                     <li className="nav-item">
                                         <NavLink to="/consultation" className="nav-link" onClick={closeMenu}>
-                                            Consultation
+                                            Advisory
                                         </NavLink>
                                     </li>
 
@@ -382,11 +387,6 @@ const Navbar = () => {
                                             <li><NavLink to="#" className="dropdown-item" onClick={closeMenu}>Single Post</NavLink></li>
                                         </ul>
                                     </li> */}
-                                    <li className="nav-item">
-                                        <NavLink to="/blog-page" className="nav-link" >
-                                            Blog
-                                        </NavLink>
-                                    </li>
                                     <li className="nav-item">
                                         <NavLink to="/contact" className="nav-link" onClick={closeMenu}>
                                             Contact

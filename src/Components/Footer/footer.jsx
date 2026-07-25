@@ -36,7 +36,7 @@ const Footer = () => {
                                         <li>
                                             <div className="d-flex flex-row align-items-center gspace-2 secondary-accent">
                                                 <i className="fa-solid fa-phone"></i>
-                                                <span>+123 123 123</span>
+                                                <span><a href="tel:+971545681182">+971 54 568 1182</a></span>
                                             </div>
                                             </li>
                                     </ul>
@@ -45,9 +45,9 @@ const Footer = () => {
                                     <h4 className="accent-color">Quick Links</h4>
                                     <ul className="footer-list no-dark">
                                         <li><Link to="/about">About</Link></li>
-                                        <li><Link to="/e_books">E-Book</Link></li>
-                                        <li><Link to="/courses">Course</Link></li>
-                                        <li><Link to="/consultation">Consultation</Link></li>
+                                        <li><Link to="/e_books">Learnings</Link></li>
+                                        <li><Link to="/courses">Frameworks</Link></li>
+                                        <li><Link to="/consultation">Advisory</Link></li>
                                         <li><Link to="/contact">Contact</Link></li>
                                     </ul>
                                 </div>

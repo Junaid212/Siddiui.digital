@@ -102,13 +102,16 @@ function Sidebar() {
                         <NavLink to="/about">About Us</NavLink>
                     </li>
                     <li>
-                        <NavLink to="/e_books">E-Book</NavLink>
+                        <NavLink to="/e_books">Frameworks</NavLink>
                     </li>
                     <li>
-                        <NavLink to="/courses">Course</NavLink>
+                        <NavLink to="/courses">Learning</NavLink>
+                    </li>
+                    <li className="below-dropdown">
+                        <NavLink to="/blog-page">Blog</NavLink>
                     </li>
                     <li>
-                        <NavLink to="/consultation">Consultation</NavLink>
+                        <NavLink to="/consultation">Advisory</NavLink>
                     </li>
 
                     {/* <li className="sidebar-dropdown">
@@ -160,9 +163,7 @@ function Sidebar() {
                         </ul>
                     </li> */}
 
-                    <li className="below-dropdown">
-                        <NavLink to="/blog-page">Blog</NavLink>
-                    </li>
+                    
                     <li className="below-dropdown">
                         <NavLink to="/contact">Contact Us</NavLink>
                     </li>

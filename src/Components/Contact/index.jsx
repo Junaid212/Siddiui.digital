@@ -18,7 +18,7 @@ const ContactSection = () =>{
                                         <i className="fa-solid fa-phone"></i>
                                     </div>
                                     <span>Phone Number</span>
-                                    <p className="description" style={{fontSize: '14px', textAlign: 'center'}}>+123 123 123</p>
+                                    <p className="description" style={{fontSize: '14px', textAlign: 'center'}}>+971 54 568 1182</p>
                                 </div>
                             </div>
                             <div className="col">
