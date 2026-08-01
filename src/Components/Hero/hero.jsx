@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 // Helper component to render text with character-by-character animation
 const AnimatedCharacters = ({ text, isAccent = false }) => {
   const characters = text.split("");
-  
+
   return (
     <>
       {characters.map((char, index) => (
@@ -37,7 +37,7 @@ export default function Hero({ onBookConsultation }) {
   useEffect(() => {
     const checkTheme = () => {
       const isDarkMode = document.documentElement.getAttribute("data-theme") === "dark" ||
-                        document.body.classList.contains("dark-mode");
+        document.body.classList.contains("dark-mode");
       setDarkMode(isDarkMode);
     };
 
@@ -47,8 +47,8 @@ export default function Hero({ onBookConsultation }) {
     // Create a MutationObserver to watch for theme changes
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
-        if (mutation.attributeName === 'data-theme' || 
-            mutation.attributeName === 'class') {
+        if (mutation.attributeName === 'data-theme' ||
+          mutation.attributeName === 'class') {
           checkTheme();
         }
       });
@@ -56,7 +56,7 @@ export default function Hero({ onBookConsultation }) {
 
     // Observe the html element for data-theme changes
     observer.observe(document.documentElement, { attributes: true });
-    
+
     // Also observe body for class changes
     observer.observe(document.body, { attributes: true });
 
@@ -124,10 +124,10 @@ export default function Hero({ onBookConsultation }) {
           position: absolute;
           inset: 0;
           opacity: 0.03;
-          background-image: ${darkMode 
-            ? `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-            : `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-          };
+          background-image: ${darkMode
+          ? `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+          : `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+        };
         }
         
         .accent-shape-1 {
@@ -379,8 +379,8 @@ export default function Hero({ onBookConsultation }) {
           position: absolute;
           // inset: -1rem;
           // background: ${darkMode ? 'linear-gradient(135deg, rgba(200, 8, 8, 0.1), transparent)'
-            : 'linear-gradient(135deg, rgba(200, 8, 8, 0.05), transparent)'
-          };
+          : 'linear-gradient(135deg, rgba(200, 8, 8, 0.05), transparent)'
+        };
           // border-radius: 1.5rem;
           // filter: blur(20px);
         }
@@ -428,10 +428,10 @@ export default function Hero({ onBookConsultation }) {
         .image-overlay {
           position: absolute;
           inset: 0;
-          // background: ${darkMode 
-          //   ? 'linear-gradient(to top, rgba(0, 0, 0, 0.4), transparent 50%)'
-          //   : 'linear-gradient(to top, rgba(0, 0, 0, 0.1), transparent 50%)'
-          // };
+          // background: ${darkMode
+        //   ? 'linear-gradient(to top, rgba(0, 0, 0, 0.4), transparent 50%)'
+        //   : 'linear-gradient(to top, rgba(0, 0, 0, 0.1), transparent 50%)'
+        // };
         }
         
         .image-caption {
@@ -494,15 +494,15 @@ export default function Hero({ onBookConsultation }) {
                       opacity var(--animation-fast) ease;
         }
       `}</style>
-      
+
       <section className="hero-section aspire-book-page" id="hero-section">
         {/* Subtle grid pattern */}
         <div className="grid-pattern" />
-        
+
         {/* Red accent shapes */}
         <div className="accent-shape-1" />
         <div className="accent-shape-2" />
-        
+
         <div className="hero-container" id="hero-container">
           <div className="hero-grid">
             {/* Left Content */}
@@ -515,9 +515,9 @@ export default function Hero({ onBookConsultation }) {
                 <span className="badge-dot" />
                 <span className="badge-text">Marketing Thinker · Educator · Advisor </span>
               </div>
-              
+
               <h1 className="hero-title">
-                <span style={{display:'none'}}>Marketing Consultant, Courses & Business Growth Solutions</span>
+                <span style={{ display: 'none' }}>Marketing Consultant, Courses & Business Growth Solutions</span>
 
                 <AnimatedCharacters text="Marketing," />
                 <span className="hero-title-accent">
@@ -526,13 +526,13 @@ export default function Hero({ onBookConsultation }) {
                 </span>
               </h1>
               <p style={{ display: "none" }}>
-  marketing consultant, online marketing courses, business strategy training, digital marketing ebooks, marketing mentor, business growth advisor
-</p>
-              
+                marketing consultant, online marketing courses, business strategy training, digital marketing ebooks, marketing mentor, business growth advisor
+              </p>
+
               <p className="hero-description">
-  strategic thinking for creating value, strengthening relevance and making more purposeful marketing and business decisions.
-</p>
-              
+                strategic thinking for creating value, strengthening relevance and making more purposeful marketing and business decisions.
+              </p>
+
               <div className="button-group">
                 <button onClick={() => navigate("/consultation", { state: { type: "consultation" } })} className="btn-primary">
                   Explore My Thinking
@@ -576,12 +576,12 @@ export default function Hero({ onBookConsultation }) {
               className="image-container"
               id="image-container"
             >
-              
+
               <div className="image-wrapper">
                 <div className="image-accent" />
-                
+
                 <div className="image-frame">
-                  
+
                   <img
                     src={img}
                     alt="Muhammad Q. Siddiqui"

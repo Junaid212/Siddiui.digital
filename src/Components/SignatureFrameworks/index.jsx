@@ -1,234 +1,339 @@
-import React, { useRef } from "react";
-import { useScroll, useTransform, motion } from "framer-motion";
-import "./SignatureFrameworks.css";
+/* src/components/SignatureFrameworks.jsx */
+import { useEffect, useRef, useState } from 'react';
+import {
+  Compass,
+  Eye,
+  Target,
+  Sparkles,
+  Users,
+  TrendingUp,
+  DollarSign,
+  Radar,
+  RefreshCw,
+  Layers,
+  Gauge,
+  Heart,
+  Lightbulb,
+  Clock,
+  ShieldCheck,
+  ArrowRight,
+} from 'lucide-react';
+import './SignatureFrameworks.css';
 
-/* ─── Data ─────────────────────────────────────────────── */
-const frameworks = [
-  {
-    id: "A",
-    code: "A",
-    label: "From Purpose to Profit",
-    tagline: "Meaning drives momentum.",
-    description:
-      "A framework showing how meaningful purpose is converted into sustainable business performance. Profit is treated as the outcome of consistent value creation, not the starting point.",
-    visual: ["Purpose", "Vision", "Strategy", "Value Creation", "Customer Impact", "Growth", "Profit"],
-    visualType: "flow",
-    image: "/assets/images/img/74.webp",
-    imageAlt: "Purpose to Profit flow diagram",
-    accent: "#C80808",
-  },
-  {
-    id: "B",
-    code: "AVF",
-    label: "AVF – Adaptive Value Framework",
-    tagline: "Sense. Shape. Scale.",
-    description:
-      "AVF helps organizations continuously sense market change, shape relevant value propositions, and scale successful solutions.",
-    visual: ["Sense", "Shape", "Scale"],
-    visualCenter: "Value System",
-    visualType: "circular",
-    image: "/assets/images/img/75.webp",
-    imageAlt: "AVF circular model diagram",
-    accent: "#C80808",
-  },
-  {
-    id: "C",
-    code: "VDI",
-    label: "VDI – Value Development Index",
-    tagline: "Measure what truly matters.",
-    description:
-      "VDI measures how effectively an organization develops and strengthens value over time through customer relevance, innovation, responsiveness, loyalty, and strategic alignment.",
-    visual: [
-      { label: "Customer Relevance", level: 80 },
-      { label: "Innovation", level: 65 },
-      { label: "Responsiveness", level: 72 },
-      { label: "Loyalty", level: 88 },
-      { label: "Strategic Alignment", level: 70 },
-    ],
-    scale: ["Low", "Moderate", "High"],
-    visualType: "scorecard",
-    image: "/assets/images/img/76.webp",
-    imageAlt: "VDI scorecard dashboard",
-    accent: "#C80808",
-  },
+/* ── data ── */
+const purposeSteps = [
+  { label: 'Purpose', icon: Compass },
+  { label: 'Vision', icon: Eye },
+  { label: 'Strategy', icon: Target },
+  { label: 'Value Creation', icon: Sparkles },
+  { label: 'Customer Impact', icon: Users },
+  { label: 'Growth', icon: TrendingUp },
+  { label: 'Profit', icon: DollarSign },
 ];
 
-/* ─── Small Visuals ─────────────────────────────────────── */
-const FlowVisual = ({ steps }) => (
-  <div className="sf-flow-visual">
-    {steps.map((step, i) => (
-      <React.Fragment key={step}>
-        <span className="sf-flow-node">{step}</span>
-        {i < steps.length - 1 && (
-          <span className="sf-flow-arrow">
-            <svg width="16" height="10" viewBox="0 0 18 10" fill="none">
-              <path d="M1 5H17M17 5L13 1M17 5L13 9"
-                stroke="var(--accent-color)" strokeWidth="1.5"
-                strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </span>
-        )}
-      </React.Fragment>
-    ))}
-  </div>
-);
+const avfCycle = [
+  { label: 'Sense', icon: Radar },
+  { label: 'Shape', icon: RefreshCw },
+  { label: 'Scale', icon: Layers },
+];
 
-const CircularVisual = ({ steps, center }) => (
-  <div className="sf-circular-visual">
-    <div className="sf-circular-ring">
-      {steps.map((step, i) => (
-        <div key={step} className={`sf-circular-step sf-step-${i}`}>
-          <span>{step}</span>
-        </div>
-      ))}
-      <div className="sf-circular-center">{center}</div>
-    </div>
-  </div>
-);
+const vdiMetrics = [
+  { label: 'Customer Relevance', icon: Heart, level: 'High' },
+  { label: 'Innovation', icon: Lightbulb, level: 'Moderate' },
+  { label: 'Responsiveness', icon: Clock, level: 'High' },
+  { label: 'Loyalty', icon: ShieldCheck, level: 'Moderate' },
+  { label: 'Strategic Alignment', icon: Target, level: 'Low' },
+];
 
-const ScorecardVisual = ({ items, scale }) => (
-  <div className="sf-scorecard-visual">
-    <div className="sf-scorecard-scale">
-      {scale.map((s) => <span key={s} className="sf-scale-label">{s}</span>)}
-    </div>
-    <div className="sf-scorecard-bar-bg">
-      <div className="sf-scorecard-bar-fill" />
-    </div>
-    <div className="sf-scorecard-metrics">
-      {items.map((item) => (
-        <div key={item.label} className="sf-metric-item">
-          <span className="sf-metric-label">{item.label}</span>
-          <div className="sf-metric-bar-bg">
-            <div className="sf-metric-bar-fill" style={{ width: `${item.level}%` }} />
-          </div>
-        </div>
-      ))}
-    </div>
-  </div>
-);
+const levelMap = {
+  Low:      { width: '35%' },
+  Moderate: { width: '62%' },
+  High:     { width: '90%' },
+};
 
-/* ─── Individual Animated Card ──────────────────────────── */
-function FrameworkCard({ fw, index, total, scrollYProgress }) {
-  const start = index / total;
-  const end   = (index + 1) / total;
-  const mid   = (start + end) / 2;
-
-  /* entrance: slide up from below */
-  const y = useTransform(
-    scrollYProgress,
-    [start - 0.05, start + 0.08, mid, end - 0.05, end],
-    ["60px",        "0px",        "0px", "-20px",    "-60px"]
-  );
-
-  /* opacity: fade in, hold, fade out */
-  const opacity = useTransform(
-    scrollYProgress,
-    [start - 0.02, start + 0.08, end - 0.07, end],
-    [0,             1,             1,           0]
-  );
-
-  /* subtle scale: slightly smaller when exiting */
-  const scale = useTransform(
-    scrollYProgress,
-    [start, start + 0.08, end - 0.07, end],
-    [0.97,  1,             1,          0.97]
-  );
-
-  /* image parallax: drifts opposite direction */
-  const imgY = useTransform(
-    scrollYProgress,
-    [start, end],
-    ["8%", "-8%"]
-  );
-
+/* ── sub-visuals ── */
+function PurposeFlow() {
   return (
-    <motion.div
-      className="sf-card sf-card-sticky"
-      style={{ y, opacity, scale }}
-    >
-      {/* Progress dot */}
-      {/* <div className="sf-card-dots">
-        {frameworks.map((_, di) => (
-          <span
-            key={di}
-            className={`sf-dot ${di === index ? "sf-dot--active" : ""}`}
-          />
-        ))}
-      </div> */}
-
-      {/* LEFT — Content */}
-      <div className="sf-card-content">
-        <div className="sf-badge">
-          <span className="sf-badge-code">{fw.code}</span>
-          <span className="sf-badge-tagline">{fw.tagline}</span>
-        </div>
-
-        <h3 className="sf-card-title secondary-accent">{fw.label}</h3>
-        <p className="sf-card-desc">{fw.description}</p>
-
-        <div className="sf-inline-visual">
-          {fw.visualType === "flow"      && <FlowVisual steps={fw.visual} />}
-          {fw.visualType === "circular"  && <CircularVisual steps={fw.visual} center={fw.visualCenter} />}
-          {fw.visualType === "scorecard" && <ScorecardVisual items={fw.visual} scale={fw.scale} />}
-        </div>
-      </div>
-
-      {/* RIGHT — Image */}
-      <div className="sf-card-image-wrap">
-        <div className="sf-card-image-glow" />
-        <motion.img
-          src={fw.image}
-          alt={fw.imageAlt}
-          className="sf-card-image"
-          style={{ y: imgY }}
-          loading="lazy"
-        />
-      </div>
-    </motion.div>
+    <div className="pf-row">
+      {purposeSteps.map((step, i) => {
+        const Icon = step.icon;
+        return (
+          <div key={step.label} className="pf-step">
+            <div className="pf-step-inner">
+              <div className="pf-icon-wrap">
+                <Icon className="pf-icon" />
+              </div>
+              <span className="pf-label">{step.label}</span>
+            </div>
+            {i < purposeSteps.length - 1 && (
+              <ArrowRight className="pf-arrow" />
+            )}
+          </div>
+        );
+      })}
+    </div>
   );
 }
 
-/* ─── Main Section ──────────────────────────────────────── */
-export default function SignatureFrameworks() {
-  /* The tall scroll-space wrapper */
-  const wrapperRef = useRef(null);
+function AvfModel() {
+  return (
+    <div className="avf-wrap">
+      <div className="avf-ring">
+        {/* center */}
+        <div className="avf-center-positioner">
+          <div className="avf-center-circle">
+            <div className="avf-center-text">
+              <Gauge className="avf-center-icon" />
+              <span className="avf-center-label">
+                Value<br />System
+              </span>
+            </div>
+          </div>
+        </div>
+        <div className="avf-dashed-ring" />
+        {avfCycle.map((node, i) => {
+          const Icon = node.icon;
+          const angle = (i * 120 - 90) * (Math.PI / 180);
+          const r = 72;
+          const x = Math.cos(angle) * r;
+          const y = Math.sin(angle) * r;
+          return (
+            <div
+              key={node.label}
+              className="avf-node-positioner"
+              style={{ transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))` }}
+            >
+              <div className="avf-node-inner">
+                <div className="avf-node-icon-wrap">
+                  <Icon className="avf-node-icon" />
+                </div>
+                <span className="avf-node-label">{node.label}</span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
-  /* Track scroll progress WITHIN this wrapper */
-  const { scrollYProgress } = useScroll({
-    target: wrapperRef,
-    offset: ["start start", "end end"],
-  });
+function VdiScorecard() {
+  return (
+    <div className="vdi-list">
+      {vdiMetrics.map((m) => {
+        const Icon = m.icon;
+        const lvl = levelMap[m.level];
+        return (
+          <div key={m.label} className="vdi-row">
+            <div className="vdi-icon-wrap">
+              <Icon className="vdi-icon" />
+            </div>
+            <div className="vdi-content">
+              <div className="vdi-header-row">
+                <span className="vdi-metric-name">{m.label}</span>
+                <span className={`vdi-level-label vdi-level-label--${m.level}`}>{m.level}</span>
+              </div>
+              <div className="vdi-bar-track">
+                <div
+                  className={`vdi-bar-fill vdi-bar-fill--${m.level}`}
+                  style={{ width: lvl.width }}
+                />
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/* ── framework cards data ── */
+const frameworks = [
+  {
+    id: 'a',
+    index: '01',
+    letter: 'A',
+    title: 'From Purpose to Profit',
+    sub: 'Purpose-to-Performance Model',
+    description:
+      'A framework showing how meaningful purpose is converted into sustainable business performance. Profit is treated as the outcome of consistent value creation, not the starting point.',
+    image:
+      'assets/images/img/74.webp',
+    visual: <PurposeFlow />,
+  },
+  {
+    id: 'b',
+    index: '02',
+    letter: 'B',
+    title: 'AVF — Adaptive Value Framework',
+    sub: 'Sense · Shape · Scale',
+    description:
+      'AVF helps organizations continuously sense market change, shape relevant value propositions, and scale successful solutions — with the value system at the center.',
+    image:
+      'assets/images/img/75.webp',
+    visual: <AvfModel />,
+  },
+  {
+    id: 'c',
+    index: '03',
+    letter: 'C',
+    title: 'VDI — Value Development Index',
+    sub: 'Low → Moderate → High',
+    description:
+      'VDI measures how effectively an organization develops and strengthens value over time through customer relevance, innovation, responsiveness, loyalty, and strategic alignment.',
+    image:
+      'assets/images/img/76.webp',
+    visual: <VdiScorecard />,
+  },
+];
+
+/* ── scroll-reveal card ── */
+function FrameworkCard({ fw }) {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          obs.unobserve(el);
+        }
+      },
+      { threshold: 0.15 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
 
   return (
-    /* Outer scroll-space: 100vh per card + 50vh for the header */
     <div
-      ref={wrapperRef}
-      className="sf-scroll-wrapper"
-      style={{ height: `${frameworks.length * 100 + 40}vh` }}
+      ref={ref}
+      className={`sf-card ${visible ? 'sf-card--visible' : 'sf-card--hidden'}`}
     >
-      {/* ── Section header — NOT sticky, scrolls away naturally ── */}
-      <div className="sf-header hero-container sf-header-flow">
-        <div className="sf-header-inner">
-          <div className="sub-heading justify-content-center">
-                                <i className="fa-solid fa-circle-notch"></i>
-                                <h6 className="font-family-1 accent-color">Framework</h6>
-                            </div>
-                            <h2 className="text-center animate-box animated animate__animated" data-animate="animate__fadeInUp">Signature Framework</h2>
+      {/* image */}
+      <div className="sf-card-img-wrap">
+        <img
+          src={fw.image}
+          alt={fw.title}
+          className="sf-card-img"
+          loading="lazy"
+        />
+        <div className="sf-card-gradient" />
+        {/* top badge */}
+        <div className="sf-card-badge-wrap">
+          <span className="sf-card-badge">
+            {fw.letter}-{fw.index}
+          </span>
+        </div>
+        {/* bottom */}
+        <div className="sf-card-bottom">
+          {/* <p className="sf-card-sub">{fw.sub}</p> */}
+          <h3 className="sf-card-title">{fw.title}</h3>
         </div>
       </div>
 
-      {/* ── Sticky viewport: cards live here ── */}
-      <div className="sf-sticky-stage">
-        {frameworks.map((fw, i) => (
-          <FrameworkCard
-            key={fw.id}
-            fw={fw}
-            index={i}
-            total={frameworks.length}
-            scrollYProgress={scrollYProgress}
-          />
-        ))}
+      {/* body */}
+      <div className="sf-card-body">
+        <p className="sf-card-desc">{fw.description}</p>
+        {fw.visual}
       </div>
     </div>
+  );
+}
+
+/* ── main section ── */
+export default function SignatureFrameworks() {
+  const sectionRef = useRef(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  /* track which card is most in view to update the sticky left counter */
+  const cardRefs = useRef([]);
+
+  useEffect(() => {
+    const observers = frameworks.map((_, i) => {
+      const el = cardRefs.current[i];
+      if (!el) return null;
+      const obs = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) setActiveIndex(i);
+        },
+        { threshold: 0.4 }
+      );
+      obs.observe(el);
+      return obs;
+    });
+    return () => observers.forEach((o) => o?.disconnect());
+  }, []);
+
+  return (
+    <section ref={sectionRef} className="sf-section">
+      {/* ── desktop: sticky left + scrolling right ── */}
+      <div className="sf-desktop">
+        {/* LEFT — sticky */}
+        <div className="sf-left-col">
+          <div className="sf-sticky-inner">
+            <span className="sf-eyebrow">
+              <span className="sf-eyebrow-accent">›_</span>
+              Frameworks // {String(activeIndex + 1).padStart(2, '0')}
+            </span>
+            <h2 className="sf-heading">
+              SIGNATURE<br />
+              <span className="sf-heading-accent">FRAMEWORKS</span>
+            </h2>
+            <p className="sf-desc">
+              Proven models that turn purpose into profit, keep organizations adaptive, and measure value development with
+              precision.
+            </p>
+
+            {/* progress dots */}
+            <div className="sf-dots-list">
+              {frameworks.map((fw, i) => (
+                <div key={fw.id} className="sf-dot-item">
+                  <div className={`sf-dot ${i === activeIndex ? 'sf-dot--active' : 'sf-dot--inactive'}`} />
+                  <span className={`sf-dot-label ${i === activeIndex ? 'sf-dot-label--active' : 'sf-dot-label--inactive'}`}>
+                    {fw.title}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* RIGHT — scrolling cards */}
+        <div className="sf-right-col">
+          {frameworks.map((fw, i) => (
+            <div key={fw.id} ref={(el) => { cardRefs.current[i] = el; }}>
+              <FrameworkCard fw={fw} />
+            </div>
+          ))}
+          {/* trailing spacer so last card fully passes the sticky panel */}
+          <div className="sf-spacer" />
+        </div>
+      </div>
+
+      {/* ── mobile: plain vertical stack ── */}
+      <div className="sf-mobile">
+        {/* header */}
+        <div>
+          <span className="sf-mobile-eyebrow">
+            <span className="sf-eyebrow-accent">›_</span> Frameworks
+          </span>
+          <h2 className="sf-mobile-heading">
+            SIGNATURE<br />
+            <span className="sf-heading-accent">FRAMEWORKS</span>
+          </h2>
+          <p className="sf-desc-mobile">
+            Proven models that turn purpose into profit, keep organizations adaptive, and measure value development with
+            precision.
+          </p>
+        </div>
+        {frameworks.map((fw) => (
+          <FrameworkCard key={fw.id} fw={fw} />
+        ))}
+      </div>
+    </section>
   );
 }

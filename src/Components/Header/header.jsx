@@ -152,12 +152,12 @@ const Navbar = () => {
         }
         return false;
     });
-    
+
     // Apply dark/light mode to entire website
     useEffect(() => {
         const root = document.documentElement;
         const body = document.body;
-        
+
         if (darkMode) {
             body.classList.add("dark-mode");
             body.classList.remove("light-mode");
@@ -187,7 +187,7 @@ const Navbar = () => {
 
         window.addEventListener('scroll', handleScroll);
         setIsMenuOpen(false);
-        
+
         return () => {
             window.removeEventListener('scroll', handleScroll);
         };
@@ -228,14 +228,14 @@ const Navbar = () => {
     };
 
     const MoonIcon = () => (
-        <svg 
+        <svg
             className="theme-icon moon-icon"
-            xmlns="http://www.w3.org/2000/svg" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2" 
-            strokeLinecap="round" 
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
             strokeLinejoin="round"
         >
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
@@ -243,14 +243,14 @@ const Navbar = () => {
     );
 
     const SunIcon = () => (
-        <svg 
+        <svg
             className="theme-icon sun-icon"
-            xmlns="http://www.w3.org/2000/svg" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2" 
-            strokeLinecap="round" 
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
             strokeLinejoin="round"
         >
             <circle cx="12" cy="12" r="5"></circle>
@@ -277,6 +277,10 @@ const Navbar = () => {
                                 className="logo" 
                                 alt="Logo" 
                             /> */}
+                            <div className="navbar-brand-text">
+                                <span className="brand-name">SIDDIQUI.DIGITAL</span>
+                                <span className="brand-tagline">BUSINESS SOLUTIONS</span>
+                            </div>
                         </NavLink>
 
                         <div className="nav-link-container">
@@ -395,9 +399,9 @@ const Navbar = () => {
                                 </ul>
                             </div>
                         </div>
-                        
+
                         {/* Theme Toggle Button */}
-                        <button 
+                        <button
                             className="theme-toggle-btn"
                             onClick={toggleDarkMode}
                             aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
@@ -474,9 +478,8 @@ const Navbar = () => {
                 left: 0;
                 width: 100%;
                 z-index: 1000;
-                // background-color: transparent;
                 transition: all 0.3s ease;
-                // background-color: var(--navbar-bg);
+                overflow: visible;
             }
 
             body {
@@ -495,6 +498,46 @@ const Navbar = () => {
             .navbar-brand {
                 display: flex;
                 align-items: center;
+                flex-shrink: 0;
+                text-decoration: none;
+                min-width: 0;
+                padding-left: 4px;
+            }
+
+            .navbar-brand-text {
+                display: flex;
+                flex-direction: column;
+                line-height: 1;
+            }
+                @media (max-width: 767px) {
+                    .navbar-brand-text {
+                        padding-left: 80px;
+                    }
+                        .mobile {
+                            display: none;
+                        }
+
+                }
+
+            .brand-name {
+                font-size: 1.3rem;
+                font-weight: 800;
+                color: #A30606;
+                margin: 0;
+                white-space: nowrap;
+                line-height: 1.15;
+                letter-spacing: 0.01em;
+            }
+
+            .brand-tagline {
+                font-size: 9.5px;
+                letter-spacing: 0.5em !important;
+                margin: 0;
+                margin-top: 2px;
+                color: var(--text-secondary);
+                white-space: nowrap;
+                text-transform: uppercase;
+                text-align: center;
             }
 
             // .logo {
@@ -666,7 +709,48 @@ const Navbar = () => {
                     box-shadow: none;
                     background: transparent;
                 }
+
+                /* Ensure brand is never clipped */
+                .container-fluid {
+                    padding-left: 12px !important;
+                    padding-right: 8px !important;
+                }
+
+                .hero-container {
+                    padding: 0 8px;
+                }
+
+                .navbar-brand {
+                    padding-left: 0;
+                    margin-right: auto;
+                }
             }
+
+            /* Brand — small phones */
+            @media (max-width: 480px) {
+                .brand-name {
+                    font-size: 1.1rem;
+                }
+
+                .brand-tagline {
+                    font-size: 8px;
+                    letter-spacing: 0.22em;
+                }
+            }
+
+            /* Brand — very small phones */
+            @media (max-width: 360px) {
+                .brand-name {
+                    font-size: 0.95rem;
+                    letter-spacing: 0;
+                }
+
+                .brand-tagline {
+                    font-size: 7px;
+                    letter-spacing: 0.15em;
+                }
+            }
+
             `}</style>
         </header>
     );

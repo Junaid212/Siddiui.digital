@@ -1,6 +1,6 @@
 import React from "react";
 import useAnimateOnScroll from "../Hooks/useAnimateOnScroll";
-import img1 from "/assets/images/img/29.webp";
+import img1 from "/assets/images/img/marketing.png";
 import { Link } from "react-router-dom";
 
 const AboutSection = () => {
@@ -41,8 +41,8 @@ const AboutSection = () => {
                             </div>
                             
                         </div>
-                        <div className="about-spacer"></div>
-                        <div className="row row-cols-md-3 row-cols-1 grid-spacer-2">
+                        {/* <div className="about-spacer"></div> */}
+                        <div className="row row-cols-md-3 row-cols-1 grid-spacer-2 mobile">
                             <div className="col">
                                 <div className="card card-about animate-box animated-fast animate__animated" data-animate="animate__fadeInUp">
                                     <div className="d-flex flex-column flex-lg-row gspace-2">

@@ -224,8 +224,8 @@
         width: 100%;
     }
     .about-image-wrapper img{
-        height: 380px;
-        object-fit: cover;
+        height: 250px;
+        object-fit: fill;
     }
     .about-traffic-card{
         width: 70%;
