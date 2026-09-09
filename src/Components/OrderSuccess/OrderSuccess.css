@@ -1,0 +1,270 @@
+.ordersuccess-section {
+    min-height: 80vh;
+    padding: 140px 20px 80px;
+    background: radial-gradient(circle at 50% 20%, rgba(200, 8, 8, 0.08) 0%, rgba(10, 10, 12, 1) 70%);
+    color: #e4e4e7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ordersuccess-container {
+    max-width: 760px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.ordersuccess-card {
+    background: rgba(24, 24, 27, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(16px);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 40px rgba(200, 8, 8, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.ordersuccess-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #c80808, #ef4444, #f59e0b);
+}
+
+.ordersuccess-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.ordersuccess-icon-wrap {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+}
+
+.ordersuccess-icon-wrap.success {
+    background: rgba(16, 185, 129, 0.15);
+    border: 2px solid rgba(16, 185, 129, 0.4);
+    color: #10b981;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.25);
+}
+
+.ordersuccess-icon-wrap.pending {
+    background: rgba(245, 158, 11, 0.15);
+    border: 2px solid rgba(245, 158, 11, 0.4);
+    color: #f59e0b;
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.25);
+}
+
+.ordersuccess-icon-wrap.failed {
+    background: rgba(239, 68, 68, 0.15);
+    border: 2px solid rgba(239, 68, 68, 0.4);
+    color: #ef4444;
+}
+
+.ordersuccess-title {
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+    color: #ffffff;
+}
+
+.ordersuccess-subtitle {
+    color: #a1a1aa;
+    font-size: 0.95rem;
+}
+
+.order-details-grid {
+    background: rgba(39, 39, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 28px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+@media (max-width: 600px) {
+    .order-details-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.order-detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.order-detail-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #71717a;
+    font-weight: 600;
+}
+
+.order-detail-value {
+    font-size: 0.95rem;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.order-detail-value.highlight {
+    color: #10b981;
+    font-size: 1.15rem;
+}
+
+.order-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    width: fit-content;
+}
+
+.order-badge.paid {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.order-badge.pending {
+    background: rgba(245, 158, 11, 0.15);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.order-badge.refunded {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.download-action-box {
+    text-align: center;
+    background: linear-gradient(180deg, rgba(200, 8, 8, 0.06) 0%, rgba(24, 24, 27, 0.4) 100%);
+    border: 1px solid rgba(200, 8, 8, 0.2);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 28px;
+}
+
+.btn-download-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: linear-gradient(135deg, #c80808 0%, #990000 100%);
+    color: #ffffff;
+    padding: 16px 36px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    box-shadow: 0 10px 25px -5px rgba(200, 8, 8, 0.45);
+    transition: all 0.25s ease;
+    width: 100%;
+    max-width: 420px;
+}
+
+.btn-download-primary:hover:not(:disabled) {
+    background: linear-gradient(135deg, #e00909 0%, #b30000 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 15px 30px -5px rgba(200, 8, 8, 0.6);
+    color: #ffffff;
+}
+
+.btn-download-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #3f3f46;
+    box-shadow: none;
+}
+
+.download-policy-notice {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 14px;
+    font-size: 0.85rem;
+    color: #a1a1aa;
+}
+
+.download-counter-bar {
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: #71717a;
+}
+
+.replacement-link-section {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.replacement-link-btn {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #d4d4d8;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.replacement-link-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.replacement-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.replacement-modal {
+    background: #18181b;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    padding: 32px;
+    max-width: 480px;
+    width: 100%;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+}

@@ -9,7 +9,7 @@ import ProcessSection from "../../Components/ProcessStep";
 import TestimonialSection from "../../Components/Testimonial/TestimonialSection";
 import HeadTitle from "../../Components/Head/HeadTitle";
 import Awards from "../../Components/Awards/awards";
-import WhyChooseUsSection from "../../Components/Chooseus";
+import WhyChooseUsSection from "../../Components/ChooseUs";
 
 const AboutPage = () => {
     return(

@@ -17,14 +17,23 @@ const SinglePostPage = () => {
                 // Un-slugify the topic from URL to match the DB Topic (hyphens back to spaces)
                 const formattedTopic = topic.replace(/-/g, ' ');
 
+                // Fetch blogs and match against topic or topic2 (handles interlinked categories)
                 const { data, error } = await supabase
                     .from('blogs')
-                    .select('*')
-                    .ilike('topic', formattedTopic)
-                    .single();
+                    .select('*');
 
                 if (error) throw error;
-                setBlog(data);
+
+                const target = formattedTopic.toLowerCase().trim();
+                const match = (data || []).find(b => {
+                    const cats = [
+                        ...(b.topic ? b.topic.split(',').map(s => s.trim().toLowerCase()) : []),
+                        ...(b.topic2 ? b.topic2.split(',').map(s => s.trim().toLowerCase()) : [])
+                    ];
+                    return cats.some(c => c === target || c.includes(target));
+                });
+
+                setBlog(match || (data && data[0]) || null);
             } catch (err) {
                 console.error("Error fetching blog by topic:", err);
             } finally {

@@ -5,7 +5,6 @@ import ModalVideoSection from "../../Components/Video/VideoPlayer";
 import ProcessSection from "../../Components/ProcessStep";
 import PartnersipSection from "../../Components/Partnership";
 import ServiceSection from "../../Components/Service";
-import WhyChooseUsSection from "../../Components/Chooseus";
 import CtaSection from "../../Components/CallToAction";
 import PortfolioSection from "../../Components/Portfolio";
 import BlogSection from "../../Components/Blog";
@@ -33,7 +32,6 @@ const HomePage = () => {
             {/* <EbookCardPage/> */}
             {/* <AchievementSection /> */}
             {/* <ProcessSection /> */}
-            {/* <WhyChooseUsSection /> */}
             
             <PortfolioSection />
             <CtaSection />

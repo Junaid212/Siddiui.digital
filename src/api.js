@@ -1,4 +1,15 @@
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const isLocalhost =
+    typeof window !== "undefined" &&
+    (window.location.hostname === "localhost" ||
+     window.location.hostname === "127.0.0.1");
+
+const API_BASE = isLocalhost
+    ? "http://localhost:5000/api"
+    : (import.meta.env.VITE_API_URL || "http://localhost:5000/api");
+
+const ADMIN_API_BASE = isLocalhost
+    ? "http://localhost:5001"
+    : (import.meta.env.VITE_ADMIN_API_URL || "http://localhost:5001");
 
 export const api = {
     // Auth
@@ -9,9 +20,85 @@ export const api = {
             body: JSON.stringify({ idToken }),
         }).then((res) => res.json()),
 
-    // Ebooks
-    getEbooks: () =>
-        fetch(`${API_BASE}/payment/ebooks`).then((res) => res.json()),
+    // Digital Products & Ebooks
+    getProducts: async () => {
+        // 1. Try Admin Public Products API (http://localhost:5001/api/public/products)
+        try {
+            const res = await fetch(`${ADMIN_API_BASE}/api/public/products`);
+            if (res.ok) {
+                const data = await res.json();
+                if (data && data.products && data.products.length > 0) return data;
+            }
+        } catch (e) {
+            // fallback
+        }
+
+        // 2. Try Backend Payment Products API (http://localhost:5000/api/payment/products)
+        try {
+            const res = await fetch(`${API_BASE}/payment/products`);
+            if (res.ok) {
+                const data = await res.json();
+                if (data && data.products && data.products.length > 0) return data;
+            }
+        } catch (e) {
+            // fallback
+        }
+
+        // 3. Fallback to /payment/ebooks
+        try {
+            const res = await fetch(`${API_BASE}/payment/ebooks`);
+            if (res.ok) {
+                const data = await res.json();
+                const list = data.ebooks || data.products || [];
+                if (list.length > 0) return { products: list };
+            }
+        } catch (e) {}
+
+        // 4. In development fallback if remote host failed
+        if (!isLocalhost) {
+            try {
+                const res = await fetch("http://localhost:5001/api/public/products");
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.products && data.products.length > 0) return data;
+                }
+            } catch (e) {}
+        }
+
+        return { products: [] };
+    },
+
+    getEbooks: () => {
+        return api.getProducts();
+    },
+
+    getProductById: async (id) => {
+        // 1. Try Admin Public Products API
+        try {
+            const res = await fetch(`${ADMIN_API_BASE}/api/public/products/${id}`);
+            if (res.ok) {
+                const data = await res.json();
+                if (data && data.product) return data;
+            }
+        } catch (e) {}
+
+        // 2. Try Backend Payment Products API
+        try {
+            const res = await fetch(`${API_BASE}/payment/products/${id}`);
+            if (res.ok) return await res.json();
+        } catch (e) {}
+
+        // 3. Find inside getProducts() list
+        try {
+            const listRes = await api.getProducts();
+            if (listRes && listRes.products) {
+                const found = listRes.products.find(p => String(p.id) === String(id) || String(p.sku) === String(id));
+                if (found) return { product: found };
+            }
+        } catch (e) {}
+
+        return null;
+    },
 
     createCheckout: (data) =>
         fetch(`${API_BASE}/payment/create-checkout`, {
@@ -20,10 +107,17 @@ export const api = {
             body: JSON.stringify(data),
         }).then((res) => res.json()),
 
-    getOrderStatus: (sessionId) =>
-        fetch(`${API_BASE}/payment/order-status/${sessionId}`).then((res) =>
+    getOrderStatus: (identifier) =>
+        fetch(`${API_BASE}/payment/order-status/${identifier}`).then((res) =>
             res.json()
         ),
+
+    requestReplacementLink: (data) =>
+        fetch(`${API_BASE}/payment/request-replacement`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        }).then((res) => res.json()),
 
     // Consultation
     getAvailableSlots: (date) =>
@@ -80,4 +174,15 @@ export const api = {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
         }).then((res) => res.json()),
+
+    // Public Blogs (from admin backend, includes category/topic)
+    getPublicBlogs: (category = null) => {
+        const url = category
+            ? `${ADMIN_API_BASE}/api/public/blogs?category=${encodeURIComponent(category)}`
+            : `${ADMIN_API_BASE}/api/public/blogs`;
+        return fetch(url).then((res) => res.json());
+    },
+
+    getPublicCategories: () =>
+        fetch(`${ADMIN_API_BASE}/api/public/blogs/categories`).then((res) => res.json()),
 };

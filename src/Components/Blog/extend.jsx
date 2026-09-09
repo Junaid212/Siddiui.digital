@@ -49,6 +49,7 @@ const BlogSectionExtend = () => {
                                         image={item.image_url}
                                         title={item.title}
                                         topic={item.topic}
+                                        topic2={item.topic2}
                                         id={item.id}
                                         date={item.published_date || item.created_at}
                                     />

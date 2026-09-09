@@ -1,8 +1,25 @@
-import { Star, Bookmark } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Share2, Check } from "lucide-react";
+import { copyToClipboard, showShareToast } from "../../utils/shareToast";
 
-const BlogCard = ({ image, title, description, link, tags, delay = 0 }) => {
+const BlogCard = ({ image, title, description, link, tags, delay = 0, onTagClick }) => {
   const navigate = useNavigate();
+  const [copied, setCopied] = useState(false);
+
+  const handleShareClick = (e) => {
+    e.stopPropagation();
+    const fullUrl = link.startsWith("http")
+      ? link
+      : `${window.location.origin}${link}`;
+
+    copyToClipboard(fullUrl).then(() => {
+      setCopied(true);
+      showShareToast("Blog link copied to clipboard!");
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
   return (
     <>
       <style>{`
@@ -72,7 +89,7 @@ const BlogCard = ({ image, title, description, link, tags, delay = 0 }) => {
           );
         }
 
-        .blog-card-bookmark {
+        .blog-card-share {
           position: absolute;
           right: 1rem;
           top: 1rem;
@@ -82,27 +99,36 @@ const BlogCard = ({ image, title, description, link, tags, delay = 0 }) => {
           backdrop-filter: blur(12px);
           padding: 0.625rem;
           transition: all 0.3s;
-          border: 1px solid rgba(255, 255, 255, 0.2);
+          border: 1px solid rgba(255, 255, 255, 0.25);
           cursor: pointer;
           display: flex;
           align-items: center;
           justify-content: center;
         }
 
-        .blog-card-bookmark:hover {
+        .blog-card-share:hover {
           background-color: rgba(255, 255, 255, 0.95);
           transform: scale(1.1);
         }
 
-        .blog-card-bookmark svg {
+        .blog-card-share svg {
           width: 1.125rem;
           height: 1.125rem;
           color: white;
           transition: color 0.3s;
         }
 
-        .blog-card-bookmark:hover svg {
+        .blog-card-share:hover svg {
           color: #1a1a1a;
+        }
+
+        .blog-card-share.copied {
+          background-color: #10B981;
+          border-color: #10B981;
+        }
+
+        .blog-card-share.copied svg {
+          color: #ffffff;
         }
 
         .blog-card-content {
@@ -149,38 +175,10 @@ const BlogCard = ({ image, title, description, link, tags, delay = 0 }) => {
           flex-wrap: wrap;
         }
 
-        .blog-card-rating {
-          display: flex;
-          align-items: center;
-          gap: 0.375rem;
-          background-color: rgba(255, 255, 255, 0.15);
-          backdrop-filter: blur(8px);
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          padding: 0.375rem 0.75rem;
-          border-radius: 0.625rem;
-          transition: all 0.3s;
-        }
-
-        .blog-card-rating:hover {
-          background-color: rgba(255, 255, 255, 0.25);
-        }
-
-        .blog-card-rating svg {
-          width: 1rem;
-          height: 1rem;
-          fill: #fbbf24;
-          color: #fbbf24;
-        }
-
-        .blog-card-rating-value {
-          font-size: 0.875rem;
-          font-weight: 600;
-          color: white;
-        }
-
+        /* Category tag — clickable chip */
         .blog-card-tag {
           border-radius: 0.625rem;
-          border: 1px solid rgba(255, 255, 255, 0.2);
+          border: 1px solid rgba(255, 255, 255, 0.25);
           background-color: rgba(255, 255, 255, 0.15);
           backdrop-filter: blur(8px);
           padding: 0.375rem 0.875rem;
@@ -189,6 +187,8 @@ const BlogCard = ({ image, title, description, link, tags, delay = 0 }) => {
           color: white;
           transition: all 0.3s;
           display: inline-block;
+          cursor: pointer;
+          user-select: none;
         }
 
         .blog-card-tag:hover {
@@ -198,6 +198,7 @@ const BlogCard = ({ image, title, description, link, tags, delay = 0 }) => {
           transform: translateY(-2px);
         }
 
+        /* CTA button */
         .blog-card-cta {
           margin-top: 0.5rem;
           width: 100%;
@@ -223,40 +224,68 @@ const BlogCard = ({ image, title, description, link, tags, delay = 0 }) => {
           transform: translateY(0);
         }
       `}</style>
-      <Link to={link}>
-        <article
-          className="blog-card no-dark"
-          style={{ animationDelay: `${delay}ms` }}
-        >
-          <img
-            src={image}
-            alt={title}
-            className="blog-card-image"
-            loading="lazy"
-          />
 
-          <div className="blog-card-gradient" />
+      {/* Outer div is NOT an <a> — only CTA navigates */}
+      <article
+        className="blog-card no-dark"
+        style={{ animationDelay: `${delay}ms` }}
+        onClick={() => navigate(link)}
+      >
+        <img
+          src={image}
+          alt={title}
+          className="blog-card-image"
+          loading="lazy"
+        />
+
+        <div className="blog-card-gradient" />
+
+        {/* Share Icon in place of Bookmark */}
+        <button
+          className={`blog-card-share ${copied ? "copied" : ""}`}
+          aria-label="Share this blog post"
+          title={copied ? "Link copied!" : "Share article"}
+          onClick={handleShareClick}
+        >
+          {copied ? <Check size={18} /> : <Share2 size={18} />}
+        </button>
+
+        <div className="blog-card-content">
+          <h3 className="blog-card-title">{title}</h3>
+          <p className="blog-card-description">{description}</p>
+
+          <div className="blog-card-footer">
+            {tags && tags.map((tag) => (
+              <span
+                key={tag}
+                className="blog-card-tag"
+                onClick={(e) => {
+                  e.stopPropagation(); // prevent card navigation
+                  if (onTagClick) onTagClick(tag);
+                }}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.stopPropagation();
+                    if (onTagClick) onTagClick(tag);
+                  }
+                }}
+                title={`Filter by ${tag}`}
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
 
           <button
-            className="blog-card-bookmark"
-            aria-label="Bookmark this post"
+            onClick={(e) => { e.stopPropagation(); navigate(link); }}
+            className="blog-card-cta"
           >
-            <Bookmark />
+            Read More
           </button>
-
-          <div className="blog-card-content">
-            <h3 className="blog-card-title">{title}</h3>
-            <p className="blog-card-description">{description}</p>
-
-            <div className="blog-card-footer">
-              {tags && tags.map(tag => (
-                <span key={tag} className="blog-card-tag">{tag}</span>
-              ))}
-            </div>
-
-            <button onClick={(e) => { e.preventDefault(); navigate(link); }} className="blog-card-cta">Read More</button>
-          </div>
-        </article></Link>
+        </div>
+      </article>
     </>
   );
 };

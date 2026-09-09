@@ -1,17 +1,16 @@
-
+import React from "react";
 import BannerInnerSection from "../../Components/Banner/inner";
 import HeadTitle from "../../Components/Head/HeadTitle";
-import Ebook from "../../Components/Ebook/ebook";
+import Ebooks from "../../Components/Ebooks";
 
 const EbookPage = () => {
-    return(
+    return (
         <>
-            <HeadTitle title="E-Books -  Digital Marketing Agency"/>
-            <BannerInnerSection title="E-Books" currentPage="E-Books" />
-            <Ebook />
+            <HeadTitle title="E-Books - Digital Marketing Agency" />
+            <BannerInnerSection title="Featured E-Books" currentPage="E-Books" />
+            <Ebooks />
         </>
     );
-
-}
+};
 
 export default EbookPage;

@@ -4,7 +4,7 @@ import PartnersipSection from "../../Components/Partnership";
 import ServiceSection from "../../Components/Service";
 import AchievementSection from "../../Components/Achievement";
 import ProcessSection from "../../Components/ProcessStep";
-import WhyChooseUsSection from "../../Components/Chooseus";
+import WhyChooseUsSection from "../../Components/ChooseUs";
 import CtaSection from "../../Components/CallToAction";
 import TeamSection from "../../Components/Team";
 import TestimonialSection from "../../Components/Testimonial/TestimonialSection";

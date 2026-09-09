@@ -24,10 +24,11 @@ const copyFrameworkImages = () => {
   return {
     name: 'copy-framework-images',
     buildStart: doCopy,
-    configureServer: doCopy,
+    configureServer(server) {
+      doCopy();
+    },
   };
 };
-
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -49,4 +50,3 @@ export default defineConfig({
     chunkSizeWarningLimit: 600,
   },
 })
-

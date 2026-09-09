@@ -2,7 +2,7 @@ import React from "react";
 import BannerInnerSection from "../../Components/Banner/inner";
 import TeamSectionExtend from "../../Components/Team/extend";
 import CtaSection from "../../Components/CallToAction";
-import WhyChooseUsSection from "../../Components/Chooseus";
+import WhyChooseUsSection from "../../Components/ChooseUs";
 import ProcessSection from "../../Components/ProcessStep";
 import HeadTitle from "../../Components/Head/HeadTitle";
 

@@ -21,7 +21,10 @@ import ConsultantPage from "./Page/Consultant";
 import Questionnaire from "./Page/Questionnaire";
 import PopupPage from "./Page/PopupManager";
 import BlogSection from "./Page/Blogs";
+import BlogByIdPage from "./Page/BlogById";
 import Courses from "./Page/Courses";
+import OrderSuccessPage from "./Page/OrderSuccess";
+import OrderCancelPage from "./Page/OrderCancel";
 // import BookAppointment from "./Page/BookAppointment";
 
 function AppRouters() {
@@ -49,10 +52,13 @@ function AppRouters() {
             <Route path="ebooks" element={<EbookPage />} />
             <Route path="e_books" element={<BookPage />} />
             <Route path="buy-book/:id" element={<BuyBookPage />} />
+            <Route path="order-success" element={<OrderSuccessPage />} />
+            <Route path="order-cancel" element={<OrderCancelPage />} />
             <Route path="consultation" element={<ConsultantPage />} />
             <Route path="blog-page" element={<BlogSection />} />
+            {/* ID-based blog route for admin share links */}
+            <Route path="blogs/:id" element={<BlogByIdPage />} />
             <Route path="courses" element={<Courses />} />
-
 
         </Routes>
     );

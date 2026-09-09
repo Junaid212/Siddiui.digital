@@ -1,7 +1,6 @@
 import React from "react";
 import BannerInnerSection from "../../Components/Banner/inner";
 import CtaSection from "../../Components/CallToAction";
-import WhyChooseUsSection from "../../Components/Chooseus";
 import ProcessSection from "../../Components/ProcessStep";
 import PricingSection from "../../Components/Pricing";
 import HeadTitle from "../../Components/Head/HeadTitle";
