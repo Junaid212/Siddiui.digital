@@ -506,7 +506,7 @@ exports.downloadProductFile = async (req, res) => {
 4 0 obj << /Length 235 >> stream
 BT
 /F1 24 Tf 50 720 Td (\${order.book_name || "Marketing Reclassified"}) Tj
-/F1 14 Tf 0 -36 Td (By Qutub Siddiqui - Siddiqui.Digital) Tj
+/F1 14 Tf 0 -36 Td (By M. Q. Siddiqui - Siddiqui.Digital) Tj
 0 -30 Td (Official Digital Publication - Protected Edition) Tj
 0 -40 Td (Thank you for your purchase. Order Verified.) Tj
 ET

@@ -102,10 +102,10 @@ function Sidebar() {
                         <NavLink to="/about">About Us</NavLink>
                     </li>
                     <li>
-                        <NavLink to="/e_books">Frameworks</NavLink>
+                        <NavLink to="/courses">Frameworks</NavLink>
                     </li>
                     <li>
-                        <NavLink to="/courses">Learning</NavLink>
+                        <NavLink to="/e_books">Learning</NavLink>
                     </li>
                     <li className="below-dropdown">
                         <NavLink to="/blog-page">Blog</NavLink>
