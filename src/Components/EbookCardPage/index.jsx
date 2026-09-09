@@ -4,28 +4,28 @@ import EbookCards from '../EbookCards';
 
 const blogPosts = [
   {
-    image: "./assets/images/img/30.webp",
-    title: "The Marketing Book",
-    description: "How to build the future in the Marketing Field",
+    image: "./assets/images/img/book1.webp",
+    title: "Marketing Reclassified",
+    description: "From transaction to human progress",
     rating: 100,
     tags: ["Startup", "Management"],
-    link: '/book1'
+    link: '/e_books'
   },
   {
-    image: "./assets/images/img/31.webp",
-    title: " Zero to One",
-    description: "Perfect for seeking mental growth and empowerment through reading.",
+    image: "./assets/images/img/book2.webp",
+    title: "The value drift index",
+    description: "Practical tool for measuring managing and preventing value drift",
     rating: 125,
     tags: ["Marketing", "Strategy"],
-    link: '/book1'
+    link: '/e_books'
   },
   {
-    image: "./assets/images/img/32.webp",
-    title: "Laws of Marketing",
-    description: "Mastery To Influence, inspire ans Succeed",
+    image: "./assets/images/img/book3.webp",
+    title: "The adaptive value framework",
+    description: "A practical approach to creating sustainable value in a changing world",
     rating: 90,
     tags: ["Growth", "Operations"],
-    link: '/book1'
+    link: '/e_books'
   },
   // {
   //   image: blog4,

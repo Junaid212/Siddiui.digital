@@ -134,8 +134,8 @@ const EbookCards = ({ image, title, description, rating, tags, delay = 0, link }
         }
 
         .blog-card-title {
-          font-size: 1.5rem;
-          font-weight: 700;
+          font-size: 1.25rem;
+          font-weight: 600;
           line-height: 1.3;
           color: white;
           transition: all 0.3s;
@@ -148,9 +148,9 @@ const EbookCards = ({ image, title, description, rating, tags, delay = 0, link }
         }
 
         .blog-card-description {
-          font-size: 0.9375rem;
+          font-size: 0.85rem;
           line-height: 1.6;
-          color: rgba(255, 255, 255, 0.9);
+          color: rgba(200, 198, 198, 0.9);
           text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
           display: -webkit-box;
           -webkit-line-clamp: 2;
@@ -256,13 +256,13 @@ const EbookCards = ({ image, title, description, rating, tags, delay = 0, link }
           <div className="blog-card-gradient" />
         </div>
 
-        <button
+        {/* <button
           className="blog-card-bookmark"
           aria-label="Bookmark this post"
           onClick={handleBookmarkClick}
         >
           <Bookmark />
-        </button>
+        </button> */}
 
         <div className="blog-card-content">
           <h3 className="blog-card-title">{title}</h3>

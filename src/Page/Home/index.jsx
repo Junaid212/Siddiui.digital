@@ -29,7 +29,7 @@ const HomePage = () => {
             <PricingSection/>
             <SignatureFrameworks/>
             {/* <ServiceSection /> */}
-            {/* <EbookCardPage/> */}
+            <EbookCardPage/>
             {/* <AchievementSection /> */}
             {/* <ProcessSection /> */}
             
