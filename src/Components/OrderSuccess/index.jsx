@@ -4,17 +4,25 @@ import { motion, AnimatePresence } from "framer-motion";
 import { api } from "../../api";
 import "./OrderSuccess.css";
 
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const isLocalhost =
+    typeof window !== "undefined" &&
+    (window.location.hostname === "localhost" ||
+     window.location.hostname === "127.0.0.1");
+
+const API_BASE = isLocalhost
+    ? "http://localhost:5000/api"
+    : (import.meta.env.VITE_API_URL || "/api");
 
 export default function OrderSuccess() {
     const [searchParams] = useSearchParams();
     const sessionId = searchParams.get("session_id");
     const orderId = searchParams.get("order_id");
     const urlToken = searchParams.get("token");
-    const isMock = searchParams.get("mock") === "true";
 
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [verifying, setVerifying] = useState(true);
+    const [errorMessage, setErrorMessage] = useState("");
     const [downloading, setDownloading] = useState(false);
     const [downloadCount, setDownloadCount] = useState(0);
     const [showReplacementModal, setShowReplacementModal] = useState(false);
@@ -22,12 +30,19 @@ export default function OrderSuccess() {
     const [replacementStatus, setReplacementStatus] = useState(null);
     const [replacementLoading, setReplacementLoading] = useState(false);
 
-    const identifier = sessionId || orderId || urlToken || "latest";
+    const identifier = sessionId || orderId || urlToken;
 
     useEffect(() => {
         let isMounted = true;
         let pollCount = 0;
         let pollTimer = null;
+
+        if (!identifier) {
+            setLoading(false);
+            setVerifying(false);
+            setErrorMessage("No order reference provided. Please check your purchase confirmation link.");
+            return;
+        }
 
         async function fetchOrder() {
             try {
@@ -38,38 +53,34 @@ export default function OrderSuccess() {
                     setOrder(res.order);
                     setDownloadCount(res.order.download_count || 0);
 
-                    if (res.order.status === "pending" && pollCount < 6) {
+                    // If still pending, poll Stripe confirmation up to 12 times (approx 30s)
+                    if (res.order.status === "pending" && pollCount < 12) {
+                        pollCount++;
+                        pollTimer = setTimeout(fetchOrder, 2500);
+                    } else {
+                        setLoading(false);
+                        setVerifying(false);
+                    }
+                } else {
+                    if (pollCount < 6) {
                         pollCount++;
                         pollTimer = setTimeout(fetchOrder, 3000);
                     } else {
                         setLoading(false);
+                        setVerifying(false);
+                        setErrorMessage(res?.error || "Order not found. If payment was completed, please wait a moment.");
                     }
-                } else {
-                    setOrder({
-                        order_number: `ORD-${Date.now().toString(36).toUpperCase()}`,
-                        book_name: "Marketing Reclassified",
-                        amount: 49.00,
-                        currency: "AED",
-                        status: isMock ? "paid" : "pending",
-                        download_token: urlToken || sessionId || "demo-token",
-                        download_count: 0,
-                        download_limit: 3,
-                    });
-                    setLoading(false);
                 }
             } catch (err) {
                 if (isMounted) {
-                    setOrder({
-                        order_number: "ORD-VERIFYING",
-                        book_name: "Marketing Reclassified",
-                        amount: 49.00,
-                        currency: "AED",
-                        status: isMock ? "paid" : "paid",
-                        download_token: urlToken || sessionId || "demo-token",
-                        download_count: 0,
-                        download_limit: 3,
-                    });
-                    setLoading(false);
+                    if (pollCount < 6) {
+                        pollCount++;
+                        pollTimer = setTimeout(fetchOrder, 3000);
+                    } else {
+                        setLoading(false);
+                        setVerifying(false);
+                        setErrorMessage("Unable to verify payment with server. Please refresh this page or contact support.");
+                    }
                 }
             }
         }
@@ -80,12 +91,13 @@ export default function OrderSuccess() {
             isMounted = false;
             if (pollTimer) clearTimeout(pollTimer);
         };
-    }, [identifier, isMock, urlToken, sessionId]);
+    }, [identifier]);
 
-    const isPaid = order?.status === "paid" || order?.status === "successful" || isMock;
-    const isRefunded = order?.status === "refunded" || order?.isRefunded;
+    const isPaid = order && (order.status === "paid" || order.status === "successful");
+    const isRefunded = order && (order.status === "refunded" || order.isRefunded);
     const isExpired = order?.isExpired;
     const isLimitReached = (downloadCount >= (order?.download_limit || 3)) || order?.isLimitReached;
+    const hasFile = order?.hasFile !== false;
 
     const downloadToken = order?.download_token || urlToken || sessionId || order?.id;
     const downloadUrl = `${API_BASE}/payment/download/${downloadToken}`;
@@ -145,51 +157,67 @@ export default function OrderSuccess() {
                                 ? "Order Refunded"
                                 : isPaid
                                 ? "Payment Confirmed!"
-                                : "Verifying Payment..."}
+                                : verifying
+                                ? "Verifying Payment with Stripe..."
+                                : "Payment Verification Pending"}
                         </h1>
                         <p className="ordersuccess-subtitle">
                             {isRefunded
                                 ? "This order has been refunded. Download access has been revoked."
                                 : isPaid
                                 ? "Thank you for your purchase. Your digital edition is ready for instant download."
-                                : "We're awaiting confirmation from Stripe. This page will update automatically."}
+                                : verifying
+                                ? "We're awaiting payment confirmation from Stripe. This page will update automatically once verified."
+                                : errorMessage || "Payment confirmation is taking slightly longer than usual. If your account was charged, a download link will also arrive in your email shortly."}
                         </p>
                     </div>
 
                     {/* Order Details Grid */}
-                    <div className="order-details-grid">
-                        <div className="order-detail-item">
-                            <span className="order-detail-label">Order Number</span>
-                            <span className="order-detail-value" style={{ fontFamily: "monospace" }}>
-                                {order?.order_number || "ORD-PENDING"}
-                            </span>
+                    {order && (
+                        <div className="order-details-grid">
+                            <div className="order-detail-item">
+                                <span className="order-detail-label">Order Number</span>
+                                <span className="order-detail-value" style={{ fontFamily: "monospace" }}>
+                                    {order.order_number || `ORD-${order.id?.substring(0, 8).toUpperCase()}`}
+                                </span>
+                            </div>
+                            <div className="order-detail-item">
+                                <span className="order-detail-label">Publication</span>
+                                <span className="order-detail-value">{order.book_name || "Digital Product"}</span>
+                            </div>
+                            <div className="order-detail-item">
+                                <span className="order-detail-label">Amount</span>
+                                <span className="order-detail-value highlight">
+                                    {order.currency || "AED"} {Number(order.amount || 0).toFixed(2)}
+                                </span>
+                            </div>
+                            <div className="order-detail-item">
+                                <span className="order-detail-label">Payment Status</span>
+                                <span className={`order-badge ${isRefunded ? 'refunded' : isPaid ? 'paid' : 'pending'}`}>
+                                    <i className={`fa-solid ${isRefunded ? 'fa-ban' : isPaid ? 'fa-check' : 'fa-clock'}`} />
+                                    {isRefunded ? "Refunded" : isPaid ? "Paid & Verified" : "Awaiting Stripe Confirmation"}
+                                </span>
+                            </div>
                         </div>
-                        <div className="order-detail-item">
-                            <span className="order-detail-label">Product</span>
-                            <span className="order-detail-value">{order?.book_name || "Digital Product"}</span>
-                        </div>
-                        <div className="order-detail-item">
-                            <span className="order-detail-label">Amount Paid</span>
-                            <span className="order-detail-value highlight">
-                                {order?.currency || "AED"} {Number(order?.amount || 49).toFixed(2)}
-                            </span>
-                        </div>
-                        <div className="order-detail-item">
-                            <span className="order-detail-label">Payment Status</span>
-                            <span className={`order-badge ${isRefunded ? 'refunded' : isPaid ? 'paid' : 'pending'}`}>
-                                <i className={`fa-solid ${isRefunded ? 'fa-ban' : isPaid ? 'fa-check' : 'fa-clock'}`} />
-                                {isRefunded ? "Refunded" : isPaid ? "Paid" : "Pending Confirmation"}
-                            </span>
-                        </div>
-                    </div>
+                    )}
 
-                    {/* Download Box */}
+                    {/* Download Box - ONLY renders if verified PAID */}
                     {isPaid && !isRefunded && (
                         <div className="download-action-box">
-                            {isLimitReached ? (
+                            {!hasFile ? (
+                                <div style={{ padding: "16px 20px", background: "rgba(239, 68, 68, 0.1)", border: "1px solid rgba(239, 68, 68, 0.25)", borderRadius: 12 }}>
+                                    <p style={{ color: "#ef4444", fontWeight: 700, marginBottom: 6 }}>
+                                        <i className="fa-solid fa-triangle-exclamation" style={{ marginRight: 8 }} />
+                                        Publication PDF Being Prepared
+                                    </p>
+                                    <p style={{ color: "#a1a1aa", fontSize: "0.85rem", margin: 0 }}>
+                                        The digital publication file for this edition is currently being generated. You will receive an instant notification at <strong>{order.email}</strong> once ready.
+                                    </p>
+                                </div>
+                            ) : isLimitReached ? (
                                 <div>
                                     <p style={{ color: "#ef4444", fontWeight: 700, marginBottom: 12 }}>
-                                        ⚠️ Maximum download limit reached ({downloadCount} of {order?.download_limit || 3} used).
+                                        Maximum download limit reached ({downloadCount} of {order.download_limit || 3} used).
                                     </p>
                                     <button
                                         className="replacement-link-btn"
@@ -201,7 +229,7 @@ export default function OrderSuccess() {
                             ) : isExpired ? (
                                 <div>
                                     <p style={{ color: "#f59e0b", fontWeight: 700, marginBottom: 12 }}>
-                                        ⏰ Download link has expired (72-hour security window).
+                                        Download link has expired (72-hour security window).
                                     </p>
                                     <button
                                         className="replacement-link-btn"
@@ -227,21 +255,43 @@ export default function OrderSuccess() {
                                         ) : (
                                             <>
                                                 <i className="fa-solid fa-cloud-arrow-down" />
-                                                Download {order?.book_name || "Publication"} (PDF)
+                                                Download {order.book_name || "Publication"} (PDF)
                                             </>
                                         )}
                                     </a>
 
                                     <div className="download-policy-notice">
                                         <i className="fa-solid fa-shield-halved" />
-                                        <span>Secure delivery • Link expires in 72 hours • Max 3 downloads</span>
+                                        <span>Official Publication • Protected Edition • Link expires in 72h • Max {order.download_limit || 3} downloads</span>
                                     </div>
 
                                     <div className="download-counter-bar">
-                                        <span>Downloads used: <strong>{downloadCount}</strong> of <strong>{order?.download_limit || 3}</strong></span>
+                                        <span>Downloads used: <strong>{downloadCount}</strong> of <strong>{order.download_limit || 3}</strong></span>
                                     </div>
                                 </>
                             )}
+                        </div>
+                    )}
+
+                    {/* Pending State Refresh Action */}
+                    {!isPaid && !isRefunded && !loading && (
+                        <div style={{ marginTop: 24, textAlign: "center" }}>
+                            <button
+                                onClick={() => window.location.reload()}
+                                style={{
+                                    background: "rgba(255,255,255,0.08)",
+                                    border: "1px solid rgba(255,255,255,0.15)",
+                                    color: "#fff",
+                                    padding: "10px 20px",
+                                    borderRadius: 8,
+                                    cursor: "pointer",
+                                    fontWeight: 600,
+                                    fontSize: "0.85rem"
+                                }}
+                            >
+                                <i className="fa-solid fa-arrows-rotate" style={{ marginRight: 8 }} />
+                                Check Again
+                            </button>
                         </div>
                     )}
 

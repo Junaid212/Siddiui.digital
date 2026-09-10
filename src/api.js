@@ -5,7 +5,7 @@ const isLocalhost =
 
 const API_BASE = isLocalhost
     ? "http://localhost:5000/api"
-    : (import.meta.env.VITE_API_URL || "http://localhost:5000/api");
+    : (import.meta.env.VITE_API_URL || "/api");
 
 const ADMIN_API_BASE = isLocalhost
     ? "http://localhost:5001"
@@ -21,52 +21,33 @@ export const api = {
         }).then((res) => res.json()),
 
     // Digital Products & Ebooks
-    getProducts: async () => {
-        // 1. Try Admin Public Products API (http://localhost:5001/api/public/products)
-        try {
-            const res = await fetch(`${ADMIN_API_BASE}/api/public/products`);
-            if (res.ok) {
-                const data = await res.json();
-                if (data && data.products && data.products.length > 0) return data;
+getProducts: async () => {
+    try {
+        const res = await fetch(
+            `${ADMIN_API_BASE}/api/public/products`,
+            {
+                cache: "no-store",
             }
-        } catch (e) {
-            // fallback
+        );
+
+        if (!res.ok) {
+            throw new Error(`Products API returned ${res.status}`);
         }
 
-        // 2. Try Backend Payment Products API (http://localhost:5000/api/payment/products)
-        try {
-            const res = await fetch(`${API_BASE}/payment/products`);
-            if (res.ok) {
-                const data = await res.json();
-                if (data && data.products && data.products.length > 0) return data;
-            }
-        } catch (e) {
-            // fallback
+        const data = await res.json();
+
+        if (!data || !Array.isArray(data.products)) {
+            throw new Error("Invalid products API response");
         }
 
-        // 3. Fallback to /payment/ebooks
-        try {
-            const res = await fetch(`${API_BASE}/payment/ebooks`);
-            if (res.ok) {
-                const data = await res.json();
-                const list = data.ebooks || data.products || [];
-                if (list.length > 0) return { products: list };
-            }
-        } catch (e) {}
-
-        // 4. In development fallback if remote host failed
-        if (!isLocalhost) {
-            try {
-                const res = await fetch("http://localhost:5001/api/public/products");
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data && data.products && data.products.length > 0) return data;
-                }
-            } catch (e) {}
-        }
-
+        return {
+            products: data.products,
+        };
+    } catch (error) {
+        console.error("Failed to load digital products:", error);
         return { products: [] };
-    },
+    }
+},
 
     getEbooks: () => {
         return api.getProducts();
@@ -105,7 +86,13 @@ export const api = {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
-        }).then((res) => res.json()),
+        }).then(async (res) => {
+            const json = await res.json().catch(() => ({}));
+            if (!res.ok) {
+                throw new Error(json.error || `Checkout request failed (${res.status})`);
+            }
+            return json;
+        }),
 
     getOrderStatus: (identifier) =>
         fetch(`${API_BASE}/payment/order-status/${identifier}`).then((res) =>

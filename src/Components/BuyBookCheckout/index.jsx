@@ -60,6 +60,7 @@ export default function BuyBookCheckout() {
     const [paymentProcessing, setPaymentProcessing] = useState(false);
     const [formData, setFormData] = useState({ name: "", email: "" });
     const [authLoading, setAuthLoading] = useState(false);
+    const [checkoutError, setCheckoutError] = useState("");
 
     // Resolve Product: checks database/API first, then falls back to catalog
     useEffect(() => {
@@ -154,10 +155,10 @@ export default function BuyBookCheckout() {
         e.preventDefault();
         if (!product || !formData.email.trim()) return;
 
+        setCheckoutError("");
         setPaymentProcessing(true);
         try {
-            // CRITICAL: Send only product identifier and customer details.
-            // Never send client-side prices or fake card info.
+            // Initiate server-side Stripe Checkout Session
             const result = await api.createCheckout({
                 productId: String(product.id),
                 bookName: product.title,
@@ -167,15 +168,15 @@ export default function BuyBookCheckout() {
             });
 
             if (result && result.url) {
-                // Redirect immediately to Stripe Hosted Checkout
+                // Redirect to official Stripe Hosted Checkout
                 window.location.href = result.url;
             } else {
-                alert("Failed to create secure checkout session. Please try again or contact support.");
+                setCheckoutError(result?.error || "Failed to create secure checkout session. Please contact support.");
                 setPaymentProcessing(false);
             }
         } catch (err) {
             console.error("Payment session creation error:", err);
-            alert("Unable to reach checkout service. Please verify your connection.");
+            setCheckoutError(err.message || "Unable to reach checkout service. Please verify your connection.");
             setPaymentProcessing(false);
         }
     };
@@ -404,6 +405,20 @@ export default function BuyBookCheckout() {
                                 </div>
                             </div>
 
+                            {checkoutError && (
+                                <div style={{
+                                    padding: "12px 16px",
+                                    borderRadius: 10,
+                                    marginBottom: 16,
+                                    fontSize: "0.85rem",
+                                    background: "rgba(239, 68, 68, 0.15)",
+                                    border: "1px solid rgba(239, 68, 68, 0.3)",
+                                    color: "#fca5a5"
+                                }}>
+                                    <i className="fa-solid fa-circle-exclamation" style={{ marginRight: 8 }} />
+                                    {checkoutError}
+                                </div>
+                            )}
                             {/* Primary Stripe Button */}
                             <button
                                 type="submit"
