@@ -1419,22 +1419,50 @@ textarea.error-border{
 
 .banner-icon-container{
     position: relative;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    width: 70%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 24px;
+    width: 100%;
+    max-width: 820px;
     z-index: 2;
 }
 
 .banner-icon{
     align-items: center;
-    padding: 8px 32px;
-    background-color:var(--accent-color-4);
+    padding: 10px 24px;
+    background-color: var(--accent-color-4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     color: whitesmoke;
     border-radius: var(--global-border-radius);
     display: flex;
     flex-direction: row;
-    gap: 20px;
+    gap: 14px;
+    transition: all var(--animation-fast) ease;
+}
+
+.banner-icon:hover{
+    background-color: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+}
+
+.banner-tag-bullet{
+    font-size: 8px;
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+.banner-tag-title{
+    display: inline-block;
+    font-size: 15px;
+    line-height: 1.4;
+    color: #E3E5E6 !important;
 }
 
 .banner-client-container{

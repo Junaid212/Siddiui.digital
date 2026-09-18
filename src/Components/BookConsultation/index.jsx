@@ -11,6 +11,7 @@ export default function BookConsultation() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [bookingLoading, setBookingLoading] = useState(false);
   const [bookingError, setBookingError] = useState(null);
+  const [emailDelivery, setEmailDelivery] = useState(null);
   const [formData, setFormData] = useState({ name: '', phone: '', email: '', message: '' });
   const [formErrors, setFormErrors] = useState({});
   const [user, setUser] = useState(null);
@@ -78,7 +79,7 @@ export default function BookConsultation() {
 
   const consultant = {
     name: "Muhammad.Q.Siddiqui",
-    title: " Head of Marketing, Ajman University",
+    title: "Marketing Consultant",
     photo: "/assets/images/img/Siddiqui.webp",
     rating: 4.9,
     reviews: 127,
@@ -208,6 +209,7 @@ export default function BookConsultation() {
       }
 
       setShowFormPopup(false);
+      setEmailDelivery(result.emailDelivery || null);
       setShowSuccess(true);
     } catch (err) {
       console.error('Booking error:', err);
@@ -769,10 +771,17 @@ export default function BookConsultation() {
                   </div>
                 </div>
 
-                <div className="bc-success-email">
-                  <p className="bc-email-title">📧 Confirmation email sent</p>
-                  <p className="bc-email-note">A confirmation with booking details has been sent to <strong>{formData.email}</strong></p>
-                </div>
+                {emailDelivery?.customer ? (
+                  <div className="bc-success-email">
+                    <p className="bc-email-title">📧 Confirmation email sent</p>
+                    <p className="bc-email-note">A confirmation with booking details has been sent to <strong>{formData.email}</strong></p>
+                  </div>
+                ) : emailDelivery && (
+                  <div className="bc-success-email" style={{ background: '#fffbeb', borderColor: '#fde68a' }}>
+                    <p className="bc-email-title" style={{ color: '#92400e' }}>Booking confirmed — email delivery needs attention</p>
+                    <p className="bc-email-note" style={{ color: '#92400e' }}>We could not deliver the confirmation email. We will follow up directly.</p>
+                  </div>
+                )}
 
                 <button
                   onClick={() => setShowSuccess(false)}

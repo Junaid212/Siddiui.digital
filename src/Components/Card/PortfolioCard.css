@@ -1,0 +1,262 @@
+/* ==========================================================================
+   Portfolio Card & Popup Modal Styles
+   ========================================================================== */
+
+/* Cursor indicator on card */
+.card-portfolio {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-portfolio .btn-accent {
+    cursor: pointer;
+}
+
+/* --------------------------------------------------------------------------
+   Modal Backdrop
+   -------------------------------------------------------------------------- */
+.portfolio-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background-color: rgba(5, 5, 5, 0.78);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25rem;
+    animation: portfolioFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes portfolioFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   Modal Card Panel
+   -------------------------------------------------------------------------- */
+.portfolio-modal-panel {
+    position: relative;
+    width: 100%;
+    max-width: 640px;
+    max-height: 90vh;
+    background: #141414;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.05);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: portfolioPanelPop 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    color: #f3f4f6;
+}
+
+@keyframes portfolioPanelPop {
+    from {
+        opacity: 0;
+        transform: translateY(18px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Close button */
+.portfolio-modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.2s ease;
+}
+
+.portfolio-modal-close:hover {
+    background: #DB1B02;
+    border-color: #DB1B02;
+    color: #ffffff;
+    transform: rotate(90deg);
+}
+
+/* Header with optional preview image banner */
+.portfolio-modal-header-img {
+    position: relative;
+    width: 100%;
+    height: 190px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.portfolio-modal-header-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.portfolio-modal-header-gradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(20, 20, 20, 0.2) 0%, rgba(20, 20, 20, 0.95) 100%);
+}
+
+.portfolio-modal-badge-container {
+    position: absolute;
+    bottom: 1rem;
+    left: 1.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.portfolio-modal-tag {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: rgba(219, 27, 2, 0.2);
+    border: 1px solid rgba(219, 27, 2, 0.4);
+    color: #ff6b6b;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border-radius: 20px;
+}
+
+/* Scrollable Content */
+.portfolio-modal-body {
+    padding: 1.5rem 1.75rem 1.25rem 1.75rem;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.portfolio-modal-title {
+    font-size: 1.45rem;
+    font-weight: 700;
+    line-height: 1.35;
+    color: #e6e6e6 !important;
+    margin-bottom: 1rem;
+}
+
+.portfolio-modal-desc {
+    font-size: 0.975rem;
+    line-height: 1.68;
+    color: #cbd5e1;
+    margin-bottom: 1.5rem;
+}
+
+/* Best Suited For Callout */
+.portfolio-modal-suited {
+    background: linear-gradient(135deg, rgba(219, 27, 2, 0.08) 0%, rgba(30, 30, 30, 0.6) 100%);
+    border: 1px solid rgba(219, 27, 2, 0.25);
+    border-left: 4px solid #DB1B02;
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.portfolio-modal-suited-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #ff6b6b;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+.portfolio-modal-suited-text {
+    font-size: 0.925rem;
+    line-height: 1.55;
+    color: #e2e8f0;
+    margin: 0;
+}
+
+/* Footer Actions */
+.portfolio-modal-footer {
+    padding: 1rem 1.75rem 1.25rem 1.75rem;
+    background: #0f0f0f;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    flex-shrink: 0;
+}
+
+.portfolio-modal-btn-close {
+    padding: 0.6rem 1.2rem;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #d1d5db;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.portfolio-modal-btn-close:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.35);
+}
+
+.portfolio-modal-btn-action {
+    padding: 0.6rem 1.35rem;
+    background: #DB1B02;
+    border: 1px solid #DB1B02;
+    color: #ffffff !important;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.portfolio-modal-btn-action:hover {
+    background: #b51500;
+    border-color: #b51500;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(219, 27, 2, 0.35);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 576px) {
+    .portfolio-modal-panel {
+        max-height: 94vh;
+        border-radius: 12px;
+    }
+    .portfolio-modal-header-img {
+        height: 140px;
+    }
+    .portfolio-modal-body {
+        padding: 1.25rem 1rem 1rem 1rem;
+    }
+    .portfolio-modal-footer {
+        padding: 0.85rem 1rem;
+    }
+    .portfolio-modal-title {
+        font-size: 1.25rem;
+    }
+}

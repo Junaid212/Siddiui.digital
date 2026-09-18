@@ -32,7 +32,8 @@ const BannerHome =() => {
                             <div className="banner-icon-container">
                                 {BannerTag.map((tag) => (
                                     <div className="banner-icon" key={tag.id}>
-                                        {tag.title}
+                                        <i className="fa-solid fa-circle banner-tag-bullet " aria-hidden="true"></i>
+                                        <span className="banner-tag-title" >{tag.title}</span>
                                     </div>
                                 ))}
                             </div>

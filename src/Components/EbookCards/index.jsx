@@ -244,7 +244,6 @@ const EbookCards = ({ image, title, description, rating, tags, delay = 0, link }
       <article
         className="blog-card no-dark"
         style={{ animationDelay: `${delay}ms` }}
-        onClick={handleCardClick}
       >
         <div className="blog-card-image-wrapper">
           <img
@@ -280,9 +279,9 @@ const EbookCards = ({ image, title, description, rating, tags, delay = 0, link }
             ))}
           </div> */}
 
-          <button onClick={handleButtonClick} className="blog-card-cta">
+          {/* <button onClick={handleButtonClick} className="blog-card-cta">
             Read More
-          </button>
+          </button> */}
         </div>
       </article>
     </>

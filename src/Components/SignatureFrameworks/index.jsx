@@ -269,7 +269,7 @@ export default function SignatureFrameworks() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="sf-section">
+    <section ref={sectionRef} className="sf-section ">
       {/* ── desktop: sticky left + scrolling right ── */}
       <div className="sf-desktop">
         {/* LEFT — sticky */}
@@ -279,7 +279,7 @@ export default function SignatureFrameworks() {
               <span className="sf-eyebrow-accent">›_</span>
               Frameworks // {String(activeIndex + 1).padStart(2, '0')}
             </span>
-            <h2 className="sf-heading">
+            <h2 className="sf-heading no-dark">
               SIGNATURE<br />
               <span className="sf-heading-accent">FRAMEWORKS</span>
             </h2>

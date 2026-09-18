@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, BookOpen, GraduationCap, CalendarCheck } from "lucide-react";
-import img from "/assets/images/img/M.Q.Siddiqui.webp"
+import img from "/assets/images/img/Muhammad.Q.Siddiqui.png"
 import { useNavigate } from "react-router-dom";
 
 // Helper component to render text with character-by-character animation
@@ -534,13 +534,13 @@ export default function Hero({ onBookConsultation }) {
               </p>
 
               <div className="button-group">
-                <button onClick={() => navigate("/consultation", { state: { type: "consultation" } })} className="btn-primary">
+                <button onClick={() => navigate("/framework", { state: { type: "consultation" } })} className="btn-primary">
                   Explore My Thinking
                   <ArrowRight className="icon-arrow" />
                 </button>
                 <button
                   className="btn-outline"
-                  onClick={() => navigate("/e_books", { state: { type: "ebook" } })}
+                  onClick={() => navigate("/courses", { state: { type: "ebook" } })}
                 >
                   Discover Learning
                 </button>

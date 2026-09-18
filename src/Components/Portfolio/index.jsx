@@ -20,13 +20,7 @@ const PortfolioSection = () => {
                             {portfoliodata.map((item) => (
                                 <div className="col" key={item.id}>
                                     <PortfolioCard
-                                        image={item.image}
-                                        logo={item.logo}
-                                        category={item.category}
-                                        title={item.title}
-                                        content={item.content}
-                                        link={item.link}
-                                        speed={item.speed}
+                                        {...item}
                                     />
                                 </div>
                             ))}

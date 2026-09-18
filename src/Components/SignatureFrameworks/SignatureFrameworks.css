@@ -76,7 +76,7 @@
 .sf-heading {
   font-size: 2.25rem;
   font-weight: 800;
-  color: #111827;
+  color: #111827 !important;
   line-height: 1.25;
   letter-spacing: -0.025em;
 }
@@ -281,7 +281,7 @@
 }
 
 .sf-card-title {
-  color: #ffffff;
+  color: #ffffff !important;
   font-weight: 700;
   font-size: 1.125rem;
   line-height: 1.375;

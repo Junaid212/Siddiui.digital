@@ -241,6 +241,7 @@
     }
     .banner-icon-container{
         width: 100%;
+        grid-template-columns: 1fr;
     }
     .about-card span{
         font-size: 36px;

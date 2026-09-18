@@ -41,7 +41,7 @@ export default function ProfileCard() {
           color: '#ef2d2d !important',
           marginTop: '0.125rem'
         }}>
-          Head of Marketing, Ajman University
+          Marketing Consultant
         </p>
       </div>
       {/* <button style={{

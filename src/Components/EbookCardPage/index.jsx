@@ -1,5 +1,6 @@
 import React from 'react'
 import EbookCards from '../EbookCards';
+import { Link } from 'react-router-dom';
 
 
 const blogPosts = [
@@ -9,7 +10,7 @@ const blogPosts = [
     description: "From transaction to human progress",
     rating: 100,
     tags: ["Startup", "Management"],
-    link: '/e_books'
+    link: '/publications'
   },
   {
     image: "./assets/images/img/book2.webp",
@@ -17,7 +18,7 @@ const blogPosts = [
     description: "Practical tool for measuring managing and preventing value drift",
     rating: 125,
     tags: ["Marketing", "Strategy"],
-    link: '/e_books'
+    link: '/publications'
   },
   {
     image: "./assets/images/img/book3.webp",
@@ -25,7 +26,7 @@ const blogPosts = [
     description: "A practical approach to creating sustainable value in a changing world",
     rating: 90,
     tags: ["Growth", "Operations"],
-    link: '/e_books'
+    link: '/publications'
   },
   // {
   //   image: blog4,
@@ -223,7 +224,7 @@ const EbookCardPage = () => {
             <div className="service-heading-container">
               <div className="sub-heading justify-content-center">
                 <i className="fa-solid fa-circle-notch"></i>
-                <h6 className="font-family-1 accent-color">E-Book</h6>
+                <h6 className="font-family-1 accent-color">Featured Books</h6>
               </div>
               <h2 className="text-center animate-box animated animate__animated" data-animate="animate__fadeInUp">Practical Marketing & Management for  Success</h2>
             </div>
@@ -243,6 +244,9 @@ const EbookCardPage = () => {
                 <EbookCards key={post.title} {...post} delay={i * 100} />
               ))}
             </div>
+          <div className="cta-container" style={{marginTop:'30px', marginBottom:'-30px'}}>
+                                    <Link to="/publications" className="btn btn-secondary-accent ">View All Publications</Link>
+                                </div>
           </div>
         </div>
       </div>

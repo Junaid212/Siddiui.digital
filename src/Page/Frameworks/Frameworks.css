@@ -1,0 +1,2057 @@
+/* ==========================================================================
+   Frameworks Page Styles — Siddiqui.Digital
+   ========================================================================== */
+
+.frameworks-page {
+    background-color: #ffffff;
+    color: #1a1a1a;
+    overflow-x: hidden;
+    position: relative;
+    font-family: var(--font-family-2, sans-serif);
+}
+
+/* --------------------------------------------------------------------------
+   01. Hero Section (Pixel-perfect to reference UI)
+   -------------------------------------------------------------------------- */
+.fw-hero-section {
+    background-color: #ffffff;
+    padding: 2rem 1.5rem 1.5rem;
+    position: relative;
+}
+
+.fw-hero-container {
+    max-width: 1140px;
+    margin: 0 auto;
+    position: relative;
+}
+
+/* Wrapper that holds the shaped banner and the buttons */
+.fw-hero-banner-wrapper {
+    position: relative;
+    width: 100%;
+    min-height: 340px !important;
+}
+
+/* The red silk wave banner with custom bottom scoop */
+.fw-hero-banner {
+    width: 100%;
+    height: 100%;
+    min-height: 340px;
+    background-image: url('/assets/images/img/red-bg.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    clip-path: url(#hero-cutout-clip);
+    -webkit-clip-path: url(#hero-cutout-clip);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 2.5rem 2rem 4.5rem;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(200, 8, 8, 0.15);
+}
+
+.fw-hero-content {
+    max-width: auto;
+    margin: 0 auto;
+}
+
+.fw-hero-title {
+    font-family: var(--font-family-1, sans-serif);
+    font-size: clamp(1.5rem, 4.2vw, 2.4rem);
+    font-weight: 800;
+    line-height: 1.22;
+    color: #ffffff !important;
+    margin: 0 auto 1.25rem;
+    letter-spacing: -0.025em;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+}
+
+.fw-hero-subheading {
+    font-size: clamp(1rem, 1.8vw, 1.15rem);
+    line-height: 1.65;
+    color: rgba(228, 223, 223, 0.9) !important;
+    max-width: 780px;
+    margin: 0 auto;
+    font-weight: 400;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Buttons positioned exactly as in the UI */
+.fw-hero-buttons-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: 24px !important;
+}
+
+.fw-hero-left-btn-wrap {
+    position: absolute;
+    left: 17%;
+    bottom: 24px;
+    pointer-events: auto;
+    z-index: 2;
+}
+
+.fw-hero-right-btn-wrap {
+    position: absolute;
+    right: 17%;
+    bottom: 24px;
+    pointer-events: auto;
+    z-index: 2;
+}
+
+/* Red button in the white cutout space */
+.fw-btn-red-explore {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.85rem 1.85rem;
+    background: #c80808;
+    color: #ffffff !important;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 6px 18px rgba(200, 8, 8, 0.35);
+    white-space: nowrap;
+}
+
+.fw-btn-red-explore:hover {
+    background: #b00606;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(200, 8, 8, 0.45);
+}
+
+/* Dark charcoal button on the red banner */
+.fw-btn-dark-pub {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.85rem 1.85rem;
+    background: #1c1c1c;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+    white-space: nowrap;
+}
+
+.fw-btn-dark-pub:hover {
+    background: #282828;
+    border-color: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+/* --------------------------------------------------------------------------
+   02. Positioning / Philosophy Section (Pixel-perfect dark card)
+   -------------------------------------------------------------------------- */
+.fw-positioning-section {
+    background-color: #ffffff;
+    padding: 2.5rem 1.5rem 4rem;
+    position: relative;
+}
+
+.fw-positioning-card {
+    max-width: 1160px;
+    margin: 0 auto;
+    background: #141414;
+    border-radius: 18px;
+    padding: 2.85rem 3.25rem;
+    box-shadow: -3px 3px 0px 0px #c80808, 0 15px 35px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    position: relative;
+    overflow: hidden;
+}
+
+.fw-positioning-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: #9ca3af;
+    text-transform: uppercase;
+    margin-bottom: 1.15rem;
+}
+
+.fw-positioning-eyebrow-icon {
+    width: 14px;
+    height: 14px;
+    border: 2px solid #9ca3af;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fw-positioning-eyebrow-icon::after {
+    content: '';
+    width: 4px;
+    height: 4px;
+    background: #9ca3af;
+    border-radius: 50%;
+}
+
+.fw-positioning-heading {
+    font-family: var(--font-family-1, sans-serif);
+    font-size: clamp(1.8rem, 3.2vw, 2.45rem);
+    font-weight: 800;
+    line-height: 1.25;
+    color: #ffffff !important;
+    margin-bottom: 1.35rem;
+    letter-spacing: -0.02em;
+}
+
+.fw-positioning-lead {
+    font-size: 1.025rem;
+    line-height: 1.7;
+    color: #cbd5e1;
+    margin-bottom: 1.15rem;
+}
+
+.fw-positioning-body {
+    font-size: 1.025rem;
+    line-height: 1.7;
+    color: #94a3b8;
+    margin-bottom: 0;
+}
+
+/* --------------------------------------------------------------------------
+   03. Frameworks Overview Cards (Main Section)
+   -------------------------------------------------------------------------- */
+.fw-cards-section {
+    padding: 4rem 1.5rem;
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
+    position: relative;
+}
+
+.fw-container {
+    max-width: 1140px;
+    margin: 0 auto;
+}
+
+.fw-section-header {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 3.5rem;
+}
+
+.fw-section-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: #c80808;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+}
+
+.fw-section-title {
+    font-family: var(--font-family-1, sans-serif);
+    font-size: clamp(2rem, 3.5vw, 2.65rem);
+    font-weight: 800;
+    line-height: 1.2;
+    color: #0f172a;
+    margin-bottom: 0.85rem;
+}
+
+.fw-section-desc {
+    font-size: 1.05rem;
+    line-height: 1.68;
+    color: #64748b;
+}
+
+.fw-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+}
+
+.fw-card {
+    background: #141414;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    color: #f8fafc;
+}
+
+.fw-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(200, 8, 8, 0.5);
+    box-shadow: 0 20px 40px rgba(200, 8, 8, 0.18);
+}
+
+.fw-card-img-wrap {
+    position: relative;
+    width: 100%;
+    height: 220px;
+    overflow: hidden;
+    background: #1f1f1f;
+}
+
+.fw-card-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+}
+
+.fw-card:hover .fw-card-img-wrap img {
+    transform: scale(1.06);
+}
+
+.fw-card-img-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(20, 20, 20, 0.1) 0%, rgba(20, 20, 20, 0.95) 100%);
+}
+
+.fw-card-tag {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.35rem 0.85rem;
+    background: rgba(13, 13, 13, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 50px;
+    font-size: 0.725rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #ff8a8a;
+    text-transform: uppercase;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 2;
+}
+
+.fw-card-tag-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #c80808;
+    box-shadow: 0 0 6px rgba(200, 8, 8, 0.8);
+}
+
+.fw-card-body {
+    padding: 1.5rem 1.6rem 1.6rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.fw-card-code {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: #94a3b8;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+}
+
+.fw-card-title {
+    font-size: 1.18rem;
+    font-weight: 700;
+    line-height: 1.3;
+    color: #ffffff !important;
+    margin-bottom: 0.75rem;
+}
+
+.fw-card-short {
+    font-size: 0.92rem;
+    line-height: 1.55;
+    color: #cbd5e1;
+    margin-bottom: 1rem;
+    font-weight: 400;
+}
+
+.fw-card-expanded {
+    font-size: 0.865rem;
+    line-height: 1.6;
+    color: #94a3b8;
+    margin-bottom: 1.25rem;
+}
+
+.fw-key-idea-box {
+    margin-top: auto;
+    background: rgba(200, 8, 8, 0.08);
+    border: 1px solid rgba(200, 8, 8, 0.22);
+    border-left: 3px solid #c80808;
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+    margin-bottom: 1.35rem;
+}
+
+.fw-key-idea-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: #ff6b6b;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.25rem;
+}
+
+.fw-key-idea-text {
+    font-size: 0.835rem;
+    line-height: 1.5;
+    color: #f1f5f9;
+    font-style: italic;
+    margin: 0;
+}
+
+/* Capsule bar button */
+.fw-card-btn {
+    width: 100%;
+    min-height: 42px;
+    padding: 0.45rem 0.55rem 0.45rem 0.95rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 50px;
+    color: #ffffff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.65rem;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.fw-card-btn:hover {
+    background: #c80808;
+    border-color: #c80808;
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(200, 8, 8, 0.4);
+}
+
+.fw-card-btn-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.55rem;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 50px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: #ff9e9e;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.fw-card-btn:hover .fw-card-btn-tag {
+    background: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+}
+
+.fw-card-btn-text {
+    flex: 1;
+    text-align: left;
+    font-size: 0.84rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.fw-card-btn-icon-wrap {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #ffffff;
+    transition: transform 0.25s ease, background 0.25s ease, color 0.25s ease;
+}
+
+.fw-card-btn:hover .fw-card-btn-icon-wrap {
+    background: #ffffff;
+    color: #c80808;
+    transform: translateX(2px);
+}
+
+/* --------------------------------------------------------------------------
+   04. How the Frameworks Work Together (Visual Flow & Redesigned Cards)
+   -------------------------------------------------------------------------- */
+.fw-synthesis-section {
+    padding: 1.5rem 1.5rem;
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.fw-synthesis-section .fw-section-header {
+    margin-bottom: 2.5rem;
+}
+
+.fw-synthesis-roles {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.75rem;
+    margin-top: 2rem;
+    margin-bottom: 3.5rem;
+    text-align: left;
+    align-items: stretch;
+}
+
+.fw-synthesis-role-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 1.75rem 1.5rem;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+    position: relative;
+    overflow: hidden;
+}
+
+.fw-synthesis-role-card:hover {
+    border-color: rgba(200, 8, 8, 0.35);
+    transform: translateY(-4px);
+    box-shadow: 0 16px 36px rgba(200, 8, 8, 0.08);
+}
+
+.fw-synthesis-role-header {
+    margin-bottom: 1.25rem;
+}
+
+.fw-synthesis-role-num {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    color: #c80808;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.fw-synthesis-role-name {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.35;
+    margin-bottom: 0.75rem;
+}
+
+.fw-synthesis-role-desc {
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: #475569;
+    margin: 0;
+    min-height: 4.5rem;
+}
+
+/* Visual Box Inside Each Card */
+.fw-visual-box {
+    background: #0b1120;
+    border: 1px solid #1e293b;
+    border-radius: 14px;
+    padding: 1.25rem;
+    color: #ffffff;
+    margin: 1.25rem 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.35);
+}
+
+.fw-visual-top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.85rem;
+    padding-bottom: 0.55rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.fw-visual-tag {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #94a3b8;
+}
+
+.fw-visual-status-pill {
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 0.18rem 0.55rem;
+    border-radius: 50px;
+    letter-spacing: 0.02em;
+}
+
+.fw-visual-status-gold {
+    background: rgba(234, 179, 8, 0.15);
+    color: #facc15;
+    border: 1px solid rgba(234, 179, 8, 0.35);
+}
+
+.fw-visual-status-crimson {
+    background: rgba(219, 27, 2, 0.18);
+    color: #ff8585;
+    border: 1px solid rgba(219, 27, 2, 0.4);
+}
+
+.fw-visual-status-green {
+    background: rgba(34, 197, 94, 0.15);
+    color: #4ade80;
+    border: 1px solid rgba(34, 197, 94, 0.35);
+}
+
+/* Card A: Purpose Flow Ladder */
+.fw-flow-ladder {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-bottom: 0.85rem;
+}
+
+.fw-flow-ladder-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #151f32;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    padding: 0.4rem 0.65rem;
+    transition: all 0.2s ease;
+}
+
+.fw-flow-ladder-item:hover {
+    background: #1e293b;
+    border-color: rgba(219, 27, 2, 0.4);
+    transform: translateX(2px);
+}
+
+.fw-flow-ladder-item.is-outcome {
+    background: linear-gradient(135deg, rgba(219, 27, 2, 0.25) 0%, rgba(234, 179, 8, 0.18) 100%);
+    border: 1px solid rgba(234, 179, 8, 0.45);
+}
+
+.fw-flow-item-left {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.fw-flow-num-badge {
+    width: 19px;
+    height: 19px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    color: #94a3b8;
+    font-size: 0.65rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.fw-flow-ladder-item.is-outcome .fw-flow-num-badge {
+    background: #c80808;
+    color: #ffffff;
+}
+
+.fw-flow-icon-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.fw-flow-item-name {
+    font-weight: 700;
+    color: #f1f5f9;
+    font-size: 0.8rem;
+}
+
+.fw-flow-item-role {
+    font-size: 0.7rem;
+    color: #94a3b8;
+}
+
+.fw-outcome-tag {
+    font-size: 0.65rem;
+    font-weight: 800;
+    background: #c80808;
+    color: #ffffff;
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.fw-flow-ladder-connector {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 8px;
+    color: rgba(255, 255, 255, 0.25);
+}
+
+/* Card B: Circular Model */
+.fw-circular-svg-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0.25rem 0 0.75rem;
+}
+
+.fw-circular-svg {
+    width: 100%;
+    max-width: 260px;
+    height: auto;
+    overflow: visible;
+}
+
+.fw-cycle-nodes-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.35rem;
+    margin-bottom: 0.75rem;
+}
+
+.fw-cycle-node-pill {
+    background: #151f32;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 6px;
+    padding: 0.4rem 0.35rem;
+    text-align: center;
+}
+
+.fw-cycle-node-pill-title {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #ff8585;
+    display: block;
+}
+
+.fw-cycle-node-pill-desc {
+    font-size: 0.65rem;
+    color: #94a3b8;
+    display: block;
+    line-height: 1.25;
+    margin-top: 0.1rem;
+}
+
+/* Card C: Scorecard & Dashboard */
+.fw-vdi-gauge-bar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    margin-bottom: 0.85rem;
+}
+
+.fw-vdi-gauge-stage {
+    padding: 0.35rem 0.45rem;
+    text-align: center;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    background: #151f32;
+    color: #64748b;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+}
+
+.fw-vdi-stage-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #64748b;
+}
+
+.fw-vdi-gauge-stage.is-active {
+    background: linear-gradient(135deg, #c80808 0%, #8b0000 100%);
+    color: #ffffff;
+    border-color: #ff5e5e;
+    box-shadow: 0 0 12px rgba(200, 8, 8, 0.45);
+}
+
+.fw-vdi-gauge-stage.is-active .fw-vdi-stage-dot {
+    background: #ffffff;
+    box-shadow: 0 0 6px #ffffff;
+}
+
+.fw-vdi-metrics-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: 0.85rem;
+}
+
+.fw-vdi-metric-row {
+    background: #151f32;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    padding: 0.4rem 0.65rem;
+    transition: all 0.2s ease;
+}
+
+.fw-vdi-metric-row:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+    background: #1e293b;
+}
+
+.fw-vdi-metric-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.3rem;
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: #e2e8f0;
+}
+
+.fw-vdi-score-num {
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: #cbd5e1;
+}
+
+.fw-vdi-stage-chip {
+    font-size: 0.64rem;
+    font-weight: 800;
+    color: #4ade80;
+    background: rgba(34, 197, 94, 0.12);
+    padding: 0.08rem 0.35rem;
+    border-radius: 4px;
+    letter-spacing: 0.02em;
+}
+
+.fw-vdi-metric-progress-track {
+    height: 4px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.fw-vdi-metric-progress-fill {
+    height: 100%;
+    border-radius: 8px;
+    background: linear-gradient(90deg, #c80808, #ff6b6b);
+}
+
+/* Shared Callout Inside Visual Box */
+.fw-visual-footer-callout {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.45rem;
+    padding: 0.55rem 0.65rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px dashed rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    font-size: 0.72rem;
+    line-height: 1.45;
+    color: #cbd5e1;
+}
+
+/* Explore Link Button at Card Bottom */
+.fw-card-link-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    color: #0f172a;
+    font-size: 0.84rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    margin-top: 0.5rem;
+}
+
+.fw-card-link-btn:hover {
+    background: #c80808;
+    border-color: #c80808;
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(200, 8, 8, 0.25);
+}
+
+.fw-card-link-btn svg {
+    transition: transform 0.25s ease;
+}
+
+.fw-card-link-btn:hover svg {
+    transform: translateX(4px);
+}
+
+@media (max-width: 1024px) {
+    .fw-synthesis-roles {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .fw-synthesis-role-desc {
+        min-height: auto;
+    }
+}
+
+.fw-flow-container {
+    background: #0f172a;
+    border-radius: 16px;
+    padding: 2.5rem 1.5rem;
+    margin-top: 2.5rem;
+    color: #ffffff;
+    box-shadow: 0 15px 35px rgba(15, 23, 42, 0.15);
+}
+
+.fw-flow-title {
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #94a3b8;
+    margin-bottom: 2rem;
+}
+
+.fw-flow-steps {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+}
+
+.fw-flow-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    flex-shrink: 0;
+}
+
+.fw-flow-circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #1e293b;
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    color: #ff6b6b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    font-weight: 700;
+    transition: all 0.3s ease;
+}
+
+.fw-flow-node:hover .fw-flow-circle {
+    background: #c80808;
+    border-color: #c80808;
+    color: #ffffff;
+    box-shadow: 0 0 20px rgba(200, 8, 8, 0.5);
+    transform: scale(1.08);
+}
+
+.fw-flow-label {
+    font-size: 0.825rem;
+    font-weight: 600;
+    color: #e2e8f0;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.fw-flow-arrow {
+    color: #ff6b6b;
+    opacity: 0.6;
+    flex-shrink: 0;
+}
+
+/* --------------------------------------------------------------------------
+   05. Application Section
+   -------------------------------------------------------------------------- */
+.fw-applications-section {
+    padding: 5rem 1.5rem;
+    background: radial-gradient(ellipse at 50% 20%, #b80505 0%, #8b0000 60%, #630000 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.fw-applications-section::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 85% 85%, rgba(0, 0, 0, 0.25) 0%, transparent 60%);
+    pointer-events: none;
+}
+
+.fw-applications-section .fw-section-eyebrow {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    color: #ffffff;
+}
+
+.fw-applications-section .fw-section-eyebrow svg {
+    color: #ffcccc;
+}
+
+.fw-applications-section .fw-section-title {
+    color: #ffffff !important;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
+.fw-applications-section .fw-section-desc {
+    color: rgba(255, 255, 255, 0.88) !important;
+}
+
+.fw-app-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+    position: relative;
+    z-index: 1;
+}
+
+@media (max-width: 1100px) {
+    .fw-app-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .fw-app-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.fw-app-card {
+    background: rgba(0, 0, 0, 0.16);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 12px;
+    padding: 1.25rem 1.35rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1.15rem;
+    min-height: 88px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: default;
+}
+
+.fw-app-card:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.36);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+}
+
+.fw-app-icon-wrap {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: rgba(255, 255, 255, 0.85);
+    background: transparent;
+    border: none;
+    transition: transform 0.25s ease, color 0.25s ease;
+}
+
+.fw-app-card:hover .fw-app-icon-wrap {
+    color: #ffffff;
+    transform: scale(1.08);
+}
+
+.fw-app-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #ffffff !important;
+    line-height: 1.32;
+    margin: 0;
+    letter-spacing: -0.01em;
+}
+
+/* --------------------------------------------------------------------------
+   06. Related Pathways
+   -------------------------------------------------------------------------- */
+.fw-pathways-section {
+    padding: 4rem 1.5rem;
+    background: #ffffff;
+    border-top: 1px solid #e2e8f0;
+}
+
+.fw-pathways-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+}
+
+.fw-pathway-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+}
+
+.fw-pathway-card:hover {
+    border-color: rgba(200, 8, 8, 0.35);
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.06);
+}
+
+.fw-pathway-badge {
+    align-self: flex-start;
+    padding: 0.3rem 0.8rem;
+    background: rgba(200, 8, 8, 0.1);
+    border: 1px solid rgba(200, 8, 8, 0.25);
+    border-radius: 50px;
+    color: #c80808;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 1.25rem;
+}
+
+.fw-pathway-title {
+    font-family: var(--font-family-1, sans-serif);
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 0.85rem;
+}
+
+.fw-pathway-desc {
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: #64748b;
+    margin-bottom: 0.5rem;
+    flex: 1;
+}
+
+.fw-pathway-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #c80808;
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.fw-pathway-cta:hover {
+    color: #b00606;
+    transform: translateX(4px);
+}
+
+/* --------------------------------------------------------------------------
+   07. Related Books and Digital Publications
+   -------------------------------------------------------------------------- */
+.fw-publications-section {
+    padding: 4rem 1.5rem;
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+}
+
+.fw-pub-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.fw-pub-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+}
+
+.fw-pub-card:hover {
+    border-color: rgba(200, 8, 8, 0.35);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
+}
+
+.fw-pub-img {
+    width: 80px;
+    height: 110px;
+    object-fit: cover;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    flex-shrink: 0;
+}
+
+.fw-pub-info {
+    flex: 1;
+}
+
+.fw-pub-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.35;
+    margin-bottom: 0.4rem;
+}
+
+.fw-pub-desc {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: #64748b;
+    margin-bottom: 0.75rem;
+}
+
+.fw-pub-link {
+    font-size: 0.825rem;
+    font-weight: 700;
+    color: #c80808;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.fw-pub-cta-center {
+    text-align: center;
+}
+
+.fw-btn-secondary-light {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    padding: 0.65rem 1.35rem !important;
+    background: #B32424 !important;
+    color: #ffffff !important;
+    border: 1px solid #B32424;
+    border-radius: 28px; 
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+}
+
+.fw-btn-secondary-light:hover {
+    background: #971010 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(179, 36, 36, 0.4);
+}
+
+.fw-btn-capsule-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1.25rem;
+    background: rgba(255, 255, 255, 0.06);
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 28px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+}
+
+.fw-btn-capsule-outline:hover {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 255, 255, 0.35);
+    color: #ffffff;
+    transform: translateY(-2px);
+}
+
+/* --------------------------------------------------------------------------
+   08. Final CTA Section (Capsule Bar Style)
+   -------------------------------------------------------------------------- */
+.fw-final-cta-section {
+    padding: 2.25rem 1.5rem 2.75rem;
+    background: #000000;
+    color: #ffffff;
+    position: relative;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.fw-capsule-cta-bar {
+    max-width: 1140px;
+    margin: 0 auto;
+    background: linear-gradient(135deg, rgba(22, 22, 22, 0.96) 0%, rgba(42, 12, 12, 0.94) 50%, rgba(18, 18, 18, 0.97) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 20px;
+    padding: 1.35rem 2.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35), 0 0 25px rgba(179, 36, 36, 0.15);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+.fw-capsule-bar-glow {
+    position: absolute;
+    top: -50%;
+    left: 25%;
+    width: 50%;
+    height: 200%;
+    background: radial-gradient(ellipse at center, rgba(200, 8, 8, 0.15) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.fw-capsule-bar-left {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    position: relative;
+    z-index: 1;
+}
+
+.fw-capsule-bar-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: #ff6b6b;
+    text-transform: uppercase;
+}
+
+.fw-capsule-bar-title {
+    font-family: var(--font-family-1, sans-serif);
+    font-size: clamp(1.2rem, 1.9vw, 1.55rem);
+    font-weight: 800;
+    color: #ffffff !important;
+    line-height: 1.22;
+    margin: 0;
+    letter-spacing: -0.015em;
+}
+
+.fw-capsule-bar-desc {
+    font-size: 0.875rem;
+    color: #94a3b8;
+    margin: 0;
+    line-height: 1.45;
+}
+
+.fw-capsule-bar-right {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+}
+
+@media (max-width: 992px) {
+    .fw-capsule-cta-bar {
+        border-radius: 24px;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1.75rem 1.5rem;
+        gap: 1.25rem;
+    }
+
+    .fw-capsule-bar-right {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   09. Framework Detail Modal
+   -------------------------------------------------------------------------- */
+.fw-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    background-color: rgba(6, 6, 6, 0.82);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    animation: fwFadeIn 0.22s ease forwards;
+}
+
+@keyframes fwFadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.fw-modal-panel {
+    position: relative;
+    width: 100%;
+    max-width: 720px;
+    max-height: 90vh;
+    background: #141414;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 18px;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.05);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: fwSlideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    color: #ffffff;
+}
+
+@keyframes fwSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(18px) scale(0.96);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.fw-modal-close-btn {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.2s ease;
+}
+
+.fw-modal-close-btn:hover {
+    background: #c80808;
+    border-color: #c80808;
+    color: #ffffff;
+    transform: rotate(90deg);
+}
+
+.fw-modal-body {
+    padding: 2.25rem 2.25rem 1.5rem;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.fw-modal-eyebrow {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: #ff6b6b;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+.fw-modal-title {
+    font-family: var(--font-family-1, sans-serif);
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1.25;
+    margin-bottom: 0.75rem;
+}
+
+.fw-modal-short {
+    font-size: 1rem;
+    line-height: 1.65;
+    color: #cbd5e1;
+    margin-bottom: 1.25rem;
+    font-weight: 500;
+}
+
+.fw-modal-text {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: #94a3b8;
+    margin-bottom: 1.75rem;
+}
+
+.fw-modal-interactive-wrap {
+    background: #1e1e1e;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.75rem;
+}
+
+.fw-modal-interactive-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #9ca3af;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.fw-modal-footer {
+    padding: 1.25rem 2.25rem;
+    background: #0f0f0f;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+/* --------------------------------------------------------------------------
+   10. Responsiveness
+   -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+    .fw-cards-grid {
+        grid-template-columns: 1fr;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .fw-app-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .fw-pathways-grid {
+        grid-template-columns: 1fr;
+        max-width: 550px;
+        margin: 0 auto;
+    }
+
+    .fw-pub-grid {
+        grid-template-columns: 1fr;
+        max-width: 500px;
+        margin: 0 auto 2.5rem;
+    }
+
+    .fw-synthesis-roles {
+        grid-template-columns: 1fr;
+    }
+
+    .fw-hero-left-btn-wrap {
+        left: 8%;
+    }
+
+    .fw-hero-right-btn-wrap {
+        right: 8%;
+    }
+}
+
+@media (max-width: 768px) {
+    .fw-hero-banner-wrapper {
+        min-height: auto;
+    }
+
+    .fw-hero-banner {
+        clip-path: none !important;
+        -webkit-clip-path: none !important;
+        border-radius: 20px;
+        padding: 3rem 1.5rem 3rem;
+        min-height: auto;
+    }
+
+    .fw-hero-buttons-layer {
+        position: static;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        padding: 1.25rem 0 0;
+        width: 100%;
+    }
+
+    .fw-hero-left-btn-wrap,
+    .fw-hero-right-btn-wrap {
+        position: static;
+        flex: 1 1 0;
+        min-width: 0;
+        width: auto;
+        display: flex;
+        justify-content: center;
+    }
+
+    .fw-btn-red-explore,
+    .fw-btn-dark-pub {
+        width: 100%;
+        max-width: 100%;
+        justify-content: center;
+        white-space: nowrap !important;
+        font-size: clamp(0.68rem, 2.7vw, 0.85rem) !important;
+        padding: 0.65rem 0.5rem !important;
+        gap: 0.35rem !important;
+        letter-spacing: -0.01em;
+    }
+
+    .fw-btn-red-explore svg,
+    .fw-btn-dark-pub svg {
+        width: 13px !important;
+        height: 13px !important;
+        flex-shrink: 0;
+    }
+
+    .fw-positioning-section {
+        padding: 2rem 1.25rem .5rem;
+    }
+
+    .fw-positioning-card {
+        padding: 2rem 1.5rem;
+    }
+
+    .fw-app-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .fw-modal-body {
+        padding: 1.5rem 1.25rem 1rem;
+    }
+
+    .fw-modal-footer {
+        padding: 1rem 1.25rem;
+    }
+}
+
+/* ==========================================================================
+   Dark Mode & Light Mode Theme Support for Frameworks Page
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Light Mode Rules (Explicit)
+   -------------------------------------------------------------------------- */
+.frameworks-page.light-mode,
+body.light-mode .frameworks-page,
+:root[data-theme="light"] .frameworks-page {
+    background-color: #ffffff;
+    color: #1a1a1a;
+}
+
+.frameworks-page.light-mode .fw-hero-section,
+body.light-mode .fw-hero-section {
+    background-color: #ffffff;
+}
+
+.frameworks-page.light-mode .fw-positioning-section,
+body.light-mode .fw-positioning-section {
+    background-color: #ffffff;
+}
+
+.frameworks-page.light-mode .fw-positioning-card,
+body.light-mode .fw-positioning-card {
+    background: #141414;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: -3px 3px 0px 0px #c80808, 0 15px 35px rgba(0, 0, 0, 0.12);
+}
+
+.frameworks-page.light-mode .fw-cards-section,
+body.light-mode .fw-cards-section {
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.frameworks-page.light-mode .fw-cards-section .fw-section-title,
+body.light-mode .fw-cards-section .fw-section-title {
+    color: #0f172a !important;
+}
+
+.frameworks-page.light-mode .fw-cards-section .fw-section-desc,
+body.light-mode .fw-cards-section .fw-section-desc {
+    color: #64748b !important;
+}
+
+.frameworks-page.light-mode .fw-synthesis-section,
+body.light-mode .fw-synthesis-section {
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.frameworks-page.light-mode .fw-synthesis-section .fw-section-title,
+body.light-mode .fw-synthesis-section .fw-section-title {
+    color: #0f172a !important;
+}
+
+.frameworks-page.light-mode .fw-synthesis-section .fw-section-desc,
+body.light-mode .fw-synthesis-section .fw-section-desc {
+    color: #64748b !important;
+}
+
+.frameworks-page.light-mode .fw-synthesis-role-card,
+body.light-mode .fw-synthesis-role-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+}
+
+.frameworks-page.light-mode .fw-synthesis-role-name,
+body.light-mode .fw-synthesis-role-name {
+    color: #0f172a !important;
+}
+
+.frameworks-page.light-mode .fw-synthesis-role-desc,
+body.light-mode .fw-synthesis-role-desc {
+    color: #475569 !important;
+}
+
+.frameworks-page.light-mode .fw-card-link-btn,
+body.light-mode .fw-card-link-btn {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #0f172a;
+}
+
+.frameworks-page.light-mode .fw-pathways-section,
+body.light-mode .fw-pathways-section {
+    background: #ffffff;
+    border-top: 1px solid #e2e8f0;
+}
+
+.frameworks-page.light-mode .fw-pathways-section .fw-section-title,
+body.light-mode .fw-pathways-section .fw-section-title {
+    color: #0f172a !important;
+}
+
+.frameworks-page.light-mode .fw-pathways-section .fw-section-desc,
+body.light-mode .fw-pathways-section .fw-section-desc {
+    color: #64748b !important;
+}
+
+.frameworks-page.light-mode .fw-pathway-card,
+body.light-mode .fw-pathway-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+}
+
+.frameworks-page.light-mode .fw-pathway-title,
+body.light-mode .fw-pathway-title {
+    color: #0f172a !important;
+}
+
+.frameworks-page.light-mode .fw-pathway-desc,
+body.light-mode .fw-pathway-desc {
+    color: #64748b !important;
+}
+
+.frameworks-page.light-mode .fw-publications-section,
+body.light-mode .fw-publications-section {
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+}
+
+.frameworks-page.light-mode .fw-publications-section .fw-section-title,
+body.light-mode .fw-publications-section .fw-section-title {
+    color: #0f172a !important;
+}
+
+.frameworks-page.light-mode .fw-publications-section .fw-section-desc,
+body.light-mode .fw-publications-section .fw-section-desc {
+    color: #64748b !important;
+}
+
+.frameworks-page.light-mode .fw-pub-card,
+body.light-mode .fw-pub-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+}
+
+.frameworks-page.light-mode .fw-pub-title,
+body.light-mode .fw-pub-title {
+    color: #0f172a !important;
+}
+
+.frameworks-page.light-mode .fw-pub-desc,
+body.light-mode .fw-pub-desc {
+    color: #64748b !important;
+}
+
+.frameworks-page.light-mode .fw-final-cta-section,
+body.light-mode .fw-final-cta-section {
+    background: #000000;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* --------------------------------------------------------------------------
+   Dark Mode Rules
+   -------------------------------------------------------------------------- */
+.frameworks-page.dark-mode,
+body.dark-mode .frameworks-page,
+:root[data-theme="dark"] .frameworks-page {
+    background-color: #121212 !important;
+    color: #f1f5f9 !important;
+}
+
+.frameworks-page.dark-mode .fw-hero-section,
+body.dark-mode .fw-hero-section {
+    background-color: #121212 !important;
+}
+
+.frameworks-page.dark-mode .fw-positioning-section,
+body.dark-mode .fw-positioning-section {
+    background-color: #121212 !important;
+}
+
+.frameworks-page.dark-mode .fw-positioning-card,
+body.dark-mode .fw-positioning-card {
+    background: #181818 !important;
+    border: 1px solid #282828 !important;
+    box-shadow: -3px 3px 0px 0px #c80808, 0 15px 35px rgba(0, 0, 0, 0.45) !important;
+}
+
+.frameworks-page.dark-mode .fw-positioning-heading,
+body.dark-mode .fw-positioning-heading {
+    color: #ffffff !important;
+}
+
+.frameworks-page.dark-mode .fw-positioning-lead,
+body.dark-mode .fw-positioning-lead {
+    color: #cbd5e1 !important;
+}
+
+.frameworks-page.dark-mode .fw-positioning-body,
+body.dark-mode .fw-positioning-body {
+    color: #94a3b8 !important;
+}
+
+.frameworks-page.dark-mode .fw-cards-section,
+body.dark-mode .fw-cards-section {
+    background: #151515 !important;
+    border-top: 1px solid #242424 !important;
+    border-bottom: 1px solid #242424 !important;
+}
+
+.frameworks-page.dark-mode .fw-cards-section .fw-section-title,
+body.dark-mode .fw-cards-section .fw-section-title {
+    color: #ffffff !important;
+}
+
+.frameworks-page.dark-mode .fw-cards-section .fw-section-desc,
+body.dark-mode .fw-cards-section .fw-section-desc {
+    color: #94a3b8 !important;
+}
+
+.frameworks-page.dark-mode .fw-card,
+body.dark-mode .fw-card {
+    background: #1c1c1c !important;
+    border: 1px solid #2a2a2a !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35) !important;
+}
+
+.frameworks-page.dark-mode .fw-card:hover,
+body.dark-mode .fw-card:hover {
+    border-color: rgba(200, 8, 8, 0.55) !important;
+    box-shadow: 0 20px 40px rgba(200, 8, 8, 0.22) !important;
+}
+
+.frameworks-page.dark-mode .fw-synthesis-section,
+body.dark-mode .fw-synthesis-section {
+    background: #121212 !important;
+    border-bottom: 1px solid #242424 !important;
+}
+
+.frameworks-page.dark-mode .fw-synthesis-section .fw-section-title,
+body.dark-mode .fw-synthesis-section .fw-section-title {
+    color: #ffffff !important;
+}
+
+.frameworks-page.dark-mode .fw-synthesis-section .fw-section-desc,
+body.dark-mode .fw-synthesis-section .fw-section-desc {
+    color: #94a3b8 !important;
+}
+
+.frameworks-page.dark-mode .fw-synthesis-role-card,
+body.dark-mode .fw-synthesis-role-card {
+    background: #181818 !important;
+    border: 1px solid #282828 !important;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35) !important;
+}
+
+.frameworks-page.dark-mode .fw-synthesis-role-card:hover,
+body.dark-mode .fw-synthesis-role-card:hover {
+    border-color: rgba(200, 8, 8, 0.45) !important;
+    box-shadow: 0 16px 36px rgba(200, 8, 8, 0.15) !important;
+}
+
+.frameworks-page.dark-mode .fw-synthesis-role-name,
+body.dark-mode .fw-synthesis-role-name {
+    color: #ffffff !important;
+}
+
+.frameworks-page.dark-mode .fw-synthesis-role-desc,
+body.dark-mode .fw-synthesis-role-desc {
+    color: #cbd5e1 !important;
+}
+
+.frameworks-page.dark-mode .fw-visual-box,
+body.dark-mode .fw-visual-box {
+    background: #0d111a !important;
+    border: 1px solid #1f2737 !important;
+}
+
+.frameworks-page.dark-mode .fw-card-link-btn,
+body.dark-mode .fw-card-link-btn {
+    background: #202020 !important;
+    border: 1px solid #2e2e2e !important;
+    color: #ffffff !important;
+}
+
+.frameworks-page.dark-mode .fw-card-link-btn:hover,
+body.dark-mode .fw-card-link-btn:hover {
+    background: #c80808 !important;
+    border-color: #c80808 !important;
+}
+
+.frameworks-page.dark-mode .fw-pathways-section,
+body.dark-mode .fw-pathways-section {
+    background: #121212 !important;
+    border-top: 1px solid #242424 !important;
+}
+
+.frameworks-page.dark-mode .fw-pathways-section .fw-section-title,
+body.dark-mode .fw-pathways-section .fw-section-title {
+    color: #ffffff !important;
+}
+
+.frameworks-page.dark-mode .fw-pathways-section .fw-section-desc,
+body.dark-mode .fw-pathways-section .fw-section-desc {
+    color: #94a3b8 !important;
+}
+
+.frameworks-page.dark-mode .fw-pathway-card,
+body.dark-mode .fw-pathway-card {
+    background: #181818 !important;
+    border: 1px solid #282828 !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25) !important;
+}
+
+.frameworks-page.dark-mode .fw-pathway-card:hover,
+body.dark-mode .fw-pathway-card:hover {
+    border-color: rgba(200, 8, 8, 0.45) !important;
+    box-shadow: 0 16px 36px rgba(200, 8, 8, 0.12) !important;
+}
+
+.frameworks-page.dark-mode .fw-pathway-title,
+body.dark-mode .fw-pathway-title {
+    color: #ffffff !important;
+}
+
+.frameworks-page.dark-mode .fw-pathway-desc,
+body.dark-mode .fw-pathway-desc {
+    color: #94a3b8 !important;
+}
+
+.frameworks-page.dark-mode .fw-publications-section,
+body.dark-mode .fw-publications-section {
+    background: #151515 !important;
+    border-top: 1px solid #242424 !important;
+}
+
+.frameworks-page.dark-mode .fw-publications-section .fw-section-title,
+body.dark-mode .fw-publications-section .fw-section-title {
+    color: #ffffff !important;
+}
+
+.frameworks-page.dark-mode .fw-publications-section .fw-section-desc,
+body.dark-mode .fw-publications-section .fw-section-desc {
+    color: #94a3b8 !important;
+}
+
+.frameworks-page.dark-mode .fw-pub-card,
+body.dark-mode .fw-pub-card {
+    background: #1c1c1c !important;
+    border: 1px solid #282828 !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3) !important;
+}
+
+.frameworks-page.dark-mode .fw-pub-card:hover,
+body.dark-mode .fw-pub-card:hover {
+    border-color: rgba(200, 8, 8, 0.45) !important;
+    box-shadow: 0 16px 36px rgba(200, 8, 8, 0.14) !important;
+}
+
+.frameworks-page.dark-mode .fw-pub-title,
+body.dark-mode .fw-pub-title {
+    color: #ffffff !important;
+}
+
+.frameworks-page.dark-mode .fw-pub-desc,
+body.dark-mode .fw-pub-desc {
+    color: #94a3b8 !important;
+}
+
+.frameworks-page.dark-mode .fw-final-cta-section,
+body.dark-mode .fw-final-cta-section {
+    background: #0d0d0d !important;
+    border-top: 1px solid #222222 !important;
+}
+
+.frameworks-page.dark-mode .fw-modal-panel,
+body.dark-mode .fw-modal-panel {
+    background: #181818 !important;
+    border: 1px solid #282828 !important;
+    color: #ffffff !important;
+}

@@ -30,7 +30,9 @@ const Footer = () => {
                                         <li>
                                             <div className="d-flex flex-row align-items-center gspace-2 secondary-accent">
                                                 <i className="fa-solid fa-envelope-open-text "></i>
-                                                <span>info@siddiqui.digital</span>
+                                                <span><a href="mailto:info@siddiqui.digital">
+  info@siddiqui.digital
+</a></span>
                                             </div>
                                         </li>
                                         <li>
@@ -45,8 +47,9 @@ const Footer = () => {
                                     <h4 className="accent-color">Quick Links</h4>
                                     <ul className="footer-list no-dark">
                                         <li><Link to="/about">About</Link></li>
-                                        <li><Link to="/e_books">Learnings</Link></li>
-                                        <li><Link to="/courses">Frameworks</Link></li>
+                                        <li><Link to="/publication">Books & Digital Publications</Link></li>
+                                        <li><Link to="/courses">Learnings</Link></li>
+                                        <li><Link to="/framework">Frameworks</Link></li>
                                         <li><Link to="/consultation">Advisory</Link></li>
                                         <li><Link to="/contact">Contact</Link></li>
                                     </ul>

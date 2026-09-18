@@ -8,7 +8,7 @@ export default function BookPage() {
   return (
     <>
     <HeadTitle title="Siddiqui.Digital"/>
-    <BannerInnerSection title="Featured Books" currentPage="Books" />
+    <BannerInnerSection title="Books and Digital Publications" currentPage="Books and Digital Publications" />
     <Ebooks />
     </>
   );

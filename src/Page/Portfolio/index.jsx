@@ -10,8 +10,8 @@ import CoursPage from "../../Components/Courses";
 const PortfolioPage = () => {
     return(
         <>
-            <HeadTitle title="Portfolio - Aspire - SEO & Digital Marketing Agency" />
-            <BannerInnerSection title="Courses" currentPage="Portfolio" />
+            {/* <HeadTitle title="Portfolio - Aspire - SEO & Digital Marketing Agency" /> */}
+            <BannerInnerSection title="Frameworks" currentPage="Portfolio" />
             <CoursPage/>
             {/* <PortfolioSection />
             <CtaSection />

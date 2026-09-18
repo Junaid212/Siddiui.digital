@@ -168,6 +168,7 @@ const Navbar = () => {
             root.setAttribute("data-theme", "light");
         }
         localStorage.setItem("darkMode", JSON.stringify(darkMode));
+        window.dispatchEvent(new Event("themeChange"));
     }, [darkMode]);
 
     const isDropdownActive = (prefixes = []) => {
@@ -298,12 +299,12 @@ const Navbar = () => {
                                         </NavLink>
                                     </li>
                                     <li className="nav-item">
-                                        <NavLink to="/courses" className="nav-link" onClick={closeMenu}>
+                                        <NavLink to="/framework" className="nav-link" onClick={closeMenu}>
                                             Frameworks
                                         </NavLink>
                                     </li>
                                     <li className="nav-item">
-                                        <NavLink to="/e_books" className="nav-link" onClick={closeMenu}>
+                                        <NavLink to="/courses" className="nav-link" onClick={closeMenu}>
                                             Learning
                                         </NavLink>
                                     </li>

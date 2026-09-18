@@ -21,37 +21,23 @@ export const api = {
         }).then((res) => res.json()),
 
     // Digital Products & Ebooks
-getProducts: async () => {
-    try {
-        const res = await fetch(
-            `${ADMIN_API_BASE}/api/public/products`,
-            {
-                cache: "no-store",
-            }
-        );
-
-        if (!res.ok) {
-            throw new Error(`Products API returned ${res.status}`);
+    getProducts: async () => {
+        try {
+            const res = await fetch(
+                `${ADMIN_API_BASE}/api/public/products`,
+                { cache: "no-store" }
+            );
+            if (!res.ok) throw new Error(`Products API returned ${res.status}`);
+            const data = await res.json();
+            if (!data || !Array.isArray(data.products)) throw new Error("Invalid products API response");
+            return { products: data.products };
+        } catch (error) {
+            console.error("Failed to load digital products:", error);
+            return { products: [] };
         }
-
-        const data = await res.json();
-
-        if (!data || !Array.isArray(data.products)) {
-            throw new Error("Invalid products API response");
-        }
-
-        return {
-            products: data.products,
-        };
-    } catch (error) {
-        console.error("Failed to load digital products:", error);
-        return { products: [] };
-    }
-},
-
-    getEbooks: () => {
-        return api.getProducts();
     },
+
+    getEbooks: () => api.getProducts(),
 
     getProductById: async (id) => {
         // 1. Try Admin Public Products API
@@ -74,6 +60,34 @@ getProducts: async () => {
             const listRes = await api.getProducts();
             if (listRes && listRes.products) {
                 const found = listRes.products.find(p => String(p.id) === String(id) || String(p.sku) === String(id));
+                if (found) return { product: found };
+            }
+        } catch (e) {}
+
+        return null;
+    },
+
+    // Fetch product by slug (primary method for /publications/:slug routing)
+    getProductBySlug: async (slug) => {
+        if (!slug) return null;
+
+        // 1. Try Admin Public Products API slug endpoint
+        try {
+            const res = await fetch(`${ADMIN_API_BASE}/api/public/products/by-slug/${encodeURIComponent(slug)}`);
+            if (res.ok) {
+                const data = await res.json();
+                if (data && data.product) return data;
+            }
+        } catch (e) {}
+
+        // 2. Search inside products list by slug field
+        try {
+            const listRes = await api.getProducts();
+            if (listRes && listRes.products) {
+                const found = listRes.products.find(p =>
+                    p.slug === slug ||
+                    p.slug === slug.toLowerCase()
+                );
                 if (found) return { product: found };
             }
         } catch (e) {}

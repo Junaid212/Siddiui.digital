@@ -141,11 +141,14 @@ export default function AppointmentDrawer({ isOpen, onClose }) {
   const [showSuccess, setShowSuccess] = useState(false);
   const [isBooking, setIsBooking] = useState(false);
   const [bookingError, setBookingError] = useState(null);
+  const [emailDelivery, setEmailDelivery] = useState(null);
   const [formData, setFormData] = useState({ name: '', phone: '', email: '', message: '' });
   const [formErrors, setFormErrors] = useState({});
   const [bookedSlots, setBookedSlots] = useState([]);
 
-  const API_BASE = "http://localhost:5000/api";
+  const isLocalhost = typeof window !== "undefined" &&
+    (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
+  const API_BASE = isLocalhost ? "http://localhost:5000/api" : (import.meta.env.VITE_API_URL || "/api");
 
   const autoCloseTimeoutRef = useRef(null);
   useEffect(() => {
@@ -246,6 +249,7 @@ export default function AppointmentDrawer({ isOpen, onClose }) {
       }
 
       setShowFormPopup(false);
+      setEmailDelivery(result.emailDelivery || null);
       setShowSuccess(true);
       autoCloseTimeoutRef.current = setTimeout(() => {
         handleSuccessClose();
@@ -270,6 +274,7 @@ export default function AppointmentDrawer({ isOpen, onClose }) {
     setSelectedPeriod("morning");
     setFormData({ name: '', phone: '', email: '', message: '' });
     setBookingError(null);
+    setEmailDelivery(null);
     onClose();
   };
 
@@ -575,6 +580,7 @@ export default function AppointmentDrawer({ isOpen, onClose }) {
         date={selectedDate ? format(selectedDate, "EEEE, MMMM d") : ""}
         time={selectedTime}
         formData={formData}
+        emailDelivery={emailDelivery}
       />
     </>
   );

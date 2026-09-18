@@ -70,7 +70,7 @@ export default function OrderCancelPage() {
                                 Try Again
                             </Link>
                             <Link
-                                to="/e_books"
+                                to="/publications"
                                 style={{
                                     background: "transparent",
                                     border: "1px solid rgba(255, 255, 255, 0.15)",

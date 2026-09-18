@@ -297,7 +297,7 @@ export default function OrderSuccess() {
 
                     {/* Bottom Actions */}
                     <div className="replacement-link-section">
-                        <Link to="/e_books" style={{ color: "#a1a1aa", textDecoration: "none", fontSize: "0.9rem" }}>
+                        <Link to="/publications" style={{ color: "#a1a1aa", textDecoration: "none", fontSize: "0.9rem" }}>
                             ← Back to Digital Publications
                         </Link>
 

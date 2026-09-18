@@ -23,6 +23,8 @@ import PopupPage from "./Page/PopupManager";
 import BlogSection from "./Page/Blogs";
 import BlogByIdPage from "./Page/BlogById";
 import Courses from "./Page/Courses";
+import FrameworksPage from "./Page/Frameworks";
+import FrameworkDetailPage from "./Page/FrameworkDetail";
 import OrderSuccessPage from "./Page/OrderSuccess";
 import OrderCancelPage from "./Page/OrderCancel";
 // import BookAppointment from "./Page/BookAppointment";
@@ -50,8 +52,14 @@ function AppRouters() {
 
 
             <Route path="ebooks" element={<EbookPage />} />
-            <Route path="e_books" element={<BookPage />} />
+            <Route path="publications" element={<BookPage />} />
+
+            {/* Primary publication route — slug-based */}
+            <Route path="publications/:slug" element={<BuyBookPage />} />
+
+            {/* Legacy ID-based route — kept for backward compatibility with existing links */}
             <Route path="buy-book/:id" element={<BuyBookPage />} />
+
             <Route path="order-success" element={<OrderSuccessPage />} />
             <Route path="order-cancel" element={<OrderCancelPage />} />
             <Route path="consultation" element={<ConsultantPage />} />
@@ -59,6 +67,11 @@ function AppRouters() {
             {/* ID-based blog route for admin share links */}
             <Route path="blogs/:id" element={<BlogByIdPage />} />
             <Route path="courses" element={<Courses />} />
+            <Route path="frameworks" element={<FrameworksPage />} />
+            <Route path="frameworks/:slug" element={<FrameworkDetailPage />} />
+            <Route path="framework" element={<FrameworksPage />} />
+            <Route path="framework/:slug" element={<FrameworkDetailPage />} />
+            <Route path="publication" element={<BookPage />} />
 
         </Routes>
     );

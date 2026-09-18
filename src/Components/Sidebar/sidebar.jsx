@@ -82,13 +82,17 @@ function Sidebar() {
             <div ref={overlayRef} className="sidebar-overlay"></div>
             <div ref={sidebarRef} className="sidebar">
                 <div className="sidebar-header">
-                    <div className="logo">
+                    <NavLink className="navbar-brand" to="/" >
                         {/* <img
                             src="/assets/images/logo.webp"
                             className="img-fluid logo"
                             alt="Logo"
                         /> */}
-                    </div>
+                        <div className="navbar-brand-text" >
+                            <span className="brand-name">SIDDIQUI.DIGITAL</span>
+                            <span className="brand-tagline">BUSINESS SOLUTIONS</span>
+                        </div>
+                    </NavLink>
                     <button className="close-btn">
                         <span>X</span>
                     </button>
@@ -102,10 +106,10 @@ function Sidebar() {
                         <NavLink to="/about">About Us</NavLink>
                     </li>
                     <li>
-                        <NavLink to="/courses">Frameworks</NavLink>
+                        <NavLink to="/framework">Frameworks</NavLink>
                     </li>
                     <li>
-                        <NavLink to="/e_books">Learning</NavLink>
+                        <NavLink to="/courses">Learning</NavLink>
                     </li>
                     <li className="below-dropdown">
                         <NavLink to="/blog-page">Blog</NavLink>
@@ -114,11 +118,7 @@ function Sidebar() {
                         <NavLink to="/consultation">Advisory</NavLink>
                     </li>
 
-                    {/* <li className="sidebar-dropdown">
-                        <div className="dropdown-header">
-                            <NavLink to="/e_books">E-Book</NavLink>
-                        </div>
-                    </li> */}
+                    
 
                     {/* <li className="sidebar-dropdown below-dropdown">
                         <div className="dropdown-header">
