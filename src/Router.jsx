@@ -27,6 +27,8 @@ import FrameworksPage from "./Page/Frameworks";
 import FrameworkDetailPage from "./Page/FrameworkDetail";
 import OrderSuccessPage from "./Page/OrderSuccess";
 import OrderCancelPage from "./Page/OrderCancel";
+import CartCheckoutPage from "./Page/CartCheckout";
+import MyOrdersPage from "./Page/MyOrders";
 // import BookAppointment from "./Page/BookAppointment";
 
 function AppRouters() {
@@ -62,6 +64,8 @@ function AppRouters() {
 
             <Route path="order-success" element={<OrderSuccessPage />} />
             <Route path="order-cancel" element={<OrderCancelPage />} />
+            <Route path="cart/checkout" element={<CartCheckoutPage />} />
+            <Route path="my-orders" element={<MyOrdersPage />} />
             <Route path="consultation" element={<ConsultantPage />} />
             <Route path="blog-page" element={<BlogSection />} />
             {/* ID-based blog route for admin share links */}

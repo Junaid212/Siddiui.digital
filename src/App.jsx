@@ -6,23 +6,26 @@ import Footer from "./Components/Footer/footer";
 import Sidebar from "./Components/Sidebar/sidebar";
 import ScrollToTop from "./Components/ScrollToTop";
 import PageTransition from "./Components/PageTransition";
-import CustomCursor from "./Components/CustomCursor";
 import PopupManager from "./Page/PopupManager";
+import { CartProvider } from "./Components/Cart/CartContext";
+import CartDrawer from "./Components/Cart/CartDrawer";
 
 const App = () => {
     return (
         <Router>
-            {/* <CustomCursor /> */}
-            <Navbar />
-            <Sidebar />
-            <ModalVideoProvider>
-                <ScrollToTop />
-                <PageTransition>
-                    <AppRouters />
-                    <PopupManager/>
-                </PageTransition>
-            </ModalVideoProvider>
-            <Footer />
+            <CartProvider>
+                <Navbar />
+                <Sidebar />
+                <CartDrawer />
+                <ModalVideoProvider>
+                    <ScrollToTop />
+                    <PageTransition>
+                        <AppRouters />
+                        <PopupManager/>
+                    </PageTransition>
+                </ModalVideoProvider>
+                <Footer />
+            </CartProvider>
         </Router>
     );
 };

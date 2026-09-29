@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../api";
+import { useCart } from "../Cart/CartContext";
 
 const DEFAULT_CATALOG = [
   {
@@ -65,11 +66,37 @@ function resolveProductLink(book) {
 
 function BookCard({ book, index, direction }) {
   const [isHovered, setIsHovered] = useState(false);
+  const [addedToCart, setAddedToCart] = useState(false);
   const navigate = useNavigate();
+  const { addItem, items } = useCart();
 
   const checkoutLink = resolveProductLink(book);
   const displayPrice = book.price || `${book.currency || "AED"} ${Number(book.priceNum || 49).toFixed(2)}`;
   const isComingSoon = book.publication_status === "coming_soon";
+
+  // Check if already in cart
+  const isInCart = items.some(i => i.productId === book.id);
+
+  const handleAddToCart = (e) => {
+    e.stopPropagation();
+    if (isInCart) {
+      // Navigate to checkout if already in cart
+      navigate("/cart/checkout");
+      return;
+    }
+    addItem({
+      productId: book.id,
+      title: book.title,
+      price: Number(book.priceNum) || 49,
+      currency: book.currency || "AED",
+      coverImage: book.image || book.cover_image,
+      accessType: "download",
+      accessLabel: "Downloadable Edition",
+      slug: book.slug || null,
+    });
+    setAddedToCart(true);
+    setTimeout(() => setAddedToCart(false), 2000);
+  };
 
   return (
     <motion.div
@@ -133,31 +160,61 @@ function BookCard({ book, index, direction }) {
             {book.description}
           </p>
 
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-            {isComingSoon ? (
-              <div style={{
-                width: '100%', background: 'rgba(245, 158, 11, 0.2)', color: '#f59e0b',
-                fontWeight: '700', padding: '9px 16px', borderRadius: '8px', border: '1px solid rgba(245, 158, 11, 0.3)',
-                cursor: 'default', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', gap: '8px'
-              }}>
-                <i className="fa-solid fa-clock" />
-                Coming Soon
-              </div>
-            ) : (
-              <button
-                onClick={(e) => { e.stopPropagation(); navigate(checkoutLink); }}
+          {/* Action Buttons */}
+          {isComingSoon ? (
+            <div style={{
+              width: '100%', background: 'rgba(245, 158, 11, 0.2)', color: '#f59e0b',
+              fontWeight: '700', padding: '9px 16px', borderRadius: '8px', border: '1px solid rgba(245, 158, 11, 0.3)',
+              cursor: 'default', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', gap: '8px'
+            }}>
+              <i className="fa-solid fa-clock" />
+              Coming Soon
+            </div>
+          ) : (
+            <div style={{ display: 'flex', gap: '8px' }}>
+              {/* Add to Cart */}
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={handleAddToCart}
+                id={`add-to-cart-${book.id}`}
                 style={{
-                  width: '100%', background: 'linear-gradient(135deg, #c80808 0%, #990000 100%)',
-                  color: 'white', fontWeight: '700', padding: '9px 16px', borderRadius: '8px',
-                  border: 'none', cursor: 'pointer', boxShadow: '0 10px 15px -3px rgba(200, 8, 8, 0.4)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', gap: '8px'
+                  flex: 1,
+                  background: isInCart || addedToCart
+                    ? 'rgba(5, 150, 105, 0.15)'
+                    : 'rgba(255,255,255,0.1)',
+                  color: isInCart || addedToCart ? '#34d399' : '#ffffff',
+                  fontWeight: '700', padding: '9px 10px', borderRadius: '8px',
+                  border: isInCart || addedToCart ? '1px solid rgba(52,211,153,0.4)' : '1px solid rgba(255,255,255,0.2)',
+                  cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', gap: '5px',
+                  backdropFilter: 'blur(6px)',
+                  transition: 'all 0.2s ease'
                 }}
               >
-                <i className="fa-solid fa-bag-shopping" />
+                <i className={`fa-solid ${isInCart ? 'fa-check' : addedToCart ? 'fa-check' : 'fa-cart-plus'}`} />
+                {isInCart ? 'In Cart' : addedToCart ? 'Added!' : 'Add to Cart'}
+              </motion.button>
+
+              {/* Buy Now */}
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={(e) => { e.stopPropagation(); navigate(checkoutLink); }}
+                id={`buy-now-${book.id}`}
+                style={{
+                  flex: 1,
+                  background: 'linear-gradient(135deg, #c80808 0%, #990000 100%)',
+                  color: 'white', fontWeight: '700', padding: '9px 10px', borderRadius: '8px',
+                  border: 'none', cursor: 'pointer', boxShadow: '0 10px 15px -3px rgba(200, 8, 8, 0.4)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', gap: '5px'
+                }}
+              >
+                <i className="fa-solid fa-bolt" />
                 Buy Now
-              </button>
-            )}
-          </motion.div>
+              </motion.button>
+            </div>
+          )}
         </div>
       </div>
     </motion.div>

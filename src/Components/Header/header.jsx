@@ -138,6 +138,8 @@
 
 import React, { useState, useEffect } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
+import { useCart } from "../Cart/CartContext";
+import "../Cart/CartDrawer.css";
 
 const Navbar = () => {
     const location = useLocation();
@@ -318,6 +320,11 @@ const Navbar = () => {
                                             Advisory
                                         </NavLink>
                                     </li>
+                                    {/* <li className="nav-item">
+                                        <NavLink to="/my-orders" className="nav-link" onClick={closeMenu}>
+                                            My Orders
+                                        </NavLink>
+                                    </li> */}
 
                                     {/* <li className="nav-item dropdown">
                                         <a
@@ -401,6 +408,9 @@ const Navbar = () => {
                             </div>
                         </div>
 
+                        {/* Cart Icon */}
+                        <CartNavIcon />
+
                         {/* Theme Toggle Button */}
                         <button
                             className="theme-toggle-btn"
@@ -423,9 +433,9 @@ const Navbar = () => {
                             <i className={`fa-solid ${isMenuOpen ? 'fa-xmark' : 'fa-bars-staggered'}`}></i>
                         </button>
 
-                        <div className="navbar-cta">
+                        {/* <div className="navbar-cta">
                             <Link to="/contact" className="btn btn-accent">Get Started</Link>
-                        </div>
+                        </div> */}
                     </div>
                 </nav>
             </div>
@@ -623,7 +633,7 @@ const Navbar = () => {
                 flex-shrink: 0;
                 margin-right: 15px;
                 background: transparent;
-                border: 2px solid var(--text-primary);
+                border: 2px solid var(--card-bg);
                 color: var(--text-primary);
             }
 
@@ -758,3 +768,28 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
+/* ── Cart Nav Icon ── rendered inside Navbar, needs its own hook call */
+function CartNavIcon() {
+    try {
+        const cart = useCart();
+        const itemCount = cart?.itemCount || 0;
+        const toggleCart = cart?.toggleCart || (() => {});
+        return (
+            <button
+                className="cart-nav-btn"
+                onClick={toggleCart}
+                aria-label={`Shopping cart${itemCount > 0 ? `, ${itemCount} items` : ""}`}
+                title="Shopping Cart"
+                id="nav-cart-btn"
+            >
+                <i className="fa-solid fa-bag-shopping" />
+                {itemCount > 0 && (
+                    <span className="cart-nav-badge">{itemCount > 99 ? "99+" : itemCount}</span>
+                )}
+            </button>
+        );
+    } catch (_) {
+        return null;
+    }
+}

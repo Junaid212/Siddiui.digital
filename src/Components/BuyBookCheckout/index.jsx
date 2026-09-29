@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "../../supabaseClient";
 import { api } from "../../api";
 import { INDIVIDUAL_FRAMEWORKS } from "../../Data/FrameworksData";
+import { useCart } from "../Cart/CartContext";
 import "./BuyBookCheckout.css";
 
 /* ============================================================
@@ -133,6 +134,7 @@ function PricingCard({ label, badge, price, currency, description, features, cta
    ============================================================ */
 export default function BuyBookCheckout() {
   const { slug, id } = useParams();
+  const { addItem, items } = useCart();
 
   const [user, setUser] = useState(null);
   const [product, setProduct] = useState(null);
@@ -143,6 +145,71 @@ export default function BuyBookCheckout() {
   const [formData, setFormData] = useState({ name: "", email: "" });
   const [showQuickForm, setShowQuickForm] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
+  const [addedToCart, setAddedToCart] = useState(false);
+
+  // Coupon code & discount state
+  const [couponCode, setCouponCode] = useState("");
+  const [couponInput, setCouponInput] = useState("");
+  const [couponDiscount, setCouponDiscount] = useState(null);
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [couponError, setCouponError] = useState("");
+  const [couponSuccess, setCouponSuccess] = useState("");
+
+  const handleApplyCoupon = async (subtotalAmount) => {
+    const code = couponInput.trim().toUpperCase();
+    if (!code) return;
+    setCouponLoading(true);
+    setCouponError("");
+    setCouponSuccess("");
+    try {
+      const data = await api.validateDiscount(code, subtotalAmount || product?.price || 49.99);
+      if (data && data.valid && data.discount) {
+        setCouponCode(code);
+        setCouponDiscount(data.discount);
+        const pct = data.discount.value || data.discount.discount_percentage;
+        setCouponSuccess(`Coupon '${code}' applied! Book price reduced by ${pct}%.`);
+      } else {
+        setCouponDiscount(null);
+        setCouponCode("");
+        setCouponError(data?.error || `Coupon code '${code}' is invalid.`);
+      }
+    } catch {
+      setCouponError("Unable to verify coupon code. Please try again.");
+    } finally {
+      setCouponLoading(false);
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    setCouponCode("");
+    setCouponDiscount(null);
+    setCouponInput("");
+    setCouponSuccess("");
+    setCouponError("");
+  };
+
+  // Check if this product is already in cart
+  const isInCart = product && items.some(i => i.productId === product.id);
+
+  const handleAddToCart = (option) => {
+    if (!product) return;
+    const isObj = typeof option === "object" && option !== null;
+    const accessType = isObj ? (option.access_type || "download") : (option || "download");
+    const accessLabel = isObj ? option.name : (option === "online" ? "Online Access" : "Downloadable Edition");
+    const price = isObj ? Number(option.price) : (option === "online" ? 20 : (product.price || 49.99));
+    addItem({
+      productId: product.id,
+      title: product.title,
+      price,
+      currency: product.currency || "AED",
+      coverImage: product.cover_image,
+      accessType,
+      accessLabel,
+      slug: product.slug || null,
+    });
+    setAddedToCart(true);
+    setTimeout(() => setAddedToCart(false), 2000);
+  };
 
   /* ─── Load product from API ─────────────────────────────── */
   useEffect(() => {
@@ -310,14 +377,28 @@ export default function BuyBookCheckout() {
         currency = product?.currency || "USD";
       }
 
+      let finalAmount = amount;
+      let appliedDiscountAmount = 0;
+      if (couponDiscount) {
+        const pct = Number(couponDiscount.value || couponDiscount.discount_percentage || 0);
+        if (pct > 0) {
+          appliedDiscountAmount = Math.round(((amount * pct) / 100) * 100) / 100;
+          finalAmount = Math.max(0, Math.round((amount - appliedDiscountAmount) * 100) / 100);
+        }
+      }
+
       const result = await api.createCheckout({
         productId,
-        bookName,
+        bookName: couponDiscount ? `${bookName} (${couponDiscount.value || couponDiscount.discount_percentage}% OFF - ${couponCode})` : bookName,
         customerName: formData.name.trim() || "Valued Customer",
         customerEmail: formData.email.trim(),
         userId: user?.id || null,
         accessType: optionKey,
-        amount,
+        amount: finalAmount,
+        originalAmount: amount,
+        discountCode: couponDiscount ? couponCode : null,
+        discountPercentage: couponDiscount ? Number(couponDiscount.value || couponDiscount.discount_percentage) : 0,
+        discountAmount: appliedDiscountAmount,
         currency,
       });
 
@@ -351,7 +432,13 @@ export default function BuyBookCheckout() {
     );
   }
 
-  const formattedPrice = `${product.currency || "USD"} ${Number(product.price || 49.99).toFixed(2)}`;
+  const originalPriceNumber = Number(product.price || 49.99);
+  const discountPct = couponDiscount ? Number(couponDiscount.value || couponDiscount.discount_percentage || 0) : 0;
+  const discountSavings = couponDiscount ? Math.round(((originalPriceNumber * discountPct) / 100) * 100) / 100 : 0;
+  const reducedPriceNumber = couponDiscount ? Math.max(0, Math.round((originalPriceNumber - discountSavings) * 100) / 100) : originalPriceNumber;
+  const currencySymbol = product.currency || "USD";
+  const formattedPrice = `${currencySymbol} ${reducedPriceNumber.toFixed(2)}`;
+  const formattedOriginalPrice = `${currencySymbol} ${originalPriceNumber.toFixed(2)}`;
   const isComingSoon = product.publication_status === "coming_soon";
 
   // Build access options for pricing section
@@ -419,6 +506,116 @@ export default function BuyBookCheckout() {
               {hasContent(product.description) && <p className="pub-hero-desc">{product.description}</p>}
               {hasContent(product.description2) && <p className="pub-hero-desc-2">{product.description2}</p>}
 
+              {/* Coupon Code / Promo Section */}
+              {!isComingSoon && (
+                <div style={{
+                  background: couponDiscount ? "rgba(34, 197, 94, 0.08)" : "rgba(255, 255, 255, 0.04)",
+                  border: couponDiscount ? "1px solid rgba(34, 197, 94, 0.35)" : "1px solid rgba(255, 255, 255, 0.12)",
+                  borderRadius: "10px",
+                  padding: "12px 14px",
+                  marginBottom: "16px",
+                  transition: "all 0.25s ease",
+                }}>
+                  {!couponDiscount ? (
+                    <div>
+                      <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                        <div style={{ position: "relative", flex: 1 }}>
+                          <i className="fa-solid fa-tag" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)", color: "rgba(255,255,255,0.45)", fontSize: "0.85rem" }} />
+                          <input
+                            type="text"
+                            placeholder="Have a coupon code? (e.g. LAUNCH20)"
+                            value={couponInput}
+                            onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                e.preventDefault();
+                                handleApplyCoupon(originalPriceNumber);
+                              }
+                            }}
+                            style={{
+                              width: "100%",
+                              background: "rgba(0,0,0,0.3)",
+                              border: "1px solid rgba(255,255,255,0.18)",
+                              borderRadius: "6px",
+                              padding: "7px 10px 7px 32px",
+                              color: "#fff",
+                              fontSize: "0.85rem",
+                              fontWeight: 600,
+                              letterSpacing: "0.5px",
+                            }}
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleApplyCoupon(originalPriceNumber)}
+                          disabled={couponLoading || !couponInput.trim()}
+                          style={{
+                            background: "linear-gradient(135deg, #2563eb, #3b82f6)",
+                            color: "#fff",
+                            border: "none",
+                            borderRadius: "6px",
+                            padding: "7px 14px",
+                            fontSize: "0.82rem",
+                            fontWeight: 600,
+                            cursor: couponLoading || !couponInput.trim() ? "not-allowed" : "pointer",
+                            opacity: couponLoading || !couponInput.trim() ? 0.6 : 1,
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          {couponLoading ? "Checking…" : "Apply Code"}
+                        </button>
+                      </div>
+                      {couponError && (
+                        <div style={{ color: "#f87171", fontSize: "0.78rem", marginTop: "6px", display: "flex", alignItems: "center", gap: "5px" }}>
+                          <i className="fa-solid fa-circle-exclamation" /> {couponError}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+                          <span style={{
+                            background: "rgba(34, 197, 94, 0.2)",
+                            color: "#4ade80",
+                            fontSize: "0.78rem",
+                            fontWeight: 700,
+                            padding: "3px 8px",
+                            borderRadius: "4px",
+                            border: "1px solid rgba(34, 197, 94, 0.4)",
+                            letterSpacing: "0.5px",
+                          }}>
+                            ✓ {couponCode} (-{discountPct}%)
+                          </span>
+                          <span style={{ fontSize: "0.85rem", color: "#86efac", fontWeight: 600 }}>
+                            Price reduced by {discountPct}%! You save {currencySymbol} {discountSavings.toFixed(2)}
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleRemoveCoupon}
+                          style={{
+                            background: "transparent",
+                            border: "none",
+                            color: "#94a3b8",
+                            fontSize: "0.75rem",
+                            textDecoration: "underline",
+                            cursor: "pointer",
+                            padding: "2px 4px",
+                          }}
+                        >
+                          Remove
+                        </button>
+                      </div>
+                      <div style={{ marginTop: "6px", display: "flex", alignItems: "center", gap: "8px", fontSize: "0.82rem" }}>
+                        <span style={{ color: "#94a3b8", textDecoration: "line-through" }}>Original: {formattedOriginalPrice}</span>
+                        <span style={{ color: "#22c55e", fontWeight: 700, fontSize: "0.95rem" }}>→ Now: {formattedPrice}</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* CTAs — shown only when Available and pricing data exists */}
               {!isComingSoon && (
                 <div className="pub-hero-cta-row">
@@ -464,6 +661,34 @@ export default function BuyBookCheckout() {
                 <span><i className="fa-solid fa-bolt" /> Instant Delivery</span>
                 <span><i className="fa-solid fa-shield-halved" /> Protected Format</span>
               </div>
+
+              {/* Add to Cart option */}
+              {!isComingSoon && (
+                <div style={{ marginTop: "12px", display: "flex", gap: "10px", flexWrap: "wrap", alignItems: "center" }}>
+                  <button
+                    className={isInCart || addedToCart ? "pub-hero-btn-secondary" : "pub-hero-btn-secondary"}
+                    id="hero-add-to-cart-btn"
+                    onClick={() => handleAddToCart("download")}
+                    style={{
+                      background: isInCart || addedToCart ? "rgba(5,150,105,0.1)" : "",
+                      borderColor: isInCart || addedToCart ? "rgba(5,150,105,0.4)" : "",
+                      color: isInCart || addedToCart ? "#059669" : "",
+                      fontSize: "0.82rem",
+                    }}
+                  >
+                    <i className={`fa-solid ${isInCart ? "fa-check" : addedToCart ? "fa-check" : "fa-cart-plus"}`} />
+                    {isInCart ? "In Cart · View Cart" : addedToCart ? "Added to Cart!" : "Add to Cart"}
+                  </button>
+                  <Link
+                    to="/my-orders"
+                    style={{ fontSize: "0.75rem", color: "var(--text-secondary, #6b7280)", textDecoration: "underline", display: "inline-flex", alignItems: "center", gap: "4px" }}
+                  >
+                    <i className="fa-solid fa-bag-shopping" style={{ fontSize: "0.7rem" }} />
+                    My Orders
+                  </Link>
+                </div>
+              )}
+
             </motion.div>
           </div>
         </div>
@@ -496,6 +721,27 @@ export default function BuyBookCheckout() {
                         Autofill with Google
                       </button>
                       <span className="pub-quick-form-or">or enter manually above</span>
+                    </div>
+                  )}
+                  {couponDiscount && (
+                    <div style={{
+                      background: "rgba(34, 197, 94, 0.1)",
+                      border: "1px solid rgba(34, 197, 94, 0.25)",
+                      borderRadius: "8px",
+                      padding: "8px 12px",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      marginBottom: "12px",
+                      fontSize: "0.85rem",
+                    }}>
+                      <span style={{ color: "#86efac", fontWeight: 600 }}>
+                        <i className="fa-solid fa-tag" style={{ marginRight: 6 }} />
+                        Coupon Applied: <strong>{couponCode}</strong> (-{discountPct}%)
+                      </span>
+                      <span style={{ color: "#22c55e", fontWeight: 700 }}>
+                        Total: {formattedPrice}
+                      </span>
                     </div>
                   )}
                   {checkoutError && <div className="pub-error-msg"><i className="fa-solid fa-circle-exclamation" /> {checkoutError}</div>}

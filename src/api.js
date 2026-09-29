@@ -108,6 +108,50 @@ export const api = {
             return json;
         }),
 
+    // Multi-item Cart Checkout
+    createCartCheckout: (data) =>
+        fetch(`${API_BASE}/payment/create-cart-checkout`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        }).then(async (res) => {
+            const json = await res.json().catch(() => ({}));
+            if (!res.ok) {
+                throw new Error(json.error || `Cart checkout failed (${res.status})`);
+            }
+            return json;
+        }),
+
+    // Validate Discount Code
+    validateDiscount: async (code, subtotal) => {
+        try {
+            const res = await fetch(`${API_BASE}/payment/validate-discount`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ code, subtotal }),
+            });
+            const data = await res.json().catch(() => ({}));
+            if (res.ok && data.valid) return data;
+            if (data && data.error) return data;
+        } catch (_) {}
+
+        // Fallback to admin server if running
+        try {
+            const fallbackRes = await fetch("http://localhost:5001/api/public/coupons/validate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ code, subtotal }),
+            });
+            return await fallbackRes.json();
+        } catch (e) {
+            return { valid: false, error: "Unable to verify coupon code." };
+        }
+    },
+
+    // Customer Order History
+    getCustomerOrders: (email) =>
+        fetch(`${API_BASE}/payment/my-orders?email=${encodeURIComponent(email)}`).then((res) => res.json()),
+
     getOrderStatus: (identifier) =>
         fetch(`${API_BASE}/payment/order-status/${identifier}`).then((res) =>
             res.json()
@@ -187,3 +231,5 @@ export const api = {
     getPublicCategories: () =>
         fetch(`${ADMIN_API_BASE}/api/public/blogs/categories`).then((res) => res.json()),
 };
+
+export default api;
