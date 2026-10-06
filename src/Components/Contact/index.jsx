@@ -27,7 +27,25 @@ const ContactSection = () =>{
                                         <i className="fa-solid fa-envelope"></i>
                                     </div>
                                     <span>Mail Address</span>
-                                    <p className="description" style={{fontSize: '14px', textAlign: 'center'}}>info@siddiqui.digital</p>
+                                    <a
+                                        href="mailto:info@siddiqui.digital"
+                                        style={{ textDecoration: 'none', color: 'inherit' }}
+                                        onClick={() => {
+                                            let appOpened = false;
+                                            const onBlur = () => { appOpened = true; };
+                                            window.addEventListener("blur", onBlur, { once: true });
+                                            window.location.href = "mailto:info@siddiqui.digital";
+                                            setTimeout(() => {
+                                                window.removeEventListener("blur", onBlur);
+                                                if (!appOpened && document.hasFocus()) {
+                                                    window.open("https://mail.google.com/mail/?view=cm&fs=1&to=info@siddiqui.digital", "_blank");
+                                                }
+                                            }, 600);
+                                        }}
+                                        title="Send email to info@siddiqui.digital"
+                                    >
+                                        <p className="description" style={{fontSize: '14px', textAlign: 'center', cursor: 'pointer'}}>info@siddiqui.digital</p>
+                                    </a>
                                 </div>
                             </div>
                             <div className="col">

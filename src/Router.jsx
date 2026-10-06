@@ -29,6 +29,7 @@ import OrderSuccessPage from "./Page/OrderSuccess";
 import OrderCancelPage from "./Page/OrderCancel";
 import CartCheckoutPage from "./Page/CartCheckout";
 import MyOrdersPage from "./Page/MyOrders";
+import AskSidPage from "./Page/AskSid";
 // import BookAppointment from "./Page/BookAppointment";
 
 function AppRouters() {
@@ -76,6 +77,8 @@ function AppRouters() {
             <Route path="framework" element={<FrameworksPage />} />
             <Route path="framework/:slug" element={<FrameworkDetailPage />} />
             <Route path="publication" element={<BookPage />} />
+            <Route path="ask-sid" element={<AskSidPage />} />
+            <Route path="ask-sid/*" element={<AskSidPage />} />
 
         </Routes>
     );

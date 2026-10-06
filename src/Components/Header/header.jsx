@@ -310,8 +310,18 @@ const Navbar = () => {
                                             Learning
                                         </NavLink>
                                     </li>
+                                    {/* <li className="nav-item">
+                                        <NavLink to="/publications" className="nav-link" onClick={closeMenu}>
+                                            Publications
+                                        </NavLink>
+                                    </li> */}
                                     <li className="nav-item">
-                                        <NavLink to="/blog-page" className="nav-link" >
+                                        <NavLink to="/ask-sid" className="nav-link asksid-nav-item" onClick={closeMenu}>
+                                            Ask SID
+                                        </NavLink>
+                                    </li>
+                                    <li className="nav-item">
+                                        <NavLink to="/blog-page" className="nav-link" onClick={closeMenu}>
                                             Blog
                                         </NavLink>
                                     </li>

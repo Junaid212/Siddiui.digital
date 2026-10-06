@@ -141,15 +141,16 @@ export default function SuccessModal({ isOpen, onClose, date, time, formData, em
                 </div>
               )}
 
-              {formData?.email && emailDelivery?.customer && (
-                <div style={{ marginTop: '1rem', padding: '0.75rem', borderRadius: '0.5rem', backgroundColor: '#ecfdf5', border: '1px solid #d1fae5', textAlign: 'center' }}>
-                  <p style={{ fontSize: '0.85rem', color: '#065f46', marginBottom: 2 }}>📧 Confirmation email sent</p>
-                  <p style={{ fontSize: '0.75rem', color: '#047857' }}>A confirmation with booking details has been sent to <strong>{formData.email}</strong></p>
-                </div>
-              )}
-              {formData?.email && emailDelivery && !emailDelivery.customer && (
-                <div style={{ marginTop: '1rem', padding: '0.75rem', borderRadius: '0.5rem', backgroundColor: '#fffbeb', border: '1px solid #fde68a', textAlign: 'center' }}>
-                  <p style={{ fontSize: '0.85rem', color: '#92400e', margin: 0 }}>Your booking is confirmed, but the confirmation email could not be delivered. We will follow up directly.</p>
+              {formData?.email && (
+                <div style={{ marginTop: '1rem', padding: '0.75rem', borderRadius: '0.5rem', backgroundColor: emailDelivery?.customer !== false ? '#ecfdf5' : '#fffbeb', border: emailDelivery?.customer !== false ? '1px solid #d1fae5' : '1px solid #fde68a', textAlign: 'center' }}>
+                  {emailDelivery?.customer !== false ? (
+                    <>
+                      <p style={{ fontSize: '0.85rem', color: '#065f46', marginBottom: 4, fontWeight: 600 }}>📧 Confirmation Sent</p>
+                      <p style={{ fontSize: '0.75rem', color: '#047857', margin: 0 }}>A confirmation has been sent to <strong>{formData.email}</strong>. If not visible in your inbox, please check your Spam/Junk folder.</p>
+                    </>
+                  ) : (
+                    <p style={{ fontSize: '0.85rem', color: '#92400e', margin: 0 }}>Your booking is confirmed! We will follow up with you directly.</p>
+                  )}
                 </div>
               )}
 

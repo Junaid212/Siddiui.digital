@@ -1,0 +1,1432 @@
+/* ============================================================
+   Ask SID — Digital Companion to Marketing Reclassified
+   Visual Identity: M. Q. Siddiqui / Marketing Reclassified
+   Colors: Obsidian (#0b0d13), Deep Crimson (#c80808, #ef4444),
+   Parchment Gold (#d4af37, #f59e0b), Slate Accent
+   ============================================================ */
+
+:root {
+  --sid-red: #c80808;
+  --sid-red-dark: #8e0505;
+  --sid-red-light: #ef4444;
+  --sid-red-glow: rgba(200, 8, 8, 0.24);
+  --sid-red-subtle: rgba(200, 8, 8, 0.1);
+  --sid-gold: #d4af37;
+  --sid-gold-glow: rgba(212, 175, 55, 0.2);
+  --sid-bg: #090b10;
+  --sid-bg-2: #0e1118;
+  --sid-bg-card: #131722;
+  --sid-bg-card-hover: #191f2e;
+  --sid-border: rgba(255, 255, 255, 0.08);
+  --sid-border-hover: rgba(200, 8, 8, 0.4);
+  --sid-text: #f3f4f6;
+  --sid-text-muted: #9ca3af;
+  --sid-text-faint: #6b7280;
+  --sid-radius-sm: 8px;
+  --sid-radius-md: 14px;
+  --sid-radius-lg: 20px;
+}
+
+/* Light Theme Variables */
+:root[data-theme="light"],
+body.light-mode,
+.asksid-page.light-mode {
+  --sid-bg: #f8fafc;
+  --sid-bg-2: #ffffff;
+  --sid-bg-card: #ffffff;
+  --sid-bg-card-hover: #fef2f2;
+  --sid-border: #e2e8f0;
+  --sid-border-hover: rgba(200, 8, 8, 0.35);
+  --sid-text: #0f172a;
+  --sid-text-muted: #475569;
+  --sid-text-faint: #94a3b8;
+  --sid-red-glow: rgba(200, 8, 8, 0.12);
+  --sid-red-subtle: rgba(200, 8, 8, 0.05);
+}
+
+.asksid-page {
+  min-height: 100vh;
+  background-color: var(--sid-bg);
+  color: var(--sid-text);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  padding-bottom: 100px;
+  position: relative;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ══════════════════════════════════════════════════════════
+   0. TOP BREADCRUMB BAR
+   ══════════════════════════════════════════════════════════ */
+.asksid-breadcrumb-bar {
+  background: #000000;
+  border-bottom: 1px solid var(--sid-border);
+  padding: 0.85rem 1.5rem;
+}
+
+.asksid-breadcrumb-container {
+  max-width: 1140px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.84rem;
+  color: var(--sid-text-muted);
+}
+
+.asksid-breadcrumb-link {
+  color: var(--sid-text-muted);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.asksid-breadcrumb-link:hover {
+  color: #ffffff;
+}
+
+.asksid-breadcrumb-sep {
+  opacity: 0.35;
+  color: var(--sid-text-faint);
+}
+
+.asksid-breadcrumb-current {
+  color: var(--sid-red-light);
+  font-weight: 600;
+}
+
+/* ══════════════════════════════════════════════════════════
+   1. HERO SECTION (Brand Visual Identity)
+   ══════════════════════════════════════════════════════════ */
+.asksid-hero {
+  position: relative;
+  background: radial-gradient(ellipse at 50% -10%, rgba(200, 8, 8, 0.28) 0%, rgba(30, 8, 12, 0.5) 45%, var(--sid-bg) 100%);
+  padding: 4.5rem 1.5rem 3.5rem;
+  text-align: center;
+  border-bottom: 1px solid var(--sid-border);
+  overflow: hidden;
+}
+
+.asksid-hero-inner {
+  max-width: 880px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.asksid-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(200, 8, 8, 0.12);
+  border: 1px solid rgba(200, 8, 8, 0.32);
+  padding: 6px 16px;
+  border-radius: 30px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: #ff6b6b;
+  margin-bottom: 1.25rem;
+}
+
+.asksid-eyebrow-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--sid-red);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--sid-red);
+  animation: asksidPulse 2s infinite ease-in-out;
+}
+
+@keyframes asksidPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+.asksid-title {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: clamp(2.8rem, 5.5vw, 4.4rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  margin: 0 0 0.6rem;
+  line-height: 1.1;
+}
+
+.asksid-page.light-mode .asksid-title {
+  color: #0f172a;
+}
+
+.asksid-title-highlight {
+  background: linear-gradient(135deg, #ef4444 0%, #d4af37 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+.asksid-subtitle {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--sid-gold);
+  letter-spacing: 0.03em;
+  margin: 0 0 1.2rem;
+  text-transform: uppercase;
+}
+
+.asksid-description {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--sid-text-muted);
+  max-width: 740px;
+  margin: 0 auto 2.2rem;
+}
+
+.asksid-description em {
+  color: var(--sid-text);
+  font-style: italic;
+}
+
+.asksid-hero-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.asksid-hero-cta {
+  background: linear-gradient(135deg, var(--sid-red) 0%, var(--sid-red-dark) 100%);
+  color: #ffffff;
+  border: none;
+  padding: 13px 28px;
+  border-radius: 30px;
+  font-size: 0.96rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 20px var(--sid-red-glow);
+  transition: all 0.25s ease;
+}
+
+.asksid-hero-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 26px rgba(200, 8, 8, 0.45);
+}
+
+.asksid-hero-secondary-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--sid-border);
+  color: var(--sid-text);
+  padding: 13px 24px;
+  border-radius: 30px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.25s ease;
+}
+
+.asksid-hero-secondary-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* ══════════════════════════════════════════════════════════
+   MAIN CONTAINER
+   ══════════════════════════════════════════════════════════ */
+.asksid-main-container {
+  max-width: 960px;
+  margin: -1.5rem auto 0;
+  padding: 0 1.5rem;
+  position: relative;
+  z-index: 2;
+}
+
+/* ══════════════════════════════════════════════════════════
+   2. ACCESS ENTITLEMENT STATUS BAR
+   ══════════════════════════════════════════════════════════ */
+.asksid-status-bar {
+  background: var(--sid-bg-card);
+  border: 1px solid var(--sid-border);
+  border-radius: var(--sid-radius-md);
+  padding: 1rem 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+  flex-wrap: wrap;
+}
+
+.asksid-status-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.asksid-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.asksid-status-pill.full {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.asksid-status-pill.online {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.asksid-status-pill.demo {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.asksid-status-pill.locked {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.asksid-status-text {
+  font-size: 0.88rem;
+  color: var(--sid-text-muted);
+}
+
+.asksid-status-text strong {
+  color: var(--sid-text);
+}
+
+.asksid-status-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.asksid-status-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--sid-border);
+  color: var(--sid-text);
+  padding: 7px 16px;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+.asksid-status-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+.asksid-status-btn.upgrade {
+  background: linear-gradient(135deg, var(--sid-red) 0%, var(--sid-red-dark) 100%);
+  color: #ffffff;
+  border: none;
+}
+
+.asksid-status-btn.upgrade:hover {
+  box-shadow: 0 4px 15px var(--sid-red-glow);
+}
+
+.asksid-verified-badge {
+  font-size: 0.82rem;
+  color: #10b981;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.asksid-sim-toggle-btn {
+  background: transparent;
+  border: 1px dashed var(--sid-border);
+  color: var(--sid-text-faint);
+  font-size: 0.76rem;
+  padding: 5px 10px;
+  border-radius: 16px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.2s ease;
+}
+
+.asksid-sim-toggle-btn:hover {
+  color: var(--sid-text);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Simulator Bar */
+.asksid-simulator-bar {
+  background: rgba(20, 24, 36, 0.95);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: var(--sid-radius-sm);
+  padding: 0.8rem 1.2rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.asksid-sim-label {
+  font-size: 0.82rem;
+  color: var(--sid-gold);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.asksid-sim-options {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.asksid-sim-pill {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--sid-border);
+  color: var(--sid-text-muted);
+  font-size: 0.76rem;
+  padding: 5px 11px;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.asksid-sim-pill.active {
+  background: var(--sid-red);
+  color: #ffffff;
+  border-color: var(--sid-red);
+  font-weight: 600;
+}
+
+.asksid-sim-pill.reset {
+  color: #fbbf24;
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+/* ══════════════════════════════════════════════════════════
+   3. PROMINENT MAIN INPUT CARD
+   ══════════════════════════════════════════════════════════ */
+.asksid-input-card {
+  background: var(--sid-bg-card);
+  border: 1px solid var(--sid-border);
+  border-radius: var(--sid-radius-lg);
+  padding: 2rem 2.2rem;
+  margin-bottom: 2.5rem;
+  position: relative;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.asksid-input-card:focus-within {
+  border-color: var(--sid-border-hover);
+  box-shadow: 0 18px 48px rgba(200, 8, 8, 0.16);
+}
+
+.asksid-card-top-accent {
+  position: absolute;
+  top: 0;
+  left: 2rem;
+  right: 2rem;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--sid-red), var(--sid-gold), transparent);
+  border-radius: 2px;
+}
+
+.asksid-textarea-wrapper {
+  margin-bottom: 1.4rem;
+}
+
+.asksid-textarea {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--sid-border);
+  border-radius: var(--sid-radius-md);
+  padding: 1.2rem 1.4rem;
+  font-family: inherit;
+  font-size: 1.12rem;
+  line-height: 1.6;
+  color: var(--sid-text);
+  resize: vertical;
+  min-height: 120px;
+  outline: none;
+  transition: all 0.25s ease;
+  box-sizing: border-box;
+}
+
+.asksid-page.light-mode .asksid-textarea {
+  background: #f8fafc;
+}
+
+.asksid-textarea:focus {
+  border-color: var(--sid-red-light);
+  background: rgba(0, 0, 0, 0.35);
+  box-shadow: 0 0 0 3px rgba(200, 8, 8, 0.15);
+}
+
+.asksid-textarea::placeholder {
+  color: var(--sid-text-faint);
+  font-size: 1.1rem;
+}
+
+.asksid-input-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.asksid-input-support-text {
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--sid-text-muted);
+  margin: 0;
+  flex: 1;
+  min-width: 260px;
+}
+
+.asksid-submit-btn {
+  background: linear-gradient(135deg, var(--sid-red) 0%, var(--sid-red-dark) 100%);
+  color: #ffffff;
+  border: none;
+  padding: 14px 30px;
+  border-radius: 30px;
+  font-size: 0.98rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  box-shadow: 0 6px 20px var(--sid-red-glow);
+  transition: all 0.25s ease;
+}
+
+.asksid-submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(200, 8, 8, 0.5);
+}
+
+.asksid-submit-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Spinner */
+.asksid-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: asksidSpin 0.8s linear infinite;
+  display: inline-block;
+}
+
+.asksid-spinner.small {
+  width: 14px;
+  height: 14px;
+}
+
+@keyframes asksidSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* ══════════════════════════════════════════════════════════
+   4. EXAMPLE QUESTIONS SECTION
+   ══════════════════════════════════════════════════════════ */
+.asksid-examples-wrap {
+  margin-bottom: 3.5rem;
+}
+
+.asksid-examples-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--sid-text-muted);
+  margin-bottom: 1.2rem;
+}
+
+.asksid-examples-label i {
+  color: var(--sid-gold);
+}
+
+.asksid-examples-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.85rem;
+}
+
+@media (min-width: 720px) {
+  .asksid-examples-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.asksid-example-pill {
+  background: var(--sid-bg-card);
+  border: 1px solid var(--sid-border);
+  border-radius: var(--sid-radius-md);
+  padding: 1.15rem 1.4rem;
+  text-align: left;
+  color: var(--sid-text);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.asksid-example-pill:hover {
+  background: var(--sid-bg-card-hover);
+  border-color: var(--sid-border-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.asksid-example-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  flex: 1;
+}
+
+.asksid-example-number {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--sid-red-light);
+  letter-spacing: 0.04em;
+  padding-top: 2px;
+}
+
+.asksid-example-text {
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--sid-text);
+}
+
+.asksid-example-arrow {
+  color: var(--sid-text-faint);
+  font-size: 0.84rem;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.asksid-example-pill:hover .asksid-example-arrow {
+  color: var(--sid-red-light);
+  transform: translateX(4px);
+}
+
+/* ══════════════════════════════════════════════════════════
+   5. CONVERSATION THREAD CONTAINER
+   ══════════════════════════════════════════════════════════ */
+.asksid-conversation-container {
+  margin-bottom: 2.5rem;
+}
+
+.asksid-conversation-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.8rem 0;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--sid-border);
+}
+
+.asksid-conversation-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--sid-gold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.asksid-pulse-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--sid-red-light);
+  border-radius: 50%;
+  animation: asksidPulse 1.8s infinite;
+}
+
+.asksid-new-conversation-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--sid-border);
+  color: var(--sid-text-muted);
+  padding: 6px 14px;
+  border-radius: 18px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.asksid-new-conversation-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+.asksid-message-group {
+  margin-bottom: 2.2rem;
+}
+
+/* User Bubble */
+.asksid-user-bubble {
+  background: linear-gradient(135deg, rgba(200, 8, 8, 0.18) 0%, rgba(20, 24, 36, 0.6) 100%);
+  border: 1px solid rgba(200, 8, 8, 0.35);
+  border-radius: var(--sid-radius-md);
+  padding: 1.4rem 1.6rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.asksid-user-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.7rem;
+}
+
+.asksid-user-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--sid-red-light);
+}
+
+.asksid-timestamp {
+  font-size: 0.74rem;
+  color: var(--sid-text-faint);
+}
+
+.asksid-user-text {
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: #ffffff;
+  margin: 0;
+  font-weight: 500;
+}
+
+.asksid-page.light-mode .asksid-user-text {
+  color: #0f172a;
+}
+
+/* ══════════════════════════════════════════════════════════
+   6. STRUCTURED ANSWER CARD
+   ══════════════════════════════════════════════════════════ */
+.asksid-response-card {
+  background: var(--sid-bg-card);
+  border: 1px solid var(--sid-border);
+  border-radius: var(--sid-radius-lg);
+  padding: 2.2rem;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.asksid-response-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.8rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid var(--sid-border);
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+/* Grounded Indicator Badge */
+.asksid-grounded-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(200, 8, 8, 0.15) 100%);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #f6e05e;
+}
+
+.asksid-grounded-badge i {
+  color: var(--sid-gold);
+}
+
+.asksid-author-citation {
+  font-size: 0.8rem;
+  color: var(--sid-text-faint);
+  font-style: italic;
+}
+
+/* Delineated Sections */
+.asksid-section {
+  margin-bottom: 1.8rem;
+}
+
+.asksid-section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.94rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--sid-text);
+  margin: 0 0 0.85rem;
+}
+
+.asksid-section-title i {
+  color: var(--sid-red-light);
+  font-size: 0.95rem;
+}
+
+.asksid-section-content {
+  font-size: 0.98rem;
+  line-height: 1.7;
+  color: var(--sid-text);
+  margin: 0;
+}
+
+/* Perspective Quote Styling */
+.asksid-perspective-quote {
+  background: rgba(0, 0, 0, 0.25);
+  border-left: 3px solid var(--sid-red);
+  padding: 1.2rem 1.4rem;
+  border-radius: 0 var(--sid-radius-sm) var(--sid-radius-sm) 0;
+}
+
+.asksid-page.light-mode .asksid-perspective-quote {
+  background: #f8fafc;
+}
+
+.asksid-perspective-quote .asksid-section-content {
+  font-family: Georgia, serif;
+  font-size: 1.02rem;
+  line-height: 1.75;
+}
+
+/* Questions to Consider List */
+.asksid-questions-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.asksid-question-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--sid-border);
+  padding: 0.9rem 1.1rem;
+  border-radius: var(--sid-radius-sm);
+}
+
+.asksid-question-bullet {
+  width: 22px;
+  height: 22px;
+  background: rgba(200, 8, 8, 0.2);
+  color: var(--sid-red-light);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.asksid-question-text {
+  font-size: 0.94rem;
+  line-height: 1.6;
+  color: var(--sid-text);
+}
+
+/* Direction Box */
+.asksid-direction-box {
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  padding: 1.1rem 1.3rem;
+  border-radius: var(--sid-radius-sm);
+}
+
+.asksid-direction-box .asksid-section-content {
+  color: var(--sid-text);
+  font-weight: 500;
+}
+
+/* Section 5: Relevant Book Section Citation Card */
+.asksid-book-ref-card {
+  background: linear-gradient(135deg, rgba(20, 24, 36, 0.9) 0%, rgba(30, 20, 25, 0.7) 100%);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: var(--sid-radius-md);
+  padding: 1.3rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.4rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.asksid-book-ref-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+  min-width: 260px;
+}
+
+.asksid-book-icon-badge {
+  width: 44px;
+  height: 44px;
+  background: rgba(212, 175, 55, 0.15);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--sid-gold);
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.asksid-book-ref-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.asksid-book-ref-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--sid-gold);
+}
+
+.asksid-book-ref-title {
+  font-size: 0.96rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.asksid-page.light-mode .asksid-book-ref-title {
+  color: #0f172a;
+}
+
+.asksid-book-ref-details {
+  font-size: 0.84rem;
+  color: var(--sid-text-muted);
+}
+
+.asksid-book-ref-cta {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  padding: 9px 18px;
+  border-radius: 20px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.asksid-book-ref-cta:hover {
+  background: var(--sid-red);
+  border-color: var(--sid-red);
+  box-shadow: 0 4px 15px var(--sid-red-glow);
+}
+
+/* Section 6: Continue Exploring */
+.section-continue {
+  margin-top: 2rem;
+  padding-top: 1.6rem;
+  border-top: 1px solid var(--sid-border);
+}
+
+.asksid-continue-hint {
+  font-size: 0.84rem;
+  color: var(--sid-text-muted);
+  margin: 0 0 0.9rem;
+}
+
+.asksid-continue-chips {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.asksid-continue-chip {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--sid-border);
+  border-radius: var(--sid-radius-sm);
+  padding: 0.85rem 1.15rem;
+  text-align: left;
+  color: var(--sid-text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  transition: all 0.25s ease;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.asksid-continue-chip i:first-child {
+  color: var(--sid-red-light);
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.asksid-continue-chip span {
+  flex: 1;
+}
+
+.asksid-continue-chip .chip-arrow {
+  color: var(--sid-text-faint);
+  font-size: 0.78rem;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.asksid-continue-chip:hover:not(:disabled) {
+  background: rgba(200, 8, 8, 0.12);
+  border-color: rgba(200, 8, 8, 0.35);
+  transform: translateX(3px);
+}
+
+.asksid-continue-chip:hover:not(:disabled) .chip-arrow {
+  color: var(--sid-red-light);
+  transform: translateX(3px);
+}
+
+.asksid-continue-chip:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Section 7: Conditional SID Advisory Callout */
+.asksid-advisory-callout {
+  margin-top: 2rem;
+  background: linear-gradient(135deg, rgba(200, 8, 8, 0.12) 0%, rgba(20, 24, 36, 0.8) 100%);
+  border: 1px solid rgba(200, 8, 8, 0.35);
+  border-radius: var(--sid-radius-md);
+  padding: 1.4rem 1.6rem;
+}
+
+.asksid-advisory-callout-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.4rem;
+  flex-wrap: wrap;
+}
+
+.asksid-advisory-callout-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 260px;
+}
+
+.asksid-advisory-callout-icon {
+  color: var(--sid-gold);
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.asksid-advisory-prompt {
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+}
+
+.asksid-page.light-mode .asksid-advisory-prompt {
+  color: #0f172a;
+}
+
+.asksid-advisory-note {
+  font-size: 0.82rem;
+  color: var(--sid-text-muted);
+  margin: 0;
+}
+
+.asksid-advisory-link {
+  background: var(--sid-red);
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+  box-shadow: 0 4px 15px var(--sid-red-glow);
+}
+
+.asksid-advisory-link:hover {
+  background: var(--sid-red-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(200, 8, 8, 0.4);
+}
+
+/* ══════════════════════════════════════════════════════════
+   7. FOLLOW-UP COMPOSER AT BOTTOM
+   ══════════════════════════════════════════════════════════ */
+.asksid-followup-card {
+  background: var(--sid-bg-card);
+  border: 1px solid var(--sid-border);
+  border-radius: var(--sid-radius-md);
+  padding: 1.2rem 1.4rem;
+  margin-top: 2rem;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
+}
+
+.asksid-followup-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.asksid-followup-textarea {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--sid-border);
+  border-radius: var(--sid-radius-sm);
+  padding: 0.85rem 1.1rem;
+  font-family: inherit;
+  font-size: 0.96rem;
+  line-height: 1.5;
+  color: var(--sid-text);
+  outline: none;
+  resize: none;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.asksid-page.light-mode .asksid-followup-textarea {
+  background: #f8fafc;
+}
+
+.asksid-followup-textarea:focus {
+  border-color: var(--sid-red-light);
+  box-shadow: 0 0 0 2px rgba(200, 8, 8, 0.15);
+}
+
+.asksid-followup-send-btn {
+  background: linear-gradient(135deg, var(--sid-red) 0%, var(--sid-red-dark) 100%);
+  color: #ffffff;
+  border: none;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 15px var(--sid-red-glow);
+}
+
+.asksid-followup-send-btn:hover:not(:disabled) {
+  transform: scale(1.06);
+  box-shadow: 0 6px 20px rgba(200, 8, 8, 0.45);
+}
+
+.asksid-followup-send-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ══════════════════════════════════════════════════════════
+   8. LOADING INDICATOR & ERROR BANNER
+   ══════════════════════════════════════════════════════════ */
+.asksid-loading-indicator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(20, 24, 36, 0.8);
+  border: 1px solid var(--sid-border);
+  padding: 1.1rem 1.4rem;
+  border-radius: var(--sid-radius-md);
+  margin-bottom: 1.5rem;
+  color: var(--sid-text-muted);
+  font-size: 0.92rem;
+  font-style: italic;
+}
+
+.asksid-error-banner {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  border-radius: var(--sid-radius-md);
+  padding: 1rem 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #fca5a5;
+  font-size: 0.92rem;
+  margin-bottom: 2rem;
+}
+
+.asksid-error-banner i {
+  font-size: 1.1rem;
+  color: #ef4444;
+}
+
+/* ══════════════════════════════════════════════════════════
+   9. UPGRADE CARD (Digital Companion Edition)
+   ══════════════════════════════════════════════════════════ */
+.asksid-upgrade-card {
+  background: linear-gradient(135deg, rgba(20, 24, 36, 0.95) 0%, rgba(35, 15, 20, 0.95) 100%);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: var(--sid-radius-lg);
+  padding: 2.8rem 2.4rem;
+  text-align: center;
+  margin-top: 2.5rem;
+  position: relative;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.asksid-upgrade-badge {
+  display: inline-block;
+  background: rgba(212, 175, 55, 0.15);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  color: var(--sid-gold);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 5px 16px;
+  border-radius: 20px;
+  margin-bottom: 1rem;
+}
+
+.asksid-upgrade-title {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 0.8rem;
+}
+
+.asksid-page.light-mode .asksid-upgrade-title {
+  color: #0f172a;
+}
+
+.asksid-upgrade-sub {
+  font-size: 0.98rem;
+  line-height: 1.65;
+  color: var(--sid-text-muted);
+  max-width: 680px;
+  margin: 0 auto 1.8rem;
+}
+
+.asksid-upgrade-price-wrap {
+  margin-bottom: 1.8rem;
+}
+
+.asksid-upgrade-price {
+  font-size: 3.2rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.asksid-page.light-mode .asksid-upgrade-price {
+  color: #0f172a;
+}
+
+.asksid-upgrade-price span {
+  font-size: 1.8rem;
+  color: var(--sid-gold);
+}
+
+.asksid-upgrade-price-period {
+  font-size: 0.84rem;
+  color: var(--sid-text-faint);
+  margin-top: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.asksid-upgrade-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 auto 2.2rem;
+  max-width: 580px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  text-align: left;
+}
+
+.asksid-upgrade-features li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.92rem;
+  color: var(--sid-text);
+}
+
+.asksid-upgrade-features li i {
+  color: #10b981;
+  font-size: 0.85rem;
+}
+
+.asksid-upgrade-cta-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.asksid-upgrade-btn {
+  background: linear-gradient(135deg, var(--sid-red) 0%, var(--sid-red-dark) 100%);
+  color: #ffffff;
+  padding: 15px 36px;
+  border-radius: 30px;
+  font-size: 1rem;
+  font-weight: 700;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 6px 24px var(--sid-red-glow);
+  transition: all 0.25s ease;
+}
+
+.asksid-upgrade-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(200, 8, 8, 0.55);
+}
+
+.asksid-upgrade-secondary-btn {
+  background: transparent;
+  border: none;
+  color: var(--sid-text-muted);
+  font-size: 0.84rem;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.asksid-upgrade-secondary-btn:hover {
+  color: #ffffff;
+}
+
+/* ══════════════════════════════════════════════════════════
+   10. RESPONSIVE MEDIA QUERIES
+   ══════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  .asksid-hero {
+    padding: 3.5rem 1rem 2.5rem;
+  }
+
+  .asksid-main-container {
+    padding: 0 1rem;
+    margin-top: -1rem;
+  }
+
+  .asksid-input-card {
+    padding: 1.4rem 1.2rem;
+  }
+
+  .asksid-response-card {
+    padding: 1.4rem 1.2rem;
+  }
+
+  .asksid-input-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .asksid-submit-btn {
+    justify-content: center;
+  }
+
+  .asksid-status-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .asksid-book-ref-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .asksid-book-ref-cta {
+    justify-content: center;
+  }
+
+  .asksid-advisory-callout-inner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .asksid-advisory-link {
+    justify-content: center;
+  }
+}

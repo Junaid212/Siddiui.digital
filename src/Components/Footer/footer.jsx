@@ -28,19 +28,44 @@ const Footer = () => {
                                             </div>
                                         </li>
                                         <li>
-                                            <div className="d-flex flex-row align-items-center gspace-2 secondary-accent">
-                                                <i className="fa-solid fa-envelope-open-text "></i>
-                                                <span><a href="mailto:info@siddiqui.digital">
-  info@siddiqui.digital
-</a></span>
-                                            </div>
+                                            <a
+                                                href="mailto:info@siddiqui.digital"
+                                                className="d-flex flex-row align-items-center gspace-2 secondary-accent text-decoration-none"
+                                                onClick={(e) => {
+                                                    // Allow standard mailto, but if user has no desktop mail client (common on Windows/Chrome), fallback to webmail
+                                                    let appOpened = false;
+                                                    const onBlur = () => { appOpened = true; };
+                                                    window.addEventListener("blur", onBlur, { once: true });
+                                                    
+                                                    // Give mailto protocol handler a chance to activate
+                                                    window.location.href = "mailto:info@siddiqui.digital";
+
+                                                    setTimeout(() => {
+                                                        window.removeEventListener("blur", onBlur);
+                                                        // If window didn't lose focus, OS didn't launch a desktop mail client -> open Gmail webmail compose
+                                                        if (!appOpened && document.hasFocus()) {
+                                                            window.open("https://mail.google.com/mail/?view=cm&fs=1&to=info@siddiqui.digital", "_blank");
+                                                        }
+                                                    }, 600);
+                                                }}
+                                                title="Send email to info@siddiqui.digital"
+                                                style={{ color: "inherit", cursor: "pointer" }}
+                                            >
+                                                <i className="fa-solid fa-envelope-open-text"></i>
+                                                <span>info@siddiqui.digital</span>
+                                            </a>
                                         </li>
                                         <li>
-                                            <div className="d-flex flex-row align-items-center gspace-2 secondary-accent">
+                                            <a
+                                                href="tel:+971545681182"
+                                                className="d-flex flex-row align-items-center gspace-2 secondary-accent text-decoration-none"
+                                                title="Call +971 54 568 1182"
+                                                style={{ color: "inherit", cursor: "pointer" }}
+                                            >
                                                 <i className="fa-solid fa-phone"></i>
-                                                <span><a href="tel:+971545681182">+971 54 568 1182</a></span>
-                                            </div>
-                                            </li>
+                                                <span>+971 54 568 1182</span>
+                                            </a>
+                                        </li>
                                     </ul>
                                 </div>
                                 <div className="footer-quick-links">

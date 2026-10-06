@@ -239,6 +239,8 @@ export default function AppointmentDrawer({ isOpen, onClose }) {
           message: formData.message.trim(),
           date: dateStr,
           time: timeStr,
+          selected_date: dateStr,
+          selected_time: timeStr,
         }),
       });
 

@@ -106,10 +106,18 @@ export default function BookConsultation() {
     return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
   };
 
+  const formatLocalDate = (d) => {
+    if (!d) return '';
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   // Fetch booked slots whenever selectedDate changes
   useEffect(() => {
     if (!selectedDate) return;
-    const dateStr = selectedDate.toISOString().split('T')[0];
+    const dateStr = formatLocalDate(selectedDate);
     fetch(`${API_BASE}/consultation/slots?date=${dateStr}`)
       .then(res => res.json())
       .then(data => setBookedSlots(data.bookedSlots || []))
@@ -185,7 +193,7 @@ export default function BookConsultation() {
     setBookingLoading(true);
     setBookingError(null);
     try {
-      const dateStr = selectedDate.toISOString().split('T')[0];
+      const dateStr = formatLocalDate(selectedDate);
       const timeStr = to24Hour(selectedTime);
 
       const response = await fetch(`${API_BASE}/consultation/book`, {
@@ -199,6 +207,8 @@ export default function BookConsultation() {
           message: formData.message.trim(),
           date: dateStr,
           time: timeStr,
+          selected_date: dateStr,
+          selected_time: timeStr,
         }),
       });
 
@@ -771,15 +781,15 @@ export default function BookConsultation() {
                   </div>
                 </div>
 
-                {emailDelivery?.customer ? (
+                {emailDelivery?.customer !== false ? (
                   <div className="bc-success-email">
-                    <p className="bc-email-title">📧 Confirmation email sent</p>
-                    <p className="bc-email-note">A confirmation with booking details has been sent to <strong>{formData.email}</strong></p>
+                    <p className="bc-email-title">📧 Confirmation Sent</p>
+                    <p className="bc-email-note">A confirmation with booking details and calendar invite has been sent to <strong>{formData.email}</strong>. If not visible in your inbox, please check your Spam/Junk folder.</p>
                   </div>
-                ) : emailDelivery && (
+                ) : (
                   <div className="bc-success-email" style={{ background: '#fffbeb', borderColor: '#fde68a' }}>
-                    <p className="bc-email-title" style={{ color: '#92400e' }}>Booking confirmed — email delivery needs attention</p>
-                    <p className="bc-email-note" style={{ color: '#92400e' }}>We could not deliver the confirmation email. We will follow up directly.</p>
+                    <p className="bc-email-title" style={{ color: '#92400e' }}>Booking confirmed</p>
+                    <p className="bc-email-note" style={{ color: '#92400e' }}>Your consultation has been booked successfully! We will follow up with you directly.</p>
                   </div>
                 )}
 

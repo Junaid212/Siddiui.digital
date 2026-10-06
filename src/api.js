@@ -230,6 +230,72 @@ export const api = {
 
     getPublicCategories: () =>
         fetch(`${ADMIN_API_BASE}/api/public/blogs/categories`).then((res) => res.json()),
+
+    // Ask SID — Digital Companion to Marketing Reclassified
+    getAskSidConfig: async () => {
+        try {
+            const res = await fetch(`${API_BASE}/ask-sid/config`);
+            if (res.ok) return await res.json();
+        } catch (e) {}
+        try {
+            const fallbackRes = await fetch(`${ADMIN_API_BASE}/api/public/ask-sid-config`);
+            if (fallbackRes.ok) return await fallbackRes.json();
+        } catch (e) {}
+        return {
+            askSidEnabled: true,
+            publicDemoEnabled: true,
+            demoQuestionLimit: 1,
+            upgradeCtaText: "Unlock Full Ask SID with the Digital Companion Edition ($49.99)",
+            upgradeUrl: "/publications/marketing-reclassified-principle-first-approach",
+            advisoryCtaEnabled: true,
+            advisoryUrl: "/consultation"
+        };
+    },
+
+    checkAskSidAccess: async (token, demoSessionId) => {
+        const headers = { "Content-Type": "application/json" };
+        if (token) headers["Authorization"] = `Bearer ${token}`;
+        const query = demoSessionId ? `?demoSessionId=${encodeURIComponent(demoSessionId)}` : "";
+        try {
+            const res = await fetch(`${API_BASE}/ask-sid/access${query}`, { headers });
+            if (res.ok) return await res.json();
+        } catch (e) {}
+        return {
+            authenticated: !!token,
+            hasCompanionAccess: false,
+            hasOnlineAccess: false,
+            accessLevel: "none",
+            demoAvailable: true,
+            demoQuestionsRemaining: 1
+        };
+    },
+
+    askSidQuestion: async ({ message, conversationHistory = [], demoSessionId }, token) => {
+        const headers = { "Content-Type": "application/json" };
+        if (token) headers["Authorization"] = `Bearer ${token}`;
+        const res = await fetch(`${API_BASE}/ask-sid/chat`, {
+            method: "POST",
+            headers,
+            body: JSON.stringify({ message, conversationHistory, demoSessionId }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+            const err = new Error(data.message || "Failed to process question with Ask SID");
+            err.status = res.status;
+            err.errorType = data.error;
+            err.data = data;
+            throw err;
+        }
+        return data;
+    },
+
+    resetAskSidDemo: (demoSessionId) =>
+        fetch(`${API_BASE}/ask-sid/reset-demo`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ demoSessionId }),
+        }).then((res) => res.json()).catch(() => ({ success: false })),
 };
 
 export default api;
+
