@@ -10,10 +10,38 @@ import {
 } from "./knowledgeEngine";
 import "./AskSid.css";
 
+const HERO_SHOWCASE_SAMPLES = [
+  {
+    tag: "Lead Conversion Paradox",
+    icon: "fa-solid fa-filter-circle-dollar",
+    question: "Our marketing generates consistent leads, but customers aren't converting. What should we examine?",
+    answer: "Lead conversion friction is rarely a tactical closing problem. It is an upstream misalignment between promotional promise and operational reality. When campaigns buy superficial attention rather than qualifying genuine buyer intent, trust collapses at the point of commercial commitment.",
+    chapter: "Chapter 3: The Illusions of Modern Marketing",
+    framework: "Promise-to-Delivery Continuum"
+  },
+  {
+    tag: "Commodity Price Trap",
+    icon: "fa-solid fa-tags",
+    question: "Our competitors are offering lower prices. Should we reduce ours to protect market share?",
+    answer: "A price concession validates the competitor's commodity frame without altering perceived customer value. When you cut prices to survive, you trade organizational sovereignty for temporary transactional volume. Compete on authentic relevance, not desperate pricing parity.",
+    chapter: "Chapter 4: The Illusions of Modern Marketing",
+    framework: "The Relevance Imperative"
+  },
+  {
+    tag: "Value Drift Diagnostic",
+    icon: "fa-solid fa-compass-drafting",
+    question: "How do we know whether our core value proposition is still relevant?",
+    answer: "Value drift occurs silently when internal operational momentum replaces outward customer empathy. If leadership cannot explicitly articulate how customer problems have evolved over the last 18 months, your proposition has already begun decaying.",
+    chapter: "Chapter 7: The Adaptive Value Framework",
+    framework: "The Value Drift Index"
+  }
+];
+
 export default function AskSid() {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
   const [demoSessionId, setDemoSessionId] = useState("");
+  const [activeHeroTab, setActiveHeroTab] = useState(0);
 
   // Configuration state
   const [config, setConfig] = useState({
@@ -283,12 +311,16 @@ export default function AskSid() {
   const handleSelectExample = (exampleText) => {
     setQuery(exampleText);
     setError("");
-    // Focus the input and scroll into view
-    if (mainInputRef.current) {
-      mainInputRef.current.focus();
-    } else if (followUpInputRef.current) {
-      followUpInputRef.current.focus();
-    }
+    // Focus the input and scroll into view smoothly
+    setTimeout(() => {
+      if (mainInputRef.current) {
+        mainInputRef.current.focus();
+        mainInputRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      } else if (followUpInputRef.current) {
+        followUpInputRef.current.focus();
+        followUpInputRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }, 50);
   };
 
   // Submit a question (either from main input or from follow-up chip)
@@ -436,48 +468,143 @@ export default function AskSid() {
       </div>
 
       {/* ══ HERO SECTION (Visual Identity: Marketing Reclassified) ══ */}
-      <section className="asksid-hero">
-        <div className="asksid-hero-inner">
-          <div className="asksid-eyebrow">
-            <span className="asksid-eyebrow-dot" />
-            Digital Companion to Marketing Reclassified
-          </div>
+      {conversation.length === 0 ? (
+        <section className="asksid-hero">
+          {/* Ambient Lighting Orbs & Grid */}
+          <div className="asksid-hero-glow asksid-hero-glow-1" />
+          <div className="asksid-hero-glow asksid-hero-glow-2" />
+          <div className="asksid-hero-grid-pattern" />
 
-          <h1 className="asksid-title">
-            Ask <span className="asksid-title-highlight">SID</span>
-          </h1>
+          <div className="asksid-hero-inner">
+            <div className="asksid-hero-layout">
+              {/* ── LEFT COLUMN: Core Narrative, Author Credential & Actions ── */}
+              <div className="asksid-hero-content">
+                <div className="asksid-eyebrow-row">
+                  <div className="asksid-eyebrow">
+                    <span className="asksid-eyebrow-dot" />
+                    <span>Digital Companion to Marketing Reclassified</span>
+                  </div>
+                  {/* <span className="asksid-canon-badge">
+                    <i className="fa-solid fa-shield-halved" /> Grounded in Canon
+                  </span> */}
+                </div>
 
-          <p className="asksid-subtitle">
-            A Principle-First Intelligence Companion by M. Q. Siddiqui
-          </p>
+                <h1 className="asksid-title">
+                  Ask <span className="asksid-title-highlight">SID</span>
+                </h1>
 
-          <p className="asksid-description">
-            Describe your situation in your own words. Ask SID will help you explore your real-world business and marketing challenges strictly through the approved principles of <em>Marketing Reclassified: A Principle-First Approach</em>.
-          </p>
+                <p className="asksid-subtitle">
+                  A Principle-First Intelligence Companion
+                  
+                </p>
 
-          {conversation.length === 0 && (
-            <div className="asksid-hero-actions">
+                {/* Author Credential Badge */}
+                <div className="asksid-author-chip">
+                  <img
+                    src="/assets/images/img/M.Q.Siddiqui.webp"
+                    alt="M. Q. Siddiqui"
+                    className="asksid-author-thumb"
+                  />
+                  <div className="asksid-author-text">
+                    <span className="asksid-author-name">By M. Q. Siddiqui</span>
+                    <span className="asksid-author-role">Author of <em>Marketing Reclassified</em></span>
+                  </div>
+                </div>
+
+                <p className="asksid-description">
+                  Describe your business or marketing challenges in your own words. Ask SID analyzes your dilemma strictly through the diagnostic frameworks and foundational principles of <em>Marketing Reclassified: A Principle-First Approach</em>
+                </p>
+
+                {/* Trust & Methodology Pillars */}
+                {/* <div className="asksid-hero-pillars">
+                  <div className="asksid-pillar-item">
+                    <div className="asksid-pillar-icon">
+                      <i className="fa-solid fa-bullseye" />
+                    </div>
+                    <div className="asksid-pillar-text">
+                      <strong>Diagnostic Precision</strong>
+                      <span>Addresses root causes upstream</span>
+                    </div>
+                  </div>
+                  <div className="asksid-pillar-item">
+                    <div className="asksid-pillar-icon">
+                      <i className="fa-solid fa-book-bookmark" />
+                    </div>
+                    <div className="asksid-pillar-text">
+                      <strong>Book Citations</strong>
+                      <span>Direct chapter & framework links</span>
+                    </div>
+                  </div>
+                  <div className="asksid-pillar-item">
+                    <div className="asksid-pillar-icon">
+                      <i className="fa-solid fa-scale-balanced" />
+                    </div>
+                    <div className="asksid-pillar-text">
+                      <strong>Strategic Grounding</strong>
+                      <span>Beyond transactional myopia</span>
+                    </div>
+                  </div>
+                </div> */}
+
+                {/* Hero CTAs */}
+                <div className="asksid-hero-actions">
+                  <button
+                    className="asksid-hero-cta"
+                    onClick={handleStartConversation}
+                    id="btn-start-conversation"
+                  >
+                    <i className="fa-solid fa-sparkles" />
+                    <span>Explore a Challenge</span>
+                    <i className="fa-solid fa-arrow-down" />
+                  </button>
+
+                  <Link
+                    to={BOOK_METADATA.publicationUrl}
+                    className="asksid-hero-secondary-btn"
+                    id="btn-view-book-details"
+                  >
+                    <i className="fa-solid fa-book-open" />
+                    <span>About the Book ($49.99)</span>
+                  </Link>
+                </div>
+              </div>
+              </div>
+            </div>
+        </section>
+      ) : (
+        /* Compact Header when in active conversation */
+        <section className="asksid-hero asksid-hero--compact">
+          <div className="asksid-hero-compact-inner">
+            <div className="asksid-compact-left">
+              <span className="asksid-compact-dot" />
+              <div>
+                <h1 className="asksid-compact-title">
+                  Ask <span className="asksid-title-highlight">SID</span>
+                  <span className="asksid-compact-sub">Active Exploration • Grounded in Marketing Reclassified</span>
+                </h1>
+              </div>
+            </div>
+            <div className="asksid-compact-right">
               <button
-                className="asksid-hero-cta"
-                onClick={handleStartConversation}
-                id="btn-start-conversation"
+                className="asksid-compact-new-btn"
+                onClick={handleResetConversation}
+                type="button"
+                id="btn-compact-new-conversation"
               >
-                <span>Explore a Challenge</span>
-                <i className="fa-solid fa-arrow-down" />
+                <i className="fa-solid fa-rotate-right" />
+                <span>New Inquiry</span>
               </button>
-
               <Link
                 to={BOOK_METADATA.publicationUrl}
-                className="asksid-hero-secondary-btn"
-                id="btn-view-book-details"
+                className="asksid-compact-book-btn"
               >
                 <i className="fa-solid fa-book-open" />
-                <span>About the Book</span>
+                <span>About Book</span>
               </Link>
             </div>
-          )}
-        </div>
-      </section>
+          </div>
+        </section>
+      )}
 
       {/* ══ MAIN WORKSPACE CONTAINER ══ */}
       <div className="asksid-main-container">
