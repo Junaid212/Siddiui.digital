@@ -47,8 +47,8 @@ function AppRouters() {
             <Route path="team" element={<TeamPage />} />
             <Route path="testimonial" element={<TestimonialPage />} />
             <Route path="faq" element={<FaqPage />} />
-            <Route path="blog" element={<BlogPage />} />
-            <Route path="blog/:topic" element={<SinglePostPage />} />
+            <Route path="blog" element={<BlogSection />} />
+            <Route path="blog/:slug" element={<BlogByIdPage />} />
             <Route path="contact" element={<ContactPage />} />
             <Route path="404-page" element={<PageNotFound />} />
             <Route path="*" element={<PageNotFound />} />
@@ -69,6 +69,7 @@ function AppRouters() {
             <Route path="my-orders" element={<MyOrdersPage />} />
             <Route path="consultation" element={<ConsultantPage />} />
             <Route path="blog-page" element={<BlogSection />} />
+            <Route path="blog-page/:slug" element={<BlogByIdPage />} />
             {/* ID-based blog route for admin share links */}
             <Route path="blogs/:id" element={<BlogByIdPage />} />
             <Route path="courses" element={<Courses />} />

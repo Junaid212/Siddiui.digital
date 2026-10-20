@@ -209,23 +209,80 @@ export const api = {
     getLiveResults: () =>
         fetch(`${API_BASE}/questionnaire/results-live`).then((res) => res.json()),
 
-    // Blog Comments
-    getComments: (blogId) =>
-        fetch(`${API_BASE}/blog/comments/${blogId}`).then((res) => res.json()),
+    // Blog Comments (Approved comments only for public view, moderation-ready)
+    getComments: async (blogId) => {
+        try {
+            const res = await fetch(`${ADMIN_API_BASE}/api/public/blogs/${blogId}/comments`);
+            if (res.ok) {
+                const data = await res.json();
+                if (data && Array.isArray(data.comments)) return data;
+            }
+        } catch (e) {}
+        try {
+            const fallbackRes = await fetch(`${API_BASE}/blog/comments/${blogId}`);
+            if (fallbackRes.ok) return await fallbackRes.json();
+        } catch (e) {}
+        return { comments: [] };
+    },
 
-    postComment: (data) =>
-        fetch(`${API_BASE}/blog/comment`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
-        }).then((res) => res.json()),
+    postComment: async (blogIdOrData, maybeData) => {
+        let blogId, payload;
+        if (typeof blogIdOrData === 'object' && blogIdOrData !== null) {
+            blogId = blogIdOrData.blogId || blogIdOrData.blog_id;
+            payload = {
+                user_name: blogIdOrData.userName || blogIdOrData.user_name || "Reader",
+                content: blogIdOrData.content,
+                parent_id: blogIdOrData.parentId || blogIdOrData.parent_id || null,
+            };
+        } else {
+            blogId = blogIdOrData;
+            payload = {
+                user_name: maybeData?.userName || maybeData?.user_name || "Reader",
+                content: maybeData?.content,
+                parent_id: maybeData?.parentId || maybeData?.parent_id || null,
+            };
+        }
+
+        try {
+            const res = await fetch(`${ADMIN_API_BASE}/api/public/blogs/${blogId}/comments`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            });
+            const data = await res.json();
+            if (res.ok) return data;
+            if (data?.error) throw new Error(data.error);
+        } catch (adminErr) {
+            const fallbackRes = await fetch(`${API_BASE}/blog/comment`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    blogId,
+                    userName: payload.user_name,
+                    content: payload.content,
+                    parentId: payload.parent_id
+                }),
+            });
+            return await fallbackRes.json();
+        }
+    },
 
     // Public Blogs (from admin backend, includes category/topic)
-    getPublicBlogs: (category = null) => {
-        const url = category
-            ? `${ADMIN_API_BASE}/api/public/blogs?category=${encodeURIComponent(category)}`
-            : `${ADMIN_API_BASE}/api/public/blogs`;
+    getPublicBlogs: (category = null, search = null) => {
+        const params = new URLSearchParams();
+        if (category && category !== 'all') params.append('category', category);
+        if (search && search.trim()) params.append('search', search.trim());
+        const qs = params.toString() ? `?${params.toString()}` : '';
+        const url = `${ADMIN_API_BASE}/api/public/blogs${qs}`;
         return fetch(url).then((res) => res.json());
+    },
+
+    getFeaturedBlog: () =>
+        fetch(`${ADMIN_API_BASE}/api/public/blogs/featured`).then((res) => res.json()),
+
+    getBlogBySlug: (slug, preview = false) => {
+        const query = preview ? '?preview=true' : '';
+        return fetch(`${ADMIN_API_BASE}/api/public/blogs/by-slug/${encodeURIComponent(slug)}${query}`).then((res) => res.json());
     },
 
     getPublicCategories: () =>

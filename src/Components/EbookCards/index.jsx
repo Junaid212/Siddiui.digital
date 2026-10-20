@@ -1,23 +1,57 @@
-import { Star, Bookmark, CircleDollarSign } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useCart } from "../Cart/CartContext";
+import { useState } from "react";
 
-const EbookCards = ({ image, title, description, rating, tags, delay = 0, link }) => {
+const EbookCards = ({
+  image,
+  title,
+  description,
+  delay = 0,
+  link,
+  status,
+  price,
+  priceNum,
+  currency,
+  productId,
+  slug,
+}) => {
   const navigate = useNavigate();
+  const { addItem, items } = useCart();
+  const [addedToCart, setAddedToCart] = useState(false);
+
+  const isComingSoon = status === "coming_soon";
+  const isInCart = items.some((i) => i.productId === productId);
 
   const handleCardClick = () => {
-    navigate(link);
+    if (!isComingSoon && link) navigate(link);
   };
 
-  const handleButtonClick = (e) => {
-    e.stopPropagation(); // Prevent card click from firing
-    navigate(link);
+  const handleReadMore = (e) => {
+    e.stopPropagation();
+    if (link) navigate(link);
   };
 
-  const handleBookmarkClick = (e) => {
-    e.stopPropagation(); // Prevent card click
-    // Add bookmark logic here if needed
-    console.log("Bookmark clicked");
+  const handleAddToCart = (e) => {
+    e.stopPropagation();
+    if (isInCart) {
+      navigate("/cart/checkout");
+      return;
+    }
+    addItem({
+      productId,
+      title,
+      price: Number(priceNum) || 49,
+      currency: currency || "AED",
+      coverImage: image,
+      accessType: "download",
+      accessLabel: "Downloadable Edition",
+      slug: slug || null,
+    });
+    setAddedToCart(true);
+    setTimeout(() => setAddedToCart(false), 2000);
   };
+
+  const displayPrice = price || `${currency || "AED"} ${Number(priceNum || 49).toFixed(2)}`;
 
   return (
     <>
@@ -36,6 +70,10 @@ const EbookCards = ({ image, title, description, rating, tags, delay = 0, link }
           cursor: pointer;
         }
 
+        .blog-card.coming-soon-card {
+          cursor: default;
+        }
+
         @keyframes fadeUp {
           from {
             opacity: 0;
@@ -47,7 +85,7 @@ const EbookCards = ({ image, title, description, rating, tags, delay = 0, link }
           }
         }
 
-        .blog-card:hover {
+        .blog-card:hover:not(.coming-soon-card) {
           transform: translateY(-0.75rem);
           box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
         }
@@ -61,7 +99,7 @@ const EbookCards = ({ image, title, description, rating, tags, delay = 0, link }
           transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .blog-card:hover .blog-card-image {
+        .blog-card:hover:not(.coming-soon-card) .blog-card-image {
           transform: scale(1.15);
         }
 
@@ -78,7 +116,7 @@ const EbookCards = ({ image, title, description, rating, tags, delay = 0, link }
           transition: opacity 0.5s;
         }
 
-        .blog-card:hover .blog-card-gradient {
+        .blog-card:hover:not(.coming-soon-card) .blog-card-gradient {
           background: linear-gradient(
             to top,
             rgba(0, 0, 0, 0.98) 0%,
@@ -88,37 +126,20 @@ const EbookCards = ({ image, title, description, rating, tags, delay = 0, link }
           );
         }
 
-        .blog-card-bookmark {
+        .blog-card-coming-soon-badge {
           position: absolute;
-          right: 1rem;
-          top: 1rem;
+          top: 14px;
+          right: 14px;
           z-index: 10;
-          border-radius: 0.75rem;
-          background-color: rgba(255, 255, 255, 0.15);
-          backdrop-filter: blur(12px);
-          padding: 0.625rem;
-          transition: all 0.3s;
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .blog-card-bookmark:hover {
-          background-color: rgba(255, 255, 255, 0.95);
-          transform: scale(1.1);
-        }
-
-        .blog-card-bookmark svg {
-          width: 1.125rem;
-          height: 1.125rem;
-          color: white;
-          transition: color 0.3s;
-        }
-
-        .blog-card-bookmark:hover svg {
-          color: #1a1a1a;
+          background: rgba(245, 158, 11, 0.9);
+          backdrop-filter: blur(8px);
+          color: #000;
+          font-size: 10px;
+          font-weight: 800;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          padding: 4px 12px;
+          border-radius: 20px;
         }
 
         .blog-card-content {
@@ -142,7 +163,7 @@ const EbookCards = ({ image, title, description, rating, tags, delay = 0, link }
           text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
 
-        .blog-card:hover .blog-card-title {
+        .blog-card:hover:not(.coming-soon-card) .blog-card-title {
           transform: translateY(-4px);
           text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
         }
@@ -156,132 +177,154 @@ const EbookCards = ({ image, title, description, rating, tags, delay = 0, link }
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
           overflow: hidden;
+          margin-bottom: 0.4rem;
         }
 
-        .blog-card-footer {
+        .blog-card-price {
+          font-size: 0.8rem;
+          font-weight: 700;
+          color: rgba(255, 255, 255, 0.85);
+          letter-spacing: 0.02em;
+          margin-bottom: 0.4rem;
+        }
+
+        .blog-card-btns {
           display: flex;
-          align-items: center;
-          gap: 0.625rem;
-          flex-wrap: wrap;
-        }
-
-        .blog-card-rating {
-          display: flex;
-          align-items: center;
-          flex-wrap: wrap;
-          gap: 0.375rem;
-          background-color: rgba(255, 255, 255, 0.15);
-          backdrop-filter: blur(8px);
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          padding: 0.375rem 0.75rem;
-          border-radius: 0.625rem;
-          transition: all 0.3s;
-        }
-
-        .blog-card-rating:hover {
-          background-color: rgba(255, 255, 255, 0.25);
-        }
-
-        .blog-card-rating svg {
-          width: 1rem;
-          height: 1rem;
-          fill: #fbbe2400;
-          color: #fbbf24;
-        }
-
-        .blog-card-rating-value {
-          font-size: 0.65rem;
-          font-weight: 500;
-          color: white !important;
-        }
-
-        .blog-card-tag {
-          border-radius: 0.65rem;
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          background-color: rgba(255, 255, 255, 0.15);
-          backdrop-filter: blur(8px);
-          padding: 0.375rem 0.875rem;
-          font-size: 0.65rem;
-          font-weight: 300 !important;
-          color: #ffffff !important ;
-          transition: all 0.3s;
-          display: inline-block;
-        }
-
-        .blog-card-tag:hover {
-          background-color: rgba(255, 255, 255, 0.95);
-          color: #1a1a1a;
-          border-color: rgba(255, 255, 255, 0.9);
-          transform: translateY(-2px);
+          gap: 0.5rem;
+          margin-top: 0.25rem;
         }
 
         .blog-card-cta {
-          margin-top: 0.5rem;
-          width: 100%;
+          flex: 1;
           border-radius: 0.75rem;
-          background-color: rgba(255, 255, 255, 0.25);
-          padding: 0.875rem;
-          font-size: 0.9375rem;
+          background-color: rgba(255, 255, 255, 0.15);
+          padding: 0.7rem 0.5rem;
+          font-size: 0.8rem;
           font-weight: 600;
           color: white;
           transition: all 0.3s;
-          border: none;
+          border: 1px solid rgba(255,255,255,0.2);
           cursor: pointer;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 5px;
+          backdrop-filter: blur(6px);
         }
 
         .blog-card-cta:hover {
           transform: translateY(-2px);
-          box-shadow: 0 10px 20px -5px rgba(246, 59, 59, 0.5);
-          background: linear-gradient(135deg, #eb2525 0%, #d81d1d 100%);
+          background-color: rgba(255,255,255,0.25);
         }
 
+        .blog-card-cta-primary {
+          flex: 1;
+          border-radius: 0.75rem;
+          background: linear-gradient(135deg, #c80808 0%, #990000 100%);
+          padding: 0.7rem 0.5rem;
+          font-size: 0.8rem;
+          font-weight: 700;
+          color: white;
+          transition: all 0.3s;
+          border: none;
+          cursor: pointer;
+          box-shadow: 0 6px 16px -3px rgba(200, 8, 8, 0.4);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 5px;
+        }
+
+        .blog-card-cta-primary:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 10px 20px -5px rgba(246, 59, 59, 0.5);
+        }
+
+        .blog-card-cta-primary:active,
         .blog-card-cta:active {
           transform: translateY(0);
+        }
+
+        .blog-card-cta.in-cart {
+          background: rgba(5, 150, 105, 0.15);
+          color: #34d399;
+          border-color: rgba(52, 211, 153, 0.4);
+        }
+
+        .blog-card-coming-soon-btn {
+          width: 100%;
+          background: rgba(245, 158, 11, 0.2);
+          color: #f59e0b;
+          font-weight: 700;
+          padding: 0.75rem 1rem;
+          border-radius: 0.75rem;
+          border: 1px solid rgba(245, 158, 11, 0.3);
+          cursor: default;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 0.85rem;
+          gap: 8px;
+          margin-top: 0.25rem;
         }
       `}</style>
 
       <article
-        className="blog-card no-dark"
+        className={`blog-card no-dark${isComingSoon ? " coming-soon-card" : ""}`}
         style={{ animationDelay: `${delay}ms` }}
+        onClick={handleCardClick}
       >
-        <div className="blog-card-image-wrapper">
-          <img
-            src={image}
-            alt={title}
-            className="blog-card-image"
-            loading="lazy"
-          />
-          <div className="blog-card-gradient" />
-        </div>
+        {/* Book Image */}
+        <img
+          src={image}
+          alt={title}
+          className="blog-card-image"
+          loading="lazy"
+        />
+        <div className="blog-card-gradient" />
 
-        {/* <button
-          className="blog-card-bookmark"
-          aria-label="Bookmark this post"
-          onClick={handleBookmarkClick}
-        >
-          <Bookmark />
-        </button> */}
+        {/* Coming Soon Badge */}
+        {isComingSoon && (
+          <div className="blog-card-coming-soon-badge">Coming Soon</div>
+        )}
 
+        {/* Card Content */}
         <div className="blog-card-content">
           <h3 className="blog-card-title">{title}</h3>
           <p className="blog-card-description">{description}</p>
 
-          {/* <div className="blog-card-footer">
-            <div className="blog-card-rating">
-              <CircleDollarSign />
-              <span className="blog-card-rating-value">{rating} AED</span>
-            </div>
-            {tags.map((tag) => (
-              <span key={tag} className="blog-card-tag">
-                {tag}
-              </span>
-            ))}
-          </div> */}
+          {/* Price — only for active books */}
+          {!isComingSoon && (
+            <p className="blog-card-price">{displayPrice}</p>
+          )}
 
-          {/* <button onClick={handleButtonClick} className="blog-card-cta">
-            Read More
-          </button> */}
+          {/* Buttons */}
+          {isComingSoon ? (
+            <div className="blog-card-coming-soon-btn">
+              <i className="fa-solid fa-clock" />
+              Coming Soon
+            </div>
+          ) : (
+            <div className="blog-card-btns">
+              {/* Add to Cart */}
+              <button
+                onClick={handleAddToCart}
+                className={`blog-card-cta${isInCart || addedToCart ? " in-cart" : ""}`}
+              >
+                <i className={`fa-solid ${isInCart ? "fa-check" : addedToCart ? "fa-check" : "fa-cart-plus"}`} />
+                {isInCart ? "In Cart" : addedToCart ? "Added!" : "Add to Cart"}
+              </button>
+
+              {/* Read More */}
+              <button
+                onClick={handleReadMore}
+                className="blog-card-cta-primary"
+              >
+                <i className="fa-solid fa-arrow-right" />
+                Read More
+              </button>
+            </div>
+          )}
         </div>
       </article>
     </>

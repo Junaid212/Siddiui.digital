@@ -4,68 +4,44 @@ import { api } from '../../api';
 
 const CommentSection = ({ blogId }) => {
     const [comments, setComments] = useState([]);
+    const [authorName, setAuthorName] = useState('');
     const [newComment, setNewComment] = useState('');
     const [replyingTo, setReplyingTo] = useState(null);
+    const [replyName, setReplyName] = useState('');
     const [replyContent, setReplyContent] = useState('');
     const [loading, setLoading] = useState(true);
+    const [submitting, setSubmitting] = useState(false);
+    const [submitSuccess, setSubmitSuccess] = useState(false);
     const [user, setUser] = useState(null);
-    const [signingIn, setSigningIn] = useState(false);
 
-    // Check for existing Supabase session (shared with Ebook sign-in)
+    // Check for existing Supabase session (e.g. from Ebook sign-in) to pre-fill name
     useEffect(() => {
         const getSession = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session?.user) {
-                setUser({
-                    id: session.user.id,
-                    name: session.user.user_metadata?.full_name || session.user.email,
-                    email: session.user.email,
-                    avatar: session.user.user_metadata?.avatar_url,
-                });
-            }
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                if (session?.user) {
+                    const fullName = session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || '';
+                    setUser({
+                        id: session.user.id,
+                        name: fullName,
+                        email: session.user.email,
+                    });
+                    if (fullName) setAuthorName(fullName);
+                }
+            } catch (e) {}
         };
         getSession();
-
-        // Listen for auth changes (e.g. user signs in via Ebook page)
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            if (session?.user) {
-                setUser({
-                    id: session.user.id,
-                    name: session.user.user_metadata?.full_name || session.user.email,
-                    email: session.user.email,
-                    avatar: session.user.user_metadata?.avatar_url,
-                });
-            } else {
-                setUser(null);
-            }
-        });
-
-        return () => subscription?.unsubscribe();
     }, []);
 
-    // Fetch comments from Supabase on every load (persisted — survives refresh)
+    // Fetch approved comments
     useEffect(() => {
         if (!blogId) return;
         const fetchComments = async () => {
             try {
-                // Primary: fetch directly from Supabase (reliable, no backend key needed)
-                const { data, error } = await supabase
-                    .from('blog_comments')
-                    .select('*')
-                    .eq('blog_id', blogId)
-                    .order('created_at', { ascending: true });
-
-                if (error) throw error;
-                setComments(data || []);
+                const res = await api.getComments(blogId);
+                setComments(res.comments || []);
             } catch (err) {
-                console.error('Supabase fetch failed, trying backend API:', err);
-                // Fallback: try backend API
-                try {
-                    const result = await api.getComments(blogId);
-                    setComments(result.comments || []);
-                } catch {
-                    console.error('Both fetch methods failed');
-                }
+                console.error('Error fetching comments:', err);
             } finally {
                 setLoading(false);
             }
@@ -73,283 +49,363 @@ const CommentSection = ({ blogId }) => {
         fetchComments();
     }, [blogId]);
 
-    // Google sign-in via Supabase OAuth
-    const handleGoogleSignIn = async () => {
-        setSigningIn(true);
-        try {
-            const { error } = await supabase.auth.signInWithOAuth({
-                provider: 'google',
-                options: {
-                    redirectTo: window.location.href, // Come back to the same page
-                },
-            });
-            if (error) {
-                console.error('Google sign-in error:', error);
-                alert('Sign-in failed. Please try again.');
-            }
-        } catch (err) {
-            console.error('Sign-in error:', err);
-        } finally {
-            setSigningIn(false);
-        }
-    };
-
     const handleSubmit = async (e, parentId = null) => {
         e.preventDefault();
         const content = parentId ? replyContent : newComment;
+        const name = (parentId ? replyName : authorName).trim() || 'Reader';
+
         if (!content.trim()) return;
 
-        // If not signed in, trigger Google sign-in
-        if (!user) {
-            handleGoogleSignIn();
-            return;
-        }
-
+        setSubmitting(true);
         try {
-            let commentData;
-            try {
-                const result = await api.postComment({
-                    blogId,
-                    content,
-                    parentId,
-                    userId: user.id,
-                    userName: user.name,
-                });
-                if (result.error) throw new Error(result.error);
-                commentData = result.comment;
-            } catch {
-                // Fallback: post directly via Supabase if backend API fails
-                const { data, error } = await supabase
-                    .from('blog_comments')
-                    .insert([{
-                        blog_id: blogId,
-                        parent_id: parentId || null,
-                        user_name: user.name,
-                        content: content,
-                        is_admin: false,
-                    }])
-                    .select()
-                    .single();
-                if (error) throw error;
-                commentData = data;
+            await api.postComment(blogId, {
+                userName: name,
+                content: content.trim(),
+                parentId: parentId || null,
+            });
+
+            setSubmitSuccess(true);
+            if (parentId) {
+                setReplyContent('');
+                setReplyingTo(null);
+            } else {
+                setNewComment('');
             }
 
-            if (commentData) {
-                setComments([...comments, commentData]);
-            }
-            setNewComment('');
-            setReplyContent('');
-            setReplyingTo(null);
+            // Auto-hide success message after 8 seconds
+            setTimeout(() => setSubmitSuccess(false), 8000);
         } catch (err) {
-            console.error('Error posting comment:', err);
-            alert('Failed to post comment. Please try again.');
+            console.error('Failed to submit comment:', err);
+            alert(err.message || 'Failed to submit comment. Please try again.');
+        } finally {
+            setSubmitting(false);
         }
     };
-
-    const handleSignOut = async () => {
-        await supabase.auth.signOut();
-        setUser(null);
-    };
-
-    if (loading) return <div className="text-center py-4">Loading comments...</div>;
 
     const rootComments = comments.filter(c => !c.parent_id);
     const getReplies = (parentId) => comments.filter(c => c.parent_id === parentId);
 
     return (
-        <div className="comment-section mt-5">
-            <h4 className="mb-4">Comments ({comments.length})</h4>
-
-            <div className="comments-chat-container mb-5" style={{
+        <section style={{ background: '#ffffff', width: '100%', borderTop: '1px solid #E3E6EC' }}>
+            <div style={{
+                maxWidth: '720px',
+                margin: '0 auto',
+                padding: '56px 24px 72px',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '20px',
-                padding: '20px',
-                background: 'rgba(255,255,255,0.05)',
-                borderRadius: '1.5rem',
-                backdropFilter: 'blur(10px)'
+                gap: '24px',
+                fontFamily: "'Source Sans 3', 'Segoe UI', sans-serif"
             }}>
-                {rootComments.map(comment => (
-                    <div key={comment.id} className="comment-thread">
-                        {/* Parent Comment */}
-                        <div className={`comment-bubble user-comment ${comment.is_admin ? 'admin' : ''}`} style={{
-                            maxWidth: '80%',
-                            alignSelf: comment.is_admin ? 'flex-end' : 'flex-start',
-                            background: comment.is_admin ? 'rgba(200, 8, 8, 0.2)' : 'rgba(255, 255, 255, 0.1)',
-                            padding: '15px 20px',
-                            borderRadius: comment.is_admin ? '1.5rem 1.5rem 0 1.5rem' : '1.5rem 1.5rem 1.5rem 0',
-                            border: `1px solid ${comment.is_admin ? 'rgba(200, 8, 8, 0.3)' : 'rgba(255, 255, 255, 0.2)'}`,
-                            marginLeft: comment.is_admin ? 'auto' : '0',
-                            position: 'relative'
-                        }}>
-                            <div className="d-flex justify-content-between mb-2">
-                                <span style={{ fontWeight: '700', fontSize: '0.9rem', color: comment.is_admin ? '#ff4d4d' : '#fff' }}>
-                                    {comment.user_name} {comment.is_admin && '(Admin)'}
-                                </span>
-                                <span style={{ fontSize: '0.75rem', opacity: 0.6 }}>
-                                    {new Date(comment.created_at).toLocaleDateString()}
-                                </span>
-                            </div>
-                            <p className="mb-2" style={{ fontSize: '0.95rem', lineHeight: '1.5' }}>{comment.content}</p>
-                            <button
-                                onClick={() => setReplyingTo(comment)}
-                                style={{
-                                    background: 'none',
-                                    border: 'none',
-                                    color: '#C80808',
-                                    fontSize: '0.8rem',
-                                    fontWeight: '600',
-                                    padding: '0'
-                                }}
-                            >
-                                Reply
-                            </button>
-                        </div>
-
-                        {/* Nested Replies */}
-                        <div className="replies-container mt-3" style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                            {getReplies(comment.id).map(reply => (
-                                <div key={reply.id} className={`comment-bubble ${reply.is_admin ? 'admin' : ''}`} style={{
-                                    maxWidth: '80%',
-                                    alignSelf: reply.is_admin ? 'flex-end' : 'flex-start',
-                                    background: reply.is_admin ? 'rgba(200, 8, 8, 0.2)' : 'rgba(255, 255, 255, 0.1)',
-                                    padding: '12px 18px',
-                                    borderRadius: reply.is_admin ? '1.5rem 1.5rem 0 1.5rem' : '1.5rem 1.5rem 1.5rem 0',
-                                    border: `1px solid ${reply.is_admin ? 'rgba(200, 8, 8, 0.3)' : 'rgba(255, 255, 255, 0.2)'}`,
-                                    marginLeft: reply.is_admin ? 'auto' : '10%',
-                                    marginRight: reply.is_admin ? '0' : '0'
-                                }}>
-                                    <div className="d-flex justify-content-between mb-1">
-                                        <span style={{ fontWeight: '700', fontSize: '0.85rem', color: reply.is_admin ? '#ff4d4d' : '#fff' }}>
-                                            {reply.user_name} {reply.is_admin && '(Admin)'}
-                                        </span>
-                                        <span style={{ fontSize: '0.7rem', opacity: 0.6 }}>
-                                            {new Date(reply.created_at).toLocaleDateString()}
-                                        </span>
-                                    </div>
-                                    <p className="mb-0" style={{ fontSize: '0.9rem' }}>{reply.content}</p>
-                                </div>
-                            ))}
-                        </div>
-
-                        {/* Reply Form */}
-                        {replyingTo?.id === comment.id && (
-                            <div className="reply-form mt-3 ms-5">
-                                <form onSubmit={(e) => handleSubmit(e, comment.id)}>
-                                    <textarea
-                                        className="form-control mb-2"
-                                        rows="2"
-                                        placeholder="Write a reply..."
-                                        style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}
-                                        value={replyContent}
-                                        onChange={(e) => setReplyContent(e.target.value)}
-                                    />
-                                    <div className="d-flex gap-2">
-                                        <button type="submit" className="btn btn-danger btn-sm">
-                                            {user ? 'Post Reply' : 'Sign in to Reply'}
-                                        </button>
-                                        <button type="button" className="btn btn-outline-light btn-sm" onClick={() => setReplyingTo(null)}>Cancel</button>
-                                    </div>
-                                </form>
-                            </div>
-                        )}
-                    </div>
-                ))}
-            </div>
-
-            {/* Main Comment Form */}
-            <div className="main-comment-form p-4" style={{
-                background: 'rgba(255,255,255,0.05)',
-                borderRadius: '1.5rem',
-                border: '1px solid rgba(255,255,255,0.1)'
-            }}>
-                <h5>Leave a Comment</h5>
-
-                {/* Show signed-in user info */}
-                {user ? (
-                    <div className="d-flex align-items-center gap-3 mb-3 p-2" style={{
-                        background: 'rgba(255,255,255,0.05)',
-                        borderRadius: '0.75rem',
-                        border: '1px solid rgba(255,255,255,0.1)'
+                <div>
+                    <h2 style={{
+                        margin: '0 0 6px 0',
+                        fontFamily: "'Source Serif 4', Georgia, serif",
+                        fontSize: '28px',
+                        fontWeight: 700,
+                        color: '#13294B'
                     }}>
-                        {user.avatar && (
-                            <img
-                                src={user.avatar}
-                                alt={user.name}
-                                style={{ width: 36, height: 36, borderRadius: '50%' }}
-                            />
-                        )}
-                        <div style={{ flex: 1 }}>
-                            <span style={{ fontWeight: '600', fontSize: '0.9rem', color: '#fff' }}>
-                                {user.name}
-                            </span>
-                            <span style={{ fontSize: '0.75rem', opacity: 0.6, marginLeft: '8px' }}>
-                                {user.email}
-                            </span>
-                        </div>
-                        <button
-                            onClick={handleSignOut}
-                            style={{
-                                background: 'none',
-                                border: '1px solid rgba(255,255,255,0.2)',
-                                color: '#aaa',
-                                fontSize: '0.75rem',
-                                padding: '4px 10px',
-                                borderRadius: '0.5rem',
-                                cursor: 'pointer'
-                            }}
-                        >
-                            Sign out
-                        </button>
-                    </div>
-                ) : (
-                    <div className="mb-3 p-3 text-center" style={{
-                        background: 'rgba(200, 8, 8, 0.1)',
-                        borderRadius: '0.75rem',
-                        border: '1px solid rgba(200, 8, 8, 0.2)'
+                        Reader Comments {comments.length > 0 && `(${comments.length})`}
+                    </h2>
+                    <p style={{ margin: 0, fontSize: '15px', color: '#4A5163' }}>
+                        Comments are reviewed before they are published.
+                    </p>
+                </div>
+
+                {/* Submission Success Alert */}
+                {submitSuccess && (
+                    <div style={{
+                        padding: '16px 20px',
+                        background: '#EEF7F2',
+                        border: '1px solid #B7E4C7',
+                        borderRadius: '10px',
+                        color: '#1E4620',
+                        fontSize: '15px',
+                        lineHeight: 1.5,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px'
                     }}>
-                        <p style={{ fontSize: '0.9rem', marginBottom: '10px', color: '#ccc' }}>
-                            Sign in with Google to post a comment
-                        </p>
-                        <button
-                            onClick={handleGoogleSignIn}
-                            disabled={signingIn}
-                            className="btn btn-outline-light btn-sm"
-                            style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}
-                        >
-                            <svg width="18" height="18" viewBox="0 0 48 48">
-                                <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
-                                <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
-                                <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z" />
-                                <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
-                            </svg>
-                            {signingIn ? 'Signing in...' : 'Sign in with Google'}
-                        </button>
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2D6A4F" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                        <div>
+                            <strong>Thank you!</strong> Your comment has been submitted for editorial review and will appear once approved.
+                        </div>
                     </div>
                 )}
 
-                <form onSubmit={(e) => handleSubmit(e)}>
-                    <div className="mb-3">
-                        <textarea
-                            className="form-control"
-                            rows="4"
-                            placeholder={user ? "Your Comment" : "Sign in first to comment..."}
+                {/* Comment Submission Form */}
+                <form onSubmit={(e) => handleSubmit(e, null)} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        <label htmlFor="c-name" style={{ fontSize: '15px', fontWeight: 600, color: '#13294B' }}>
+                            Name
+                        </label>
+                        <input
+                            id="c-name"
+                            type="text"
+                            placeholder="Your full name"
+                            value={authorName}
+                            onChange={(e) => setAuthorName(e.target.value)}
                             required
-                            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', padding: '12px' }}
-                            value={newComment}
-                            onChange={(e) => setNewComment(e.target.value)}
+                            style={{
+                                minHeight: '48px',
+                                boxSizing: 'border-box',
+                                border: '1px solid #C9CFDB',
+                                borderRadius: '8px',
+                                padding: '0 14px',
+                                font: 'inherit',
+                                fontSize: '16px',
+                                color: '#1B1F2A',
+                                outline: 'none'
+                            }}
                         />
                     </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        <label htmlFor="c-text" style={{ fontSize: '15px', fontWeight: 600, color: '#13294B' }}>
+                            Your comment
+                        </label>
+                        <textarea
+                            id="c-text"
+                            rows={4}
+                            placeholder="Share your perspective or ask a question..."
+                            value={newComment}
+                            onChange={(e) => setNewComment(e.target.value)}
+                            required
+                            style={{
+                                boxSizing: 'border-box',
+                                border: '1px solid #C9CFDB',
+                                borderRadius: '8px',
+                                padding: '12px 14px',
+                                font: 'inherit',
+                                fontSize: '16px',
+                                color: '#1B1F2A',
+                                outline: 'none',
+                                resize: 'vertical'
+                            }}
+                        />
+                    </div>
+
                     <button
                         type="submit"
-                        className="btn btn-danger px-4 py-2"
-                        style={{ borderRadius: '0.75rem', fontWeight: '600' }}
+                        disabled={submitting}
+                        style={{
+                            alignSelf: 'flex-start',
+                            minHeight: '48px',
+                            padding: '0 28px',
+                            border: 0,
+                            borderRadius: '8px',
+                            background: '#A3192F',
+                            color: '#ffffff',
+                            font: 'inherit',
+                            fontWeight: 700,
+                            fontSize: '16px',
+                            cursor: submitting ? 'wait' : 'pointer',
+                            transition: 'background 0.2s ease',
+                            opacity: submitting ? 0.7 : 1
+                        }}
                     >
-                        {user ? 'Post Comment' : 'Sign in to Comment'}
+                        {submitting ? 'Submitting...' : 'Submit for review'}
                     </button>
                 </form>
+
+                {/* Approved Comments List */}
+                {loading ? (
+                    <div style={{ padding: '24px 0', color: '#6A7282', fontSize: '15px' }}>
+                        Loading comments...
+                    </div>
+                ) : rootComments.length > 0 ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '24px' }}>
+                        {rootComments.map((comment) => (
+                            <div
+                                key={comment.id}
+                                style={{
+                                    border: '1px solid #E3E6EC',
+                                    borderRadius: '12px',
+                                    padding: '20px 24px',
+                                    background: '#FAFBFD'
+                                }}
+                            >
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                        <span style={{ fontWeight: 700, fontSize: '16px', color: '#13294B' }}>
+                                            {comment.user_name || 'Reader'}
+                                        </span>
+                                        {comment.is_admin && (
+                                            <span style={{
+                                                fontSize: '11px',
+                                                fontWeight: 700,
+                                                letterSpacing: '0.5px',
+                                                background: '#F7EEF0',
+                                                color: '#8A1528',
+                                                padding: '2px 8px',
+                                                borderRadius: '999px',
+                                                textTransform: 'uppercase'
+                                            }}>
+                                                Author
+                                            </span>
+                                        )}
+                                    </div>
+                                    <span style={{ fontSize: '13px', color: '#6A7282' }}>
+                                        {new Date(comment.created_at).toLocaleDateString('en-US', {
+                                            month: 'short',
+                                            day: 'numeric',
+                                            year: 'numeric'
+                                        })}
+                                    </span>
+                                </div>
+
+                                <p style={{ margin: '0 0 12px 0', fontSize: '16px', lineHeight: 1.6, color: '#2B303B', whiteSpace: 'pre-wrap' }}>
+                                    {comment.content}
+                                </p>
+
+                                <button
+                                    type="button"
+                                    onClick={() => setReplyingTo(replyingTo?.id === comment.id ? null : comment)}
+                                    style={{
+                                        background: 'none',
+                                        border: 'none',
+                                        padding: 0,
+                                        color: '#A3192F',
+                                        fontSize: '14px',
+                                        fontWeight: 600,
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    {replyingTo?.id === comment.id ? 'Cancel reply' : 'Reply'}
+                                </button>
+
+                                {/* Nested Replies */}
+                                {getReplies(comment.id).length > 0 && (
+                                    <div style={{
+                                        marginTop: '16px',
+                                        paddingLeft: '18px',
+                                        borderLeft: '2px solid #E3E6EC',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        gap: '14px'
+                                    }}>
+                                        {getReplies(comment.id).map((reply) => (
+                                            <div key={reply.id} style={{ background: '#ffffff', padding: '14px 18px', borderRadius: '8px', border: '1px solid #EAECEF' }}>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                        <span style={{ fontWeight: 700, fontSize: '15px', color: '#13294B' }}>
+                                                            {reply.user_name || 'Reader'}
+                                                        </span>
+                                                        {reply.is_admin && (
+                                                            <span style={{
+                                                                fontSize: '11px',
+                                                                fontWeight: 700,
+                                                                background: '#F7EEF0',
+                                                                color: '#8A1528',
+                                                                padding: '2px 8px',
+                                                                borderRadius: '999px',
+                                                                textTransform: 'uppercase'
+                                                            }}>
+                                                                Author
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <span style={{ fontSize: '12px', color: '#6A7282' }}>
+                                                        {new Date(reply.created_at).toLocaleDateString('en-US', {
+                                                            month: 'short',
+                                                            day: 'numeric',
+                                                            year: 'numeric'
+                                                        })}
+                                                    </span>
+                                                </div>
+                                                <p style={{ margin: 0, fontSize: '15px', lineHeight: 1.55, color: '#2B303B', whiteSpace: 'pre-wrap' }}>
+                                                    {reply.content}
+                                                </p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+
+                                {/* Inline Reply Form */}
+                                {replyingTo?.id === comment.id && (
+                                    <form onSubmit={(e) => handleSubmit(e, comment.id)} style={{
+                                        marginTop: '16px',
+                                        padding: '16px',
+                                        background: '#ffffff',
+                                        borderRadius: '8px',
+                                        border: '1px solid #D9DEE7',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        gap: '10px'
+                                    }}>
+                                        <input
+                                            type="text"
+                                            placeholder="Your name"
+                                            value={replyName}
+                                            onChange={(e) => setReplyName(e.target.value)}
+                                            required
+                                            style={{
+                                                minHeight: '40px',
+                                                border: '1px solid #C9CFDB',
+                                                borderRadius: '6px',
+                                                padding: '0 12px',
+                                                fontSize: '14px'
+                                            }}
+                                        />
+                                        <textarea
+                                            rows={2}
+                                            placeholder={`Reply to ${comment.user_name || 'reader'}...`}
+                                            value={replyContent}
+                                            onChange={(e) => setReplyContent(e.target.value)}
+                                            required
+                                            style={{
+                                                border: '1px solid #C9CFDB',
+                                                borderRadius: '6px',
+                                                padding: '10px 12px',
+                                                fontSize: '14px',
+                                                resize: 'vertical'
+                                            }}
+                                        />
+                                        <div style={{ display: 'flex', gap: '8px' }}>
+                                            <button
+                                                type="submit"
+                                                disabled={submitting}
+                                                style={{
+                                                    minHeight: '38px',
+                                                    padding: '0 18px',
+                                                    border: 0,
+                                                    borderRadius: '6px',
+                                                    background: '#A3192F',
+                                                    color: '#ffffff',
+                                                    fontWeight: 600,
+                                                    fontSize: '14px',
+                                                    cursor: 'pointer'
+                                                }}
+                                            >
+                                                Submit reply for review
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => setReplyingTo(null)}
+                                                style={{
+                                                    minHeight: '38px',
+                                                    padding: '0 14px',
+                                                    border: '1px solid #C9CFDB',
+                                                    borderRadius: '6px',
+                                                    background: '#ffffff',
+                                                    color: '#4A5163',
+                                                    fontSize: '14px',
+                                                    cursor: 'pointer'
+                                                }}
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </form>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                ) : null}
             </div>
-        </div>
+        </section>
     );
 };
 

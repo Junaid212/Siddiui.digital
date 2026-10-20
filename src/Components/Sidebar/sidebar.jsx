@@ -89,7 +89,7 @@ function Sidebar() {
                             alt="Logo"
                         /> */}
                         <div className="navbar-brand-text" >
-                            <span className="brand-name">SIDDIQUI.DIGITAL</span>
+                            <span className="brand-name-2">SIDDIQUI<span className="brand-name">.DIGITAL</span></span>
                             <span className="brand-tagline">BUSINESS SOLUTIONS</span>
                         </div>
                     </NavLink>

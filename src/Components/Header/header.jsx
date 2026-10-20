@@ -281,7 +281,7 @@ const Navbar = () => {
                                 alt="Logo" 
                             /> */}
                             <div className="navbar-brand-text">
-                                <span className="brand-name">SIDDIQUI.DIGITAL</span>
+                                <span className="brand-name-2">SIDDIQUI<span className="brand-name">.DIGITAL</span></span>
                                 <span className="brand-tagline">BUSINESS SOLUTIONS</span>
                             </div>
                         </NavLink>
@@ -540,10 +540,19 @@ const Navbar = () => {
 
                 }
 
+            .brand-name-2 {
+                font-size: 1.3rem;
+                font-weight: 800;
+                color: #13294B !important;
+                margin: 0;
+                white-space: nowrap;
+                line-height: 1.15;
+                letter-spacing: 0.01em;
+            }
             .brand-name {
                 font-size: 1.3rem;
                 font-weight: 800;
-                color: #A30606;
+                color: #A30606 !important;
                 margin: 0;
                 white-space: nowrap;
                 line-height: 1.15;
