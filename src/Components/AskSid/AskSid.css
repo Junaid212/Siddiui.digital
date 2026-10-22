@@ -2038,8 +2038,8 @@ body.light-mode,
 }
 
 .asksid-upgrade-title {
-  font-family: "Cormorant Garamond", Georgia, serif;
-  font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+  /* font-family: "Cormorant Garamond", Georgia, serif; */
+  font-size: clamp(1.8rem, 3vw, 2rem);
   font-weight: 700;
   color: #ffffff !important;
   margin: 0 0 0.8rem;
@@ -2052,7 +2052,7 @@ body.light-mode,
 .asksid-upgrade-sub {
   font-size: 0.98rem;
   line-height: 1.65;
-  color: var(--sid-text-muted);
+  color: #a4a4a4 !important;
   max-width: 680px;
   margin: 0 auto 1.8rem;
 }
@@ -2101,7 +2101,7 @@ body.light-mode,
   align-items: center;
   gap: 10px;
   font-size: 0.92rem;
-  color: var(--sid-text);
+  color: #e9e9e9 !important;
 }
 
 .asksid-upgrade-features li i {

@@ -33,7 +33,7 @@
 
 .my-orders-subtitle {
   font-size: 0.875rem;
-  color: var(--text-secondary, #6b7280);
+  color: var(--text-secondary, #050505);
   margin: 0;
 }
 
@@ -410,3 +410,28 @@
   border-color: #374151;
   color: #f9fafb;
 }
+
+/* ── Upgrade Button ───────────────────────────────── */
+.my-order-upgrade-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 16px;
+  background: linear-gradient(135deg, #c80808 0%, #8b0000 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(200, 8, 8, 0.25);
+}
+
+.my-order-upgrade-btn:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(200, 8, 8, 0.4);
+}
+

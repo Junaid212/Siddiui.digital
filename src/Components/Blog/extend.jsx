@@ -11,6 +11,14 @@ const BlogSectionExtend = () => {
     useEffect(() => {
         const fetchBlogs = async () => {
             try {
+                // Try API first to get enriched blog data with social links
+                const res = await fetch("http://localhost:5001/api/public/blogs").then(r => r.json()).catch(() => null);
+                if (res && res.blogs && res.blogs.length > 0) {
+                    setBlogs(res.blogs);
+                    setLoading(false);
+                    return;
+                }
+
                 const { data, error } = await supabase
                     .from('blogs')
                     .select('*')
@@ -52,6 +60,9 @@ const BlogSectionExtend = () => {
                                         topic2={item.topic2}
                                         id={item.id}
                                         date={item.published_date || item.created_at}
+                                        linkedin_url={item.linkedin_url}
+                                        instagram_url={item.instagram_url}
+                                        facebook_url={item.facebook_url}
                                     />
                                 </div>
                             ))}

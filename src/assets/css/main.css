@@ -350,7 +350,7 @@ ul {
 }
 
 .accent-color {
-    color: var(--accent-color);
+    color: #7f7e7e !important;
 }
 
 .accent-color-3 {

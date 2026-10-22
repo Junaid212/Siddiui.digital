@@ -58,8 +58,15 @@ export default function CartDrawer() {
     setDiscountError("");
   };
 
+  const [agreedRefund, setAgreedRefund] = useState(false);
+  const [agreeError, setAgreeError] = useState(false);
+
   /* ── Checkout ───────────────────────────────────── */
   const handleCheckout = () => {
+    if (!agreedRefund) {
+      setAgreeError(true);
+      return;
+    }
     closeCart();
     navigate("/cart/checkout");
   };
@@ -193,8 +200,8 @@ export default function CartDrawer() {
                 </div>
               )}
               <div className="cart-total-row">
-                <span style={{ fontSize: "0.78rem" }}>Tax / VAT</span>
-                <span style={{ fontSize: "0.78rem" }}>Calculated at checkout</span>
+                {/* <span style={{ fontSize: "0.78rem" }}>Tax / VAT</span> */}
+                {/* <span style={{ fontSize: "0.78rem" }}>Calculated at checkout</span> */}
               </div>
               <div className="cart-total-row grand-total">
                 <span>Total</span>
@@ -204,6 +211,39 @@ export default function CartDrawer() {
 
             {/* Footer */}
             <div className="cart-footer">
+              {/* Refund Policy Agreement Checkbox */}
+              <div className="cart-agreement-box">
+                <label className="cart-agreement-label" htmlFor="cart-agree-refund">
+                  <input
+                    type="checkbox"
+                    id="cart-agree-refund"
+                    checked={agreedRefund}
+                    onChange={(e) => {
+                      setAgreedRefund(e.target.checked);
+                      if (e.target.checked) setAgreeError(false);
+                    }}
+                  />
+                  <span>
+                    I agree to the{" "}
+                    <Link
+                      to="/refund-policy"
+                      onClick={closeCart}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="cart-policy-link"
+                    >
+                      Refund Policy
+                    </Link>
+                  </span>
+                </label>
+                {agreeError && (
+                  <div className="cart-agree-error" role="alert">
+                    <i className="fa-solid fa-circle-exclamation" />
+                    Please agree to the Refund Policy to continue.
+                  </div>
+                )}
+              </div>
+
               <button
                 className="cart-checkout-btn"
                 onClick={handleCheckout}
@@ -211,7 +251,7 @@ export default function CartDrawer() {
                 disabled={items.length === 0}
               >
                 <i className="fa-solid fa-lock" />
-                Secure Checkout — {fmt(total)}
+                Secure Checkout · {fmt(total)}
               </button>
               <button
                 className="cart-continue-btn"
@@ -238,6 +278,15 @@ export default function CartDrawer() {
 function CartItem({ item, onRemove, fmt }) {
   const [imgError, setImgError] = useState(false);
 
+  // Determine the subtitle line under the item title
+  const isOnlineOnly = item.accessType === "online" || Number(item.price) === 20;
+  const isUpgrade = item.isUpgrade;
+  const featuresLine = isUpgrade
+    ? "Upgrade difference: Online reading, PDF download, full Companion Pack"
+    : isOnlineOnly
+    ? "Online reading access · Reader Companion"
+    : "Online reading, PDF download, full Companion Pack";
+
   return (
     <div className="cart-item" role="listitem">
       {imgError || !item.coverImage ? (
@@ -255,9 +304,10 @@ function CartItem({ item, onRemove, fmt }) {
       )}
       <div className="cart-item-info">
         <div className="cart-item-title">{item.title}</div>
+        <div className="cart-item-features-line">{featuresLine}</div>
         <div className="cart-item-access">
-          <i className={item.accessType === "online" ? "fa-solid fa-globe" : "fa-solid fa-download"} />
-          {item.accessLabel || (item.accessType === "online" ? "Online Access" : "Downloadable Edition")}
+          <i className={isOnlineOnly ? "fa-solid fa-globe" : "fa-solid fa-download"} />
+          {item.accessLabel || (isOnlineOnly ? "Online Access" : "Digital Companion Edition")}
         </div>
         <div className="cart-item-price">{fmt(item.price)}</div>
       </div>

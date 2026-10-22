@@ -85,6 +85,14 @@ const CommentSection = ({ blogId }) => {
     const rootComments = comments.filter(c => !c.parent_id);
     const getReplies = (parentId) => comments.filter(c => c.parent_id === parentId);
 
+    const getDisplayName = (c) => {
+        if (!c) return 'Reader';
+        if (c.is_admin || (c.user_name && c.user_name.toLowerCase().trim() === 'admin')) {
+            return 'M. Q. Siddiqui';
+        }
+        return c.user_name || 'Reader';
+    };
+
     return (
         <section style={{ background: '#ffffff', width: '100%', borderTop: '1px solid #E3E6EC' }}>
             <div style={{
@@ -230,7 +238,7 @@ const CommentSection = ({ blogId }) => {
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                         <span style={{ fontWeight: 700, fontSize: '16px', color: '#13294B' }}>
-                                            {comment.user_name || 'Reader'}
+                                            {getDisplayName(comment)}
                                         </span>
                                         {comment.is_admin && (
                                             <span style={{
@@ -291,7 +299,7 @@ const CommentSection = ({ blogId }) => {
                                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
                                                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                                         <span style={{ fontWeight: 700, fontSize: '15px', color: '#13294B' }}>
-                                                            {reply.user_name || 'Reader'}
+                                                            {getDisplayName(reply)}
                                                         </span>
                                                         {reply.is_admin && (
                                                             <span style={{

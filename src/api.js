@@ -20,6 +20,23 @@ export const api = {
             body: JSON.stringify({ idToken }),
         }).then((res) => res.json()),
 
+    checkAccountType: (email) =>
+        fetch(`${API_BASE}/auth/check-account-type?email=${encodeURIComponent(email)}`)
+            .then((res) => res.json())
+            .catch(() => ({ exists: false, isGoogle: false })),
+
+    forgotPassword: (email) =>
+        fetch(`${API_BASE}/auth/forgot-password`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
+        }).then((res) => res.json()),
+
+    checkOwnership: (email) =>
+        fetch(`${API_BASE}/payment/check-ownership?email=${encodeURIComponent(email)}`)
+            .then((res) => res.json())
+            .catch(() => ({ owned: false, edition: null, canUpgrade: false })),
+
     // Digital Products & Ebooks
     getProducts: async () => {
         try {

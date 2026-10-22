@@ -44,7 +44,7 @@ const EbookCards = ({
       currency: currency || "AED",
       coverImage: image,
       accessType: "download",
-      accessLabel: "Downloadable Edition",
+      accessLabel: "Digital Companion Edition",
       slug: slug || null,
     });
     setAddedToCart(true);

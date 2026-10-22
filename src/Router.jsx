@@ -30,6 +30,11 @@ import OrderCancelPage from "./Page/OrderCancel";
 import CartCheckoutPage from "./Page/CartCheckout";
 import MyOrdersPage from "./Page/MyOrders";
 import AskSidPage from "./Page/AskSid";
+import PrivacyPolicyPage from "./Page/Legal/PrivacyPolicy";
+import RefundPolicyPage from "./Page/Legal/RefundPolicy";
+import TermsOfUsePage from "./Page/Legal/TermsOfUse";
+import LoginPage from "./Page/Login";
+import ResetPasswordPage from "./Page/ResetPassword";
 // import BookAppointment from "./Page/BookAppointment";
 
 function AppRouters() {
@@ -81,6 +86,12 @@ function AppRouters() {
             <Route path="ask-sid" element={<AskSidPage />} />
             <Route path="ask-sid/*" element={<AskSidPage />} />
 
+            {/* Legal & Auth Routes */}
+            <Route path="privacy-policy" element={<PrivacyPolicyPage />} />
+            <Route path="refund-policy" element={<RefundPolicyPage />} />
+            <Route path="terms-of-use" element={<TermsOfUsePage />} />
+            <Route path="login" element={<LoginPage />} />
+            <Route path="reset-password" element={<ResetPasswordPage />} />
         </Routes>
     );
 }

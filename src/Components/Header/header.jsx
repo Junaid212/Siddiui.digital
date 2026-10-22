@@ -457,8 +457,8 @@ const Navbar = () => {
                 --bg-secondary: #f8f9fa;
                 --bg-tertiary: #e9ecef;
                 --text-primary: #212529;
-                --text-secondary: #6c757d;
-                --text-tertiary: #495057;
+                --text-secondary: #212121ff;
+                --text-tertiary: #000000ff;
                 --border-color: #dee2e6;
                 --accent-color: #c80808;
                 --accent-hover: #a00606;

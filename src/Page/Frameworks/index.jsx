@@ -472,7 +472,7 @@ function SectionValueDevelopmentDashboardVisual() {
               <div className="fw-vdi-metric-top">
                 <div className="d-flex align-items-center gap-2">
                   <Icon size={12} color="#ff8585" />
-                  <span>{m.label}</span>
+                  <span className="no-light">{m.label}</span>
                 </div>
                 <div className="d-flex align-items-center gap-2">
                   <span className="fw-vdi-score-num">{m.score}%</span>
@@ -1093,7 +1093,7 @@ export default function FrameworksPage() {
             <div className="fw-capsule-bar-left">
               <div className="fw-capsule-bar-eyebrow">
                 <Sparkles size={13} />
-                <span>Transform Your Perspective</span>
+                <div>Transform Your Perspective</div>
               </div>
               <h2 className="fw-capsule-bar-title">
                 Ready to Think About Marketing Differently?

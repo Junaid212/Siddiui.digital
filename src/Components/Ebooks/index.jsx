@@ -91,7 +91,7 @@ function BookCard({ book, index, direction }) {
       currency: book.currency || "AED",
       coverImage: book.image || book.cover_image,
       accessType: "download",
-      accessLabel: "Downloadable Edition",
+      accessLabel: "Digital Companion Edition",
       slug: book.slug || null,
     });
     setAddedToCart(true);

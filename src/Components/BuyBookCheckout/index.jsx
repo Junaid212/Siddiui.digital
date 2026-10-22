@@ -1,23 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "../../supabaseClient";
 import { api } from "../../api";
-import { INDIVIDUAL_FRAMEWORKS } from "../../Data/FrameworksData";
 import { useCart } from "../Cart/CartContext";
 import "./BuyBookCheckout.css";
-
-/* ============================================================
-   STATIC DEFAULTS — used only when API data is unavailable
-   ============================================================ */
-const STATIC = {
-  title: "Marketing Reclassified: A Principle-First Approach",
-  subtitle: "Rethinking Marketing Through Purpose, Value, Relevance and Sustainable Growth",
-  author: "M. Q. Siddiqui",
-  coverFallback: "/assets/images/img/book1.webp",
-  downloadProductId: "cff3798b-88bb-41af-8e2a-bc5f7a2a4239",
-  onlineProductId: "prod_online_reading_001",
-};
 
 /* ============================================================
    Helpers
@@ -38,9 +25,6 @@ function safeArr(val) {
       const delim = trimmed.includes(";") ? ";" : "\n";
       return trimmed.split(delim).map((s) => s.trim()).filter(Boolean);
     }
-    if (trimmed.includes(" ") && !trimmed.includes(". ")) {
-      return trimmed.split(/\s+/).map((s) => s.trim()).filter(Boolean);
-    }
     return [trimmed];
   }
   return [];
@@ -54,100 +38,29 @@ function hasContent(val) {
 }
 
 /* ============================================================
-   FAQ Accordion Item
-   ============================================================ */
-function FaqItem({ item, index }) {
-  const [open, setOpen] = useState(false);
-  const q = item.question || item.q || "";
-  const a = item.answer || item.a || "";
-  return (
-    <div className={`pub-faq-item ${open ? "is-open" : ""}`}>
-      <button
-        className="pub-faq-trigger"
-        onClick={() => setOpen((p) => !p)}
-        aria-expanded={open}
-        id={`faq-btn-${index}`}
-        aria-controls={`faq-body-${index}`}
-      >
-        <span className="pub-faq-q">{q}</span>
-        <span className="pub-faq-icon">{open ? "−" : "+"}</span>
-      </button>
-      <AnimatePresence initial={false}>
-        {open && (
-          <motion.div
-            id={`faq-body-${index}`}
-            role="region"
-            aria-labelledby={`faq-btn-${index}`}
-            className="pub-faq-body"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            style={{ overflow: "hidden" }}
-          >
-            <p className="pub-faq-a">{a}</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
-
-/* ============================================================
-   Pricing Card
-   ============================================================ */
-function PricingCard({ label, badge, price, currency, description, features, ctaText, highlight, onPurchase, processing, disabled }) {
-  return (
-    <div className={`pub-price-card ${highlight ? "is-featured" : ""}`}>
-      {highlight && <div className="pub-price-badge">{badge || "Most Complete"}</div>}
-      <div className="pub-price-label">{label}</div>
-      <div className="pub-price-amount">
-        <span className="pub-price-currency">{currency}</span>
-        <span className="pub-price-number">{price}</span>
-      </div>
-      {description && <p className="pub-price-desc">{description}</p>}
-      {features && features.length > 0 && (
-        <ul className="pub-price-features">
-          {features.map((f, i) => (
-            <li key={i}><i className="fa-solid fa-check" />{f}</li>
-          ))}
-        </ul>
-      )}
-      <button
-        className={`pub-price-cta ${highlight ? "is-primary" : "is-secondary"}`}
-        onClick={onPurchase}
-        disabled={processing || disabled}
-        id={`pricing-btn-${String(label).replace(/\s+/g, "-").toLowerCase()}`}
-      >
-        {processing ? (
-          <><span className="spinner" /> Connecting to Stripe...</>
-        ) : (
-          <><i className="fa-solid fa-lock" /> {ctaText}</>
-        )}
-      </button>
-    </div>
-  );
-}
-
-/* ============================================================
-   Main Component
+   Component: BuyBookCheckout
+   All content values come dynamically from Admin Panel / DB
+   No hardcoded default values.
    ============================================================ */
 export default function BuyBookCheckout() {
   const { slug, id } = useParams();
-  const { addItem, items } = useCart();
+  const navigate = useNavigate();
+  const { addItem } = useCart();
 
   const [user, setUser] = useState(null);
   const [product, setProduct] = useState(null);
   const [loadingProduct, setLoadingProduct] = useState(true);
-  const [authLoading, setAuthLoading] = useState(false);
   const [processingOption, setProcessingOption] = useState(null);
   const [checkoutError, setCheckoutError] = useState("");
   const [formData, setFormData] = useState({ name: "", email: "" });
   const [showQuickForm, setShowQuickForm] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
-  const [addedToCart, setAddedToCart] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
-  // Coupon code & discount state
+  // Ask SID interactive input
+  const [askSidQuery, setAskSidQuery] = useState("");
+
+  // Coupon state
   const [couponCode, setCouponCode] = useState("");
   const [couponInput, setCouponInput] = useState("");
   const [couponDiscount, setCouponDiscount] = useState(null);
@@ -155,6 +68,189 @@ export default function BuyBookCheckout() {
   const [couponError, setCouponError] = useState("");
   const [couponSuccess, setCouponSuccess] = useState("");
 
+  const [ownership, setOwnership] = useState({ owned: false, edition: null, canUpgrade: false });
+  const [ownershipNotice, setOwnershipNotice] = useState(null);
+
+  // Auth state
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (user?.email) {
+      setFormData((prev) => ({
+        name: user.user_metadata?.full_name || prev.name,
+        email: user.email || prev.email,
+      }));
+      api.checkOwnership(user.email).then((res) => {
+        if (res) setOwnership(res);
+        // Check for preserved selection after returning from login
+        const pending = sessionStorage.getItem("pendingPurchase");
+        if (pending) {
+          try {
+            const parsed = JSON.parse(pending);
+            sessionStorage.removeItem("pendingPurchase");
+            if (parsed.option) {
+              setTimeout(() => handlePurchase(parsed.option), 400);
+            }
+          } catch (_) {}
+        }
+      }).catch(() => {});
+    } else {
+      setOwnership({ owned: false, edition: null, canUpgrade: false });
+    }
+  }, [user]);
+
+  // Load publication from API
+  useEffect(() => {
+    let isMounted = true;
+    async function loadProduct() {
+      try {
+        let res = null;
+        if (slug) res = await api.getProductBySlug(slug);
+        if (!res && id) res = await api.getProductById(id);
+
+        if (res && (res.product || (Array.isArray(res.products) && res.products.length > 0))) {
+          const p = res.product || res.products[0];
+          if (p && isMounted) {
+            setProduct(normalizeProduct(p));
+            setLoadingProduct(false);
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn("API unavailable:", err.message);
+      }
+
+      if (isMounted) {
+        setProduct(null);
+        setLoadingProduct(false);
+      }
+    }
+    loadProduct();
+    return () => { isMounted = false; };
+  }, [slug, id]);
+
+  function normalizeProduct(p) {
+    if (!p) return null;
+
+    let parsedV2 = {};
+    if (typeof p.why_this_book_matters === "string" && p.why_this_book_matters.trim().startsWith("{")) {
+      try {
+        parsedV2 = JSON.parse(p.why_this_book_matters);
+      } catch {
+        parsedV2 = {};
+      }
+    }
+
+    const systems = [];
+    if (parsedV2.system_1_desc) systems.push({ number: "01", name: "SENSE", desc: parsedV2.system_1_desc, boxClass: "v2-system-box-1" });
+    if (parsedV2.system_2_desc) systems.push({ number: "02", name: "SHAPE", desc: parsedV2.system_2_desc, boxClass: "v2-system-box-2" });
+    if (parsedV2.system_3_desc) systems.push({ number: "03", name: "SCALE", desc: parsedV2.system_3_desc, boxClass: "v2-system-box-3" });
+    if (parsedV2.system_4_desc) systems.push({ number: "04", name: "EXPERIENCE", desc: parsedV2.system_4_desc, boxClass: "v2-system-box-4" });
+
+    const metaYear = parsedV2.meta_edition_year || "";
+    const metaPages = parsedV2.meta_pages || "";
+    const metaChapters = parsedV2.meta_chapters || "";
+    const metaToolkit = parsedV2.meta_toolkit_note || "";
+
+    let metaInfo = "";
+    if (metaYear || metaPages || metaChapters) {
+      const parts = [];
+      if (metaYear) parts.push(`Digital edition, ${metaYear}`);
+      if (metaChapters) parts.push(`${metaChapters} chapters`);
+      if (metaPages) parts.push(`${metaPages} pages`);
+      metaInfo = parts.join(" · ");
+    }
+
+    return {
+      // Book / Card Product Info (Distinct from Hero)
+      id: String(p.id),
+      title: p.title || "",
+      subtitle: p.subtitle || "",
+      author: p.author || "",
+      description: p.description || "",
+      cover_image: p.cover_image || "",
+      price: Number(p.price) || 0,
+      currency: p.currency || "USD",
+      publication_status: p.publication_status || "available",
+
+      // Dedicated Hero Section Info
+      hero_audience_tag: parsedV2.hero_audience_tag || "",
+      hero_title: parsedV2.hero_title || "",
+      hero_title_accent: parsedV2.hero_title_accent || "",
+      hero_subtitle: parsedV2.hero_subtitle || "",
+      hero_motto: parsedV2.hero_motto || "",
+      hero_image: parsedV2.hero_image || "",
+      hero_meta_info: parsedV2.hero_meta_info || metaInfo || "",
+
+      meta_stats: (metaYear || metaPages || metaChapters || metaToolkit) ? {
+        year: metaYear,
+        pages: metaPages,
+        chapters: metaChapters,
+        toolkit: metaToolkit,
+      } : null,
+
+      // Introduction
+      intro_eyebrow: parsedV2.intro_eyebrow || "",
+      why_this_book_matters: parsedV2.intro_lead || (typeof p.why_this_book_matters === "string" && !p.why_this_book_matters.startsWith("{") ? p.why_this_book_matters : ""),
+      intro_highlight: parsedV2.intro_highlight || "",
+      intro_body: parsedV2.intro_body || "",
+
+      // SID Definition
+      sid_definition_quote: parsedV2.sid_definition_quote || "",
+      sid_definition_full: parsedV2.sid_definition_full || "",
+      sid_definition_citation: parsedV2.sid_definition_citation || "",
+      author_note: p.author_note || "",
+
+      // Systems & Offerings
+      systems,
+      loop_note: parsedV2.loop_note || "",
+      offering_cards: Array.isArray(parsedV2.offering_cards) ? parsedV2.offering_cards.filter(c => c && c.title) : [],
+
+      // Ask SID
+      ask_sid_eyebrow: parsedV2.ask_sid_eyebrow || "",
+      ask_sid_title: parsedV2.ask_sid_title || "",
+      ask_sid_tagline: parsedV2.ask_sid_tagline || "",
+      ask_sid_paragraphs: Array.isArray(parsedV2.ask_sid_paragraphs) ? parsedV2.ask_sid_paragraphs.filter(Boolean) : [],
+      ask_sid_link_text: parsedV2.ask_sid_link_text || "Learn more about Ask SID",
+      ask_sid_link_url: parsedV2.ask_sid_link_url || "/ask-sid",
+      ask_sid_disclaimer: parsedV2.ask_sid_disclaimer || "",
+      ask_sid_bottom_quote: parsedV2.ask_sid_bottom_quote || "",
+      ask_sid_questions: Array.isArray(parsedV2.ask_sid_questions) ? parsedV2.ask_sid_questions.filter(Boolean) : [],
+
+      // Audience & Scope
+      who_its_for: safeArr(p.who_its_for),
+      what_not_paras: Array.isArray(parsedV2.what_not_paras) ? parsedV2.what_not_paras.filter(Boolean) : [],
+      what_not_conclusion: parsedV2.what_not_conclusion || "",
+
+      // Editions
+      editions_eyebrow: parsedV2.editions_eyebrow || "EDITIONS",
+      editions_heading: parsedV2.editions_heading || "Choose Your Edition",
+      access_options: safeArr(p.access_options).filter(o => o && o.status !== "inactive"),
+      editions_footnote: parsedV2.editions_footnote || "",
+
+      // About Book & Author
+      about_book_eyebrow: parsedV2.about_book_eyebrow || "ABOUT THE BOOK",
+      about_book_title: parsedV2.about_book_title || p.title || "",
+      about_book_summary: parsedV2.about_book_summary || "",
+      author_photo: parsedV2.author_photo || "/assets/images/img/v2-author-photo.png",
+      author_bio: Array.isArray(parsedV2.author_bio) ? parsedV2.author_bio.filter(Boolean) : (p.author_note ? [p.author_note] : []),
+
+      // Final CTA
+      cta_heading: parsedV2.cta_heading || "",
+      cta_paragraphs: Array.isArray(parsedV2.cta_paragraphs) ? parsedV2.cta_paragraphs.filter(Boolean) : [],
+      cta_motto: parsedV2.cta_motto || parsedV2.hero_motto || "",
+    };
+  }
+
+  // Handle Coupon
   const handleApplyCoupon = async (subtotalAmount) => {
     const code = couponInput.trim().toUpperCase();
     if (!code) return;
@@ -162,12 +258,12 @@ export default function BuyBookCheckout() {
     setCouponError("");
     setCouponSuccess("");
     try {
-      const data = await api.validateDiscount(code, subtotalAmount || product?.price || 49.99);
+      const data = await api.validateDiscount(code, subtotalAmount || product?.price || 0);
       if (data && data.valid && data.discount) {
         setCouponCode(code);
         setCouponDiscount(data.discount);
         const pct = data.discount.value || data.discount.discount_percentage;
-        setCouponSuccess(`Coupon '${code}' applied! Book price reduced by ${pct}%.`);
+        setCouponSuccess(`Coupon '${code}' applied! Saved ${pct}%.`);
       } else {
         setCouponDiscount(null);
         setCouponCode("");
@@ -188,198 +284,126 @@ export default function BuyBookCheckout() {
     setCouponError("");
   };
 
-  // Check if this product is already in cart
-  const isInCart = product && items.some(i => i.productId === product.id);
-
+  // Add to cart with ownership and upgrade rules
   const handleAddToCart = (option) => {
     if (!product) return;
     const isObj = typeof option === "object" && option !== null;
-    const accessType = isObj ? (option.access_type || "download") : (option || "download");
-    const accessLabel = isObj ? option.name : (option === "online" ? "Online Access" : "Downloadable Edition");
-    const price = isObj ? Number(option.price) : (option === "online" ? 20 : (product.price || 49.99));
+    const accessType = isObj ? (option.access_type || "download") : option;
+    const price = isObj ? Number(option.price) : Number(product.price);
+    const isOnlineOpt = accessType === "online" || price === 20;
+    const isCompanionOpt = accessType === "companion" || price >= 40;
+
+    // Rule 1: Owns $49.99 edition -> block both $20 and $49.99
+    if (ownership.edition === "companion") {
+      setOwnershipNotice({
+        message: "You already own the complete Digital Companion Edition. You have full access to read online and download files.",
+      });
+      return;
+    }
+
+    // Rule 2: Owns $20 edition and tries to buy $20 edition -> block
+    if (ownership.edition === "online" && isOnlineOpt) {
+      setOwnershipNotice({
+        message: "You already own the Online Reading Edition. You have full access to read this publication in your account.",
+      });
+      return;
+    }
+
+    let finalPrice = price;
+    let accessLabel = isObj ? option.name : "Publication";
+    let isUpgrade = false;
+
+    // Rule 3: Owns $20 edition, buying $49.99 edition -> charge only difference (USD 29.99)
+    if (ownership.edition === "online" && isCompanionOpt) {
+      finalPrice = 29.99;
+      accessLabel = "Upgrade to Digital Companion Edition";
+      isUpgrade = true;
+    }
+
+    const currency = isObj ? (option.currency || product.currency || "USD") : (product.currency || "USD");
+
     addItem({
       productId: product.id,
       title: product.title,
-      price,
-      currency: product.currency || "AED",
+      price: finalPrice,
+      currency,
       coverImage: product.cover_image,
       accessType,
       accessLabel,
-      slug: product.slug || null,
+      isUpgrade,
+      slug: slug || null,
     });
-    setAddedToCart(true);
-    setTimeout(() => setAddedToCart(false), 2000);
-  };
 
-  /* ─── Load product from API ─────────────────────────────── */
-  useEffect(() => {
-    let isMounted = true;
-    async function loadProduct() {
-      try {
-        let res = null;
-
-        // 1. Try slug first (primary routing)
-        if (slug) {
-          res = await api.getProductBySlug(slug);
-        }
-
-        // 2. Fallback to id-based lookup
-        if (!res && id) {
-          res = await api.getProductById(id);
-        }
-
-        if (res && (res.product || (Array.isArray(res.products) && res.products.length > 0))) {
-          const p = res.product || res.products[0];
-          if (p && isMounted) {
-            setProduct(normalizeProduct(p));
-            setLoadingProduct(false);
-            return;
-          }
-        }
-      } catch (err) {
-        console.warn("API unavailable, using fallback:", err.message);
-      }
-
-      // Static fallback
-      if (isMounted) {
-        setProduct(normalizeProduct(null));
-        setLoadingProduct(false);
-      }
-    }
-    loadProduct();
-    return () => { isMounted = false; };
-  }, [slug, id]);
-
-  function normalizeProduct(p) {
-    if (!p) {
-      return {
-        id: STATIC.downloadProductId,
-        title: STATIC.title,
-        subtitle: STATIC.subtitle,
-        author: STATIC.author,
-        description: "Marketing Reclassified: A Principle-First Approach challenges the narrow view of marketing as promotion, advertising, selling, or short-term campaign activity.",
-        description2: "The book presents marketing as a broader strategic discipline.",
-        cover_image: STATIC.coverFallback,
-        price: 49.99,
-        currency: "USD",
-        format: "PDF",
-        download_limit: 3,
-        publication_status: "available",
-        why_this_book_matters: null,
-        who_its_for: [],
-        what_readers_will_learn: [],
-        author_note: null,
-        faq: [],
-        related_learning: [],
-        related_frameworks: [],
-        related_blogs: [],
-        access_options: [],
-      };
-    }
-    return {
-      id: String(p.id),
-      title: p.title || STATIC.title,
-      subtitle: p.subtitle || null,
-      author: p.author || STATIC.author,
-      description: p.description || "",
-      description2: p.description2 || "",
-      cover_image: p.cover_image || p.image || STATIC.coverFallback,
-      price: Number(p.price) || 49.99,
-      currency: p.currency || "USD",
-      format: p.format || "PDF",
-      download_limit: p.download_limit || 3,
-      slug: p.slug || null,
-      publication_status: p.publication_status || "available",
-      why_this_book_matters: p.why_this_book_matters || null,
-      who_its_for: safeArr(p.who_its_for),
-      what_readers_will_learn: safeArr(p.what_readers_will_learn),
-      author_note: p.author_note || null,
-      faq: safeArr(p.faq),
-      related_learning: safeArr(p.related_learning),
-      related_frameworks: safeArr(p.related_frameworks),
-      related_blogs: safeArr(p.related_blogs),
-      access_options: safeArr(p.access_options),
-    };
-  }
-
-  /* ─── Auth state ─────────────────────────────────────────── */
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-    });
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
-    return () => subscription.unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    if (user) {
-      setFormData((prev) => ({
-        name: user.user_metadata?.full_name || prev.name,
-        email: user.email || prev.email,
-      }));
-    }
-  }, [user]);
-
-  const handleGoogleSignIn = async () => {
-    setAuthLoading(true);
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: { redirectTo: window.location.href },
-      });
-      if (error) console.error("Google sign-in error:", error.message);
-    } finally {
-      setAuthLoading(false);
+    if (isUpgrade) {
+      showToast("Upgrade to Digital Companion Edition ($29.99) added to cart");
+    } else {
+      showToast(`Added ${accessLabel} to your cart`);
     }
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  const showToast = (msg) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(""), 3500);
   };
 
-  /* ─── Initiate Stripe Checkout ───────────────────────────── */
+  // Stripe Checkout with ownership and upgrade rules
   const handlePurchase = async (option) => {
-    // option: 'online' | 'download' | object (access_option)
     setCheckoutError("");
+    const isObj = typeof option === "object" && option !== null;
+    const optionKey = isObj ? (option.access_type || "download") : option;
+    const price = isObj ? Number(option.price) : Number(product.price);
+    const isOnlineOpt = optionKey === "online" || price === 20;
+    const isCompanionOpt = optionKey === "companion" || price >= 40;
+
+    // Rule 1: Owns $49.99 edition -> block purchase
+    if (ownership.edition === "companion") {
+      setOwnershipNotice({
+        message: "You already own the complete Digital Companion Edition. You have full access to read online and download files.",
+      });
+      return;
+    }
+
+    // Rule 2: Owns $20 edition and tries to buy $20 edition -> block purchase
+    if (ownership.edition === "online" && isOnlineOpt) {
+      setOwnershipNotice({
+        message: "You already own the Online Reading Edition. You have full access to read this publication in your account.",
+      });
+      return;
+    }
 
     if (!formData.email.trim()) {
       setSelectedOption(option);
       setShowQuickForm(true);
-      setTimeout(() => {
-        document.getElementById("pub-quick-form")?.scrollIntoView({ behavior: "smooth", block: "center" });
-      }, 100);
       return;
     }
 
-    const optionKey = typeof option === "string" ? option : option?.access_type || "download";
     setProcessingOption(optionKey);
     try {
       let productId, bookName, amount, currency;
+      let isUpgrade = false;
 
-      if (typeof option === "object" && option !== null) {
-        // Dynamic access option from admin
-        productId = option.product_id || product?.id || STATIC.downloadProductId;
-        bookName = `${product?.title || STATIC.title} — ${option.name}`;
-        amount = Number(option.price) || product?.price || 49.99;
+      // Rule 3: Owns $20 edition, buying $49.99 edition -> charge difference (USD 29.99)
+      if (ownership.edition === "online" && isCompanionOpt) {
+        productId = option.product_id || product?.id;
+        bookName = `${product?.title || "Publication"} — Upgrade to Digital Companion Edition`;
+        amount = 29.99;
         currency = option.currency || product?.currency || "USD";
-      } else if (option === "online") {
-        productId = STATIC.onlineProductId;
-        bookName = `${product?.title || STATIC.title} — Online Access`;
-        amount = 20;
-        currency = "USD";
+        isUpgrade = true;
+      } else if (isObj) {
+        productId = option.product_id || product?.id;
+        bookName = `${product?.title || "Publication"} — ${option.name}`;
+        amount = Number(option.price) || 0;
+        currency = option.currency || product?.currency || "USD";
       } else {
-        productId = product?.id || STATIC.downloadProductId;
-        bookName = product?.title || STATIC.title;
-        amount = product?.price || 49.99;
+        productId = product?.id;
+        bookName = product?.title || "Publication";
+        amount = Number(product?.price) || 0;
         currency = product?.currency || "USD";
       }
 
       let finalAmount = amount;
       let appliedDiscountAmount = 0;
-      if (couponDiscount) {
+      if (couponDiscount && !isUpgrade) {
         const pct = Number(couponDiscount.value || couponDiscount.discount_percentage || 0);
         if (pct > 0) {
           appliedDiscountAmount = Math.round(((amount * pct) / 100) * 100) / 100;
@@ -389,15 +413,16 @@ export default function BuyBookCheckout() {
 
       const result = await api.createCheckout({
         productId,
-        bookName: couponDiscount ? `${bookName} (${couponDiscount.value || couponDiscount.discount_percentage}% OFF - ${couponCode})` : bookName,
-        customerName: formData.name.trim() || "Valued Customer",
+        bookName: couponDiscount && !isUpgrade ? `${bookName} (${couponDiscount.value || couponDiscount.discount_percentage}% OFF - ${couponCode})` : bookName,
+        customerName: formData.name.trim() || "Valued Reader",
         customerEmail: formData.email.trim(),
         userId: user?.id || null,
-        accessType: optionKey,
+        accessType: isUpgrade ? "companion" : optionKey,
+        isUpgrade,
         amount: finalAmount,
         originalAmount: amount,
-        discountCode: couponDiscount ? couponCode : null,
-        discountPercentage: couponDiscount ? Number(couponDiscount.value || couponDiscount.discount_percentage) : 0,
+        discountCode: couponDiscount && !isUpgrade ? couponCode : null,
+        discountPercentage: couponDiscount && !isUpgrade ? Number(couponDiscount.value || couponDiscount.discount_percentage) : 0,
         discountAmount: appliedDiscountAmount,
         currency,
       });
@@ -405,7 +430,7 @@ export default function BuyBookCheckout() {
       if (result && result.url) {
         window.location.href = result.url;
       } else {
-        setCheckoutError(result?.error || "Failed to create checkout session. Please contact support.");
+        setCheckoutError(result?.error || "Failed to create checkout session. Please try again.");
         setProcessingOption(null);
       }
     } catch (err) {
@@ -415,641 +440,778 @@ export default function BuyBookCheckout() {
     }
   };
 
-  const handleQuickFormSubmit = (e) => {
-    e.preventDefault();
-    if (!formData.email.trim()) return;
-    setShowQuickForm(false);
-    handlePurchase(selectedOption);
+  const handleAskSidSubmit = (e) => {
+    if (e) e.preventDefault();
+    const q = askSidQuery.trim();
+    if (!q) return;
+    navigate(`/ask-sid?q=${encodeURIComponent(q)}`);
   };
 
-  /* ─── Loading State ──────────────────────────────────────── */
+  const handleAskSidChipClick = (chipText) => {
+    navigate(`/ask-sid?q=${encodeURIComponent(chipText)}`);
+  };
+
   if (loadingProduct) {
     return (
-      <div className="pub-loading">
-        <div className="pub-loading-spinner" />
-        <p>Loading publication details…</p>
+      <div className="pub-page-v2" style={{ minHeight: "60vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <p style={{ fontFamily: "var(--v2-font-serif)", fontSize: "20px", color: "var(--v2-navy)" }}>
+          Loading publication details…
+        </p>
       </div>
     );
   }
 
-  const originalPriceNumber = Number(product.price || 49.99);
-  const discountPct = couponDiscount ? Number(couponDiscount.value || couponDiscount.discount_percentage || 0) : 0;
-  const discountSavings = couponDiscount ? Math.round(((originalPriceNumber * discountPct) / 100) * 100) / 100 : 0;
-  const reducedPriceNumber = couponDiscount ? Math.max(0, Math.round((originalPriceNumber - discountSavings) * 100) / 100) : originalPriceNumber;
-  const currencySymbol = product.currency || "USD";
-  const formattedPrice = `${currencySymbol} ${reducedPriceNumber.toFixed(2)}`;
-  const formattedOriginalPrice = `${currencySymbol} ${originalPriceNumber.toFixed(2)}`;
-  const isComingSoon = product.publication_status === "coming_soon";
-
-  // Build access options for pricing section
-  // Use dynamic access_options if present, else fall back to the two-option static layout
-  const dynamicOptions = (Array.isArray(product.access_options) ? product.access_options : []).filter(o => o && o.status !== "inactive");
-  const hasDynamicOptions = dynamicOptions.length > 0;
-
-  function resolveFramework(slugOrName) {
-    if (!INDIVIDUAL_FRAMEWORKS || !INDIVIDUAL_FRAMEWORKS.length) return null;
-    return INDIVIDUAL_FRAMEWORKS.find(f =>
-      f.slug === slugOrName || f.id === slugOrName || f.title?.toLowerCase() === String(slugOrName).toLowerCase()
+  if (!product) {
+    return (
+      <div className="pub-page-v2" style={{ minHeight: "60vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12 }}>
+        <h2 style={{ fontFamily: "var(--v2-font-serif)", color: "var(--v2-navy)" }}>Publication Not Found</h2>
+        <Link to="/publications" className="v2-btn-primary">Browse All Publications</Link>
+      </div>
     );
   }
 
-  /* ============================================================
-     RENDER
-     ============================================================ */
+  const isComingSoon = product.publication_status === "coming_soon";
+  const hasOptions = product.access_options && product.access_options.length > 0;
+
   return (
-    <div className="pub-page">
+    <div className="pub-page-v2">
 
-      {/* ══ 1. HERO ══ */}
-      <section className="pub-hero">
-        <div className="pub-hero-inner">
-          {/* Breadcrumb */}
-          <nav className="pub-breadcrumb" aria-label="Breadcrumb">
-            <Link to="/" className="pub-breadcrumb-link">Home</Link>
-            <span className="pub-breadcrumb-sep">/</span>
-            <Link to="/publications" className="pub-breadcrumb-link">Publications</Link>
-            <span className="pub-breadcrumb-sep">/</span>
-            <span className="pub-breadcrumb-current">{product.title}</span>
-          </nav>
+      {/* ── 1. HERO (#top) ─────────────────────────────────── */}
+      <section id="top" className="v2-hero">
+        <div className="v2-hero-inner">
+          <div className="v2-hero-content">
+            {product.hero_audience_tag && (
+              <p className="v2-hero-audience">{product.hero_audience_tag}</p>
+            )}
 
-          <div className="pub-hero-grid">
-            {/* Cover */}
-            <motion.div
-              className="pub-hero-cover-wrap"
-              initial={{ opacity: 0, x: -40 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.7, ease: "easeOut" }}
-            >
-              <img src={product.cover_image} alt={product.title} className="pub-hero-cover" />
-              <div className="pub-hero-cover-glow" />
-            </motion.div>
+            {(product.hero_title || product.hero_title_accent) ? (
+              <h1 className="v2-hero-title">
+                {product.hero_title}
+                {product.hero_title_accent && (
+                  <>
+                    {product.hero_title && <br />}
+                    <span style={{ color: "#F2C6CD" }}>{product.hero_title_accent}</span>
+                  </>
+                )}
+              </h1>
+            ) : product.title ? (
+              <h1 className="v2-hero-title">{product.title}</h1>
+            ) : null}
 
-            {/* Info */}
-            <motion.div
-              className="pub-hero-info"
-              initial={{ opacity: 0, x: 40 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
-            >
-              <span className="pub-hero-eyebrow">
-                <i className="fa-solid fa-book-open" /> Digital Publication
-              </span>
+            {product.hero_subtitle && (
+              <p className="v2-hero-subtitle">{product.hero_subtitle}</p>
+            )}
 
-              {isComingSoon && (
-                <span style={{ display: 'inline-block', background: 'rgba(245,158,11,0.15)', border: '1px solid rgba(245,158,11,0.3)', color: '#f59e0b', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase', padding: '4px 12px', borderRadius: 20, marginBottom: 8 }}>
-                  Coming Soon
-                </span>
-              )}
+            {product.hero_motto && (
+              <p className="v2-hero-motto">{product.hero_motto}</p>
+            )}
 
-              <h1 className="pub-hero-title">{product.title}</h1>
-              {hasContent(product.subtitle) && <p className="pub-hero-subtitle">{product.subtitle}</p>}
-              <p className="pub-hero-author">By <strong>{product.author}</strong></p>
-              {hasContent(product.description) && <p className="pub-hero-desc">{product.description}</p>}
-              {hasContent(product.description2) && <p className="pub-hero-desc-2">{product.description2}</p>}
-
-              {/* Coupon Code / Promo Section */}
-              {!isComingSoon && (
-                <div style={{
-                  background: couponDiscount ? "rgba(34, 197, 94, 0.08)" : "rgba(255, 255, 255, 0.04)",
-                  border: couponDiscount ? "1px solid rgba(34, 197, 94, 0.35)" : "1px solid rgba(255, 255, 255, 0.12)",
-                  borderRadius: "10px",
-                  padding: "12px 14px",
-                  marginBottom: "16px",
-                  transition: "all 0.25s ease",
-                }}>
-                  {!couponDiscount ? (
-                    <div>
-                      <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-                        <div style={{ position: "relative", flex: 1 }}>
-                          <i className="fa-solid fa-tag" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)", color: "rgba(255,255,255,0.45)", fontSize: "0.85rem" }} />
-                          <input
-                            type="text"
-                            placeholder="Have a coupon code? (e.g. LAUNCH20)"
-                            value={couponInput}
-                            onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") {
-                                e.preventDefault();
-                                handleApplyCoupon(originalPriceNumber);
-                              }
-                            }}
-                            style={{
-                              width: "100%",
-                              background: "rgba(0,0,0,0.3)",
-                              border: "1px solid rgba(255,255,255,0.18)",
-                              borderRadius: "6px",
-                              padding: "7px 10px 7px 32px",
-                              color: "#fff",
-                              fontSize: "0.85rem",
-                              fontWeight: 600,
-                              letterSpacing: "0.5px",
-                            }}
-                          />
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => handleApplyCoupon(originalPriceNumber)}
-                          disabled={couponLoading || !couponInput.trim()}
-                          style={{
-                            background: "linear-gradient(135deg, #2563eb, #3b82f6)",
-                            color: "#fff",
-                            border: "none",
-                            borderRadius: "6px",
-                            padding: "7px 14px",
-                            fontSize: "0.82rem",
-                            fontWeight: 600,
-                            cursor: couponLoading || !couponInput.trim() ? "not-allowed" : "pointer",
-                            opacity: couponLoading || !couponInput.trim() ? 0.6 : 1,
-                            whiteSpace: "nowrap",
-                          }}
-                        >
-                          {couponLoading ? "Checking…" : "Apply Code"}
-                        </button>
-                      </div>
-                      {couponError && (
-                        <div style={{ color: "#f87171", fontSize: "0.78rem", marginTop: "6px", display: "flex", alignItems: "center", gap: "5px" }}>
-                          <i className="fa-solid fa-circle-exclamation" /> {couponError}
-                        </div>
+            {/* CTAs from Access Options or direct price */}
+            {!isComingSoon && (
+              <div className="v2-hero-actions">
+                {hasOptions ? (
+                  product.access_options.slice(0, 2).map((opt, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      className={i === 0 ? "v2-btn-primary" : "v2-btn-secondary"}
+                      onClick={() => handlePurchase(opt)}
+                      disabled={processingOption === (opt.access_type || `opt-${i}`)}
+                    >
+                      {processingOption === (opt.access_type || `opt-${i}`) ? (
+                        <>Connecting to Stripe…</>
+                      ) : (
+                        <>{opt.cta_text || `${opt.name} · ${opt.currency || product.currency || 'USD'} ${Number(opt.price).toFixed(2)}`}</>
                       )}
-                    </div>
-                  ) : (
-                    <div>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
-                          <span style={{
-                            background: "rgba(34, 197, 94, 0.2)",
-                            color: "#4ade80",
-                            fontSize: "0.78rem",
-                            fontWeight: 700,
-                            padding: "3px 8px",
-                            borderRadius: "4px",
-                            border: "1px solid rgba(34, 197, 94, 0.4)",
-                            letterSpacing: "0.5px",
-                          }}>
-                            ✓ {couponCode} (-{discountPct}%)
-                          </span>
-                          <span style={{ fontSize: "0.85rem", color: "#86efac", fontWeight: 600 }}>
-                            Price reduced by {discountPct}%! You save {currencySymbol} {discountSavings.toFixed(2)}
-                          </span>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={handleRemoveCoupon}
-                          style={{
-                            background: "transparent",
-                            border: "none",
-                            color: "#94a3b8",
-                            fontSize: "0.75rem",
-                            textDecoration: "underline",
-                            cursor: "pointer",
-                            padding: "2px 4px",
-                          }}
-                        >
-                          Remove
-                        </button>
-                      </div>
-                      <div style={{ marginTop: "6px", display: "flex", alignItems: "center", gap: "8px", fontSize: "0.82rem" }}>
-                        <span style={{ color: "#94a3b8", textDecoration: "line-through" }}>Original: {formattedOriginalPrice}</span>
-                        <span style={{ color: "#22c55e", fontWeight: 700, fontSize: "0.95rem" }}>→ Now: {formattedPrice}</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* CTAs — shown only when Available and pricing data exists */}
-              {!isComingSoon && (
-                <div className="pub-hero-cta-row">
-                  {hasDynamicOptions ? (
-                    dynamicOptions.slice(0, 2).map((opt, i) => (
-                      <button
-                        key={i}
-                        className={i === 0 ? "pub-hero-btn-primary" : "pub-hero-btn-secondary"}
-                        onClick={() => handlePurchase(opt)}
-                        disabled={!!processingOption}
-                        id={`hero-opt-btn-${i}`}
-                      >
-                        {processingOption === (opt.access_type || `opt-${i}`) ? (
-                          <><span className="spinner" /> Connecting…</>
-                        ) : (
-                          <><i className={`fa-solid ${opt.access_type === 'download' ? 'fa-download' : 'fa-globe'}`} /> {opt.cta_text || opt.name}</>
-                        )}
-                      </button>
-                    ))
-                  ) : (
-                    <>
-                      <button className="pub-hero-btn-primary" id="hero-download-btn" onClick={() => handlePurchase("download")} disabled={processingOption === "download"}>
-                        {processingOption === "download" ? <><span className="spinner" /> Connecting…</> : <><i className="fa-solid fa-download" /> Download Edition — {formattedPrice}</>}
-                      </button>
-                      <button className="pub-hero-btn-secondary" id="hero-online-btn" onClick={() => handlePurchase("online")} disabled={processingOption === "online"}>
-                        {processingOption === "online" ? <><span className="spinner" /> Connecting…</> : <><i className="fa-solid fa-globe" /> Online Access — USD 20</>}
-                      </button>
-                    </>
-                  )}
-                </div>
-              )}
-
-              {isComingSoon && (
-                <div className="pub-hero-cta-row">
-                  <span className="pub-hero-btn-secondary" style={{ cursor: 'default', opacity: 0.7 }}>
-                    <i className="fa-solid fa-clock" /> Coming Soon
-                  </span>
-                </div>
-              )}
-
-              <div className="pub-hero-trust">
-                <span><i className="fa-solid fa-lock" /> Secure Checkout</span>
-                <span><i className="fa-solid fa-bolt" /> Instant Delivery</span>
-                <span><i className="fa-solid fa-shield-halved" /> Protected Format</span>
-              </div>
-
-              {/* Add to Cart option */}
-              {!isComingSoon && (
-                <div style={{ marginTop: "12px", display: "flex", gap: "10px", flexWrap: "wrap", alignItems: "center" }}>
+                    </button>
+                  ))
+                ) : product.price > 0 ? (
                   <button
-                    className={isInCart || addedToCart ? "pub-hero-btn-secondary" : "pub-hero-btn-secondary"}
-                    id="hero-add-to-cart-btn"
-                    onClick={() => handleAddToCart("download")}
-                    style={{
-                      background: isInCart || addedToCart ? "rgba(5,150,105,0.1)" : "",
-                      borderColor: isInCart || addedToCart ? "rgba(5,150,105,0.4)" : "",
-                      color: isInCart || addedToCart ? "#059669" : "",
-                      fontSize: "0.82rem",
-                    }}
+                    type="button"
+                    className="v2-btn-primary"
+                    onClick={() => handlePurchase("download")}
+                    disabled={processingOption === "download"}
                   >
-                    <i className={`fa-solid ${isInCart ? "fa-check" : addedToCart ? "fa-check" : "fa-cart-plus"}`} />
-                    {isInCart ? "In Cart · View Cart" : addedToCart ? "Added to Cart!" : "Add to Cart"}
+                    {processingOption === "download" ? "Connecting to Stripe…" : `Get Publication · ${product.currency || "USD"} ${Number(product.price).toFixed(2)}`}
                   </button>
-                  <Link
-                    to="/my-orders"
-                    style={{ fontSize: "0.75rem", color: "var(--text-secondary, #6b7280)", textDecoration: "underline", display: "inline-flex", alignItems: "center", gap: "4px" }}
-                  >
-                    <i className="fa-solid fa-bag-shopping" style={{ fontSize: "0.7rem" }} />
-                    My Orders
-                  </Link>
-                </div>
-              )}
-
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Quick Email Form */}
-      <AnimatePresence>
-        {showQuickForm && (
-          <motion.section
-            id="pub-quick-form"
-            className="pub-quick-form-section"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-          >
-            <div className="pub-container">
-              <div className="pub-quick-form-card">
-                <h3>Enter your details to continue</h3>
-                <p>Your secure download / access link will be sent to your email.</p>
-                <form onSubmit={handleQuickFormSubmit} className="pub-quick-form">
-                  <div className="pub-form-row">
-                    <input type="text" name="name" placeholder="Full Name" value={formData.name} onChange={handleInputChange} className="pub-form-input" id="quick-form-name" />
-                    <input type="email" name="email" placeholder="Email Address *" value={formData.email} onChange={handleInputChange} className="pub-form-input" required id="quick-form-email" />
-                  </div>
-                  {!user && (
-                    <div className="pub-quick-form-auth">
-                      <button type="button" className="pub-google-btn" onClick={handleGoogleSignIn} disabled={authLoading} id="quick-form-google-btn">
-                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style={{ width: 16, height: 16 }} />
-                        Autofill with Google
-                      </button>
-                      <span className="pub-quick-form-or">or enter manually above</span>
-                    </div>
-                  )}
-                  {couponDiscount && (
-                    <div style={{
-                      background: "rgba(34, 197, 94, 0.1)",
-                      border: "1px solid rgba(34, 197, 94, 0.25)",
-                      borderRadius: "8px",
-                      padding: "8px 12px",
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      marginBottom: "12px",
-                      fontSize: "0.85rem",
-                    }}>
-                      <span style={{ color: "#86efac", fontWeight: 600 }}>
-                        <i className="fa-solid fa-tag" style={{ marginRight: 6 }} />
-                        Coupon Applied: <strong>{couponCode}</strong> (-{discountPct}%)
-                      </span>
-                      <span style={{ color: "#22c55e", fontWeight: 700 }}>
-                        Total: {formattedPrice}
-                      </span>
-                    </div>
-                  )}
-                  {checkoutError && <div className="pub-error-msg"><i className="fa-solid fa-circle-exclamation" /> {checkoutError}</div>}
-                  <div className="pub-quick-form-actions">
-                    <button type="submit" className="pub-price-cta is-primary" id="quick-form-submit"><i className="fa-solid fa-arrow-right" /> Continue to Secure Checkout</button>
-                    <button type="button" className="pub-quick-form-cancel" onClick={() => setShowQuickForm(false)}>Cancel</button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </motion.section>
-        )}
-      </AnimatePresence>
-
-      {/* ══ 2. WHY THIS BOOK MATTERS ══ */}
-      {hasContent(product.why_this_book_matters) && (
-        <section className="pub-section pub-why-section">
-          <div className="pub-container">
-            <div className="pub-section-header">
-              <span className="pub-section-eyebrow"><i className="fa-solid fa-lightbulb" /> Strategic Perspective</span>
-              <h2 className="pub-section-title">Why This Book Matters</h2>
-            </div>
-            <div className="pub-why-editorial">
-              <motion.div
-                className="pub-why-prose"
-                initial={{ opacity: 0, x: -30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: "-60px" }}
-                transition={{ duration: 0.6, ease: "easeOut" }}
-              >
-                {product.why_this_book_matters.split("\n").filter(l => l.trim()).map((para, i) => (
-                  <p key={i} className={i === 0 ? "pub-why-intro-p" : "pub-why-body-p"}>{para.trim()}</p>
-                ))}
-              </motion.div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ══ 3. WHO IT IS FOR ══ */}
-      {hasContent(product.who_its_for) && (
-        <section className="pub-section pub-audience-section">
-          <div className="pub-container">
-            <div className="pub-section-header">
-              <span className="pub-section-eyebrow"><i className="fa-solid fa-users" /> Readership</span>
-              <h2 className="pub-section-title">Who It Is For</h2>
-            </div>
-            <div className="pub-audience-grid">
-              {product.who_its_for.map((item, i) => {
-                const label = typeof item === "string" ? item : item.label || String(item);
-                const icon = typeof item === "object" ? item.icon || "fa-user" : "fa-user";
-                return (
-                  <motion.div
-                    key={i}
-                    className="pub-audience-card"
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true, margin: "-40px" }}
-                    transition={{ duration: 0.35, delay: i * 0.06 }}
-                  >
-                    <i className={`fa-solid ${icon} pub-audience-icon`} />
-                    <span className="pub-audience-label">{label}</span>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ══ 4. WHAT READERS WILL LEARN ══ */}
-      {hasContent(product.what_readers_will_learn) && (
-        <section className="pub-section pub-learn-section">
-          <div className="pub-container">
-            <div className="pub-section-header">
-              <span className="pub-section-eyebrow"><i className="fa-solid fa-book-open-reader" /> Inside the Publication</span>
-              <h2 className="pub-section-title">What Readers Will Learn</h2>
-            </div>
-            <div className="pub-learn-grid">
-              {product.what_readers_will_learn.map((item, i) => {
-                let num = String(i + 1).padStart(2, "0");
-                let title, desc;
-                if (typeof item === "string") { title = item; desc = ""; }
-                else { title = item.title || item.num || String(i + 1); desc = item.desc || item.description || ""; num = item.num || num; }
-                return (
-                  <motion.div
-                    key={i}
-                    className="pub-learn-card"
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true, margin: "-40px" }}
-                    transition={{ duration: 0.4, delay: i * 0.06 }}
-                  >
-                    <span className="pub-learn-num">{num}</span>
-                    <div>
-                      <h4 className="pub-learn-title">{title}</h4>
-                      {desc && <p className="pub-learn-desc">{desc}</p>}
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ══ 5. PRICING / ACCESS OPTIONS ══ */}
-      {!isComingSoon && (
-        <section className="pub-section pub-pricing-section" id="pub-pricing">
-          <div className="pub-container">
-            <div className="pub-section-header">
-              <span className="pub-section-eyebrow"><i className="fa-solid fa-tag" /> Access Options</span>
-              <h2 className="pub-section-title">Choose Your Access</h2>
-              <p className="pub-section-desc">All options are secured through Stripe.</p>
-            </div>
-
-            {checkoutError && !showQuickForm && (
-              <div className="pub-error-msg" style={{ maxWidth: 600, margin: "0 auto 2rem" }}>
-                <i className="fa-solid fa-circle-exclamation" /> {checkoutError}
+                ) : null}
               </div>
             )}
 
-            <div className="pub-pricing-grid">
-              {hasDynamicOptions ? (
-                dynamicOptions.map((opt, i) => (
-                  <PricingCard
-                    key={i}
-                    label={opt.name}
-                    price={Number(opt.price).toFixed(2)}
-                    currency={opt.currency || "USD"}
-                    description={opt.description}
-                    features={[]}
-                    ctaText={opt.cta_text || `Get ${opt.name}`}
-                    highlight={i === dynamicOptions.length - 1}
-                    onPurchase={() => handlePurchase(opt)}
-                    processing={processingOption === (opt.access_type || `opt-${i}`)}
-                    disabled={!!processingOption && processingOption !== (opt.access_type || `opt-${i}`)}
-                  />
-                ))
-              ) : (
-                <>
-                  <PricingCard
-                    label="Online Reading Access"
-                    price="20"
-                    currency="USD"
-                    description="Read the book online through protected website access. Ideal for focused reading sessions."
-                    features={["Protected online reading", "Full publication access", "Works on all devices", "Not downloadable"]}
-                    ctaText="Get Online Access — USD 20"
-                    highlight={false}
-                    onPurchase={() => handlePurchase("online")}
-                    processing={processingOption === "online"}
-                    disabled={!!processingOption && processingOption !== "online"}
-                  />
-                  <PricingCard
-                    label="Downloadable Professional Edition"
-                    price={Number(product.price || 49.99).toFixed(2)}
-                    currency={product.currency || "USD"}
-                    description="Get the complete downloadable digital edition for personal study, professional reference and long-term use."
-                    features={["Complete downloadable edition", "PDF format", "Works offline", "Professional reference copy", `Up to ${product.download_limit || 3} secure downloads`]}
-                    ctaText={`Download Professional Edition — ${formattedPrice}`}
-                    highlight={true}
-                    onPurchase={() => handlePurchase("download")}
-                    processing={processingOption === "download"}
-                    disabled={!!processingOption && processingOption !== "download"}
-                  />
-                </>
+            {isComingSoon && (
+              <div className="v2-hero-actions">
+                <span className="v2-btn-secondary" style={{ opacity: 0.7, cursor: "default" }}>
+                  Coming Soon
+                </span>
+              </div>
+            )}
+
+            {product.hero_meta_info && (
+              <p className="v2-hero-meta">{product.hero_meta_info}</p>
+            )}
+          </div>
+
+          {/* Dedicated Hero Showcase Image (Distinct from book card cover) */}
+          {product.hero_image && (
+            <div className="v2-hero-cover-col">
+              <img
+                src={product.hero_image}
+                alt={product.hero_title || product.title}
+                className="v2-hero-cover-img"
+              />
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ── 2. INTRODUCTION (#book) ────────────────────────── */}
+      {hasContent(product.why_this_book_matters) && (
+        <section id="book" className="v2-intro-section">
+          <div className="v2-container-narrow">
+            <div className="v2-intro-content">
+              {product.intro_eyebrow && <p className="v2-eyebrow">{product.intro_eyebrow}</p>}
+              <p className="v2-intro-lead">{product.why_this_book_matters}</p>
+              {product.intro_highlight && (
+                <p className="v2-intro-highlight">{product.intro_highlight}</p>
+              )}
+              {product.intro_body && (
+                <p className="v2-intro-body">{product.intro_body}</p>
               )}
             </div>
           </div>
         </section>
       )}
 
-      {/* ══ 6. AUTHOR NOTE ══ */}
-      {hasContent(product.author_note) && (
-        <section className="pub-section pub-author-section">
-          <div className="pub-container">
-            <div className="pub-author-card">
-              <div className="pub-author-accent" />
-              <div className="pub-author-body">
-                <span className="pub-author-eyebrow">Author Note</span>
-                <h3 className="pub-author-name">{product.author || "M. Q. Siddiqui"}</h3>
-                {product.author_note.split("\n").filter(l => l.trim()).map((para, i) => (
-                  <p key={i} className="pub-author-note">{para.trim()}</p>
+      {/* ── 3. THE SID DEFINITION OF MARKETING ─────────────── */}
+      {(hasContent(product.sid_definition_quote) || hasContent(product.author_note)) && (
+        <section className="v2-definition-section">
+          <figure className="v2-definition-figure">
+            {product.sid_definition_citation && (
+              <p className="v2-eyebrow">{product.sid_definition_citation}</p>
+            )}
+            <svg
+              className="v2-quote-icon"
+              aria-hidden="true"
+              width="48"
+              height="36"
+              viewBox="0 0 48 36"
+              fill="none"
+              stroke="#A3192F"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M4 32 V20 Q4 6 18 4" />
+              <path d="M28 32 V20 Q28 6 42 4" />
+            </svg>
+            <blockquote className="v2-definition-quote">
+              {product.sid_definition_quote || product.author_note}
+            </blockquote>
+            <div className="v2-definition-divider" />
+            {product.sid_definition_full && (
+              <p className="v2-definition-full">{product.sid_definition_full}</p>
+            )}
+          </figure>
+        </section>
+      )}
+
+      {/* ── 4. WHAT THE BOOK OFFERS ────────────────────────── */}
+      {(product.systems.length > 0 || product.offering_cards.length > 0) && (
+        <section className="v2-offers-section">
+          <div className="v2-container">
+            <div className="v2-offers-header">
+              <p className="v2-eyebrow">WHAT THE BOOK OFFERS</p>
+              <h2 className="v2-section-heading">One Operating Loop, Four Systems</h2>
+            </div>
+
+            {/* Systems Ribbon */}
+            {product.systems.length > 0 && (
+              <>
+                <div className="v2-systems-ribbon">
+                  {product.systems.map((sys) => (
+                    <div key={sys.number} className={`v2-system-box ${sys.boxClass}`}>
+                      <p className="v2-system-tag">{sys.number} · {sys.name}</p>
+                      <p className="v2-system-desc">{sys.desc}</p>
+                    </div>
+                  ))}
+                </div>
+                {product.loop_note && (
+                  <p className="v2-loop-note">
+                    <svg
+                      aria-hidden="true"
+                      width="22"
+                      height="22"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#A3192F"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M3 12a9 9 0 1 0 3-6.7" />
+                      <path d="M3 3v6h6" />
+                    </svg>
+                    {product.loop_note}
+                  </p>
+                )}
+              </>
+            )}
+
+            {/* Feature Cards */}
+            {product.offering_cards.length > 0 && (
+              <div className="v2-cards-grid">
+                {product.offering_cards.map((card, idx) => (
+                  <article key={idx} className="v2-card">
+                    <h3 className="v2-card-title">{card.title}</h3>
+                    <p className="v2-card-desc">{card.desc}</p>
+                  </article>
                 ))}
-                <div className="pub-author-sig">{product.author || "M. Q. Siddiqui"}</div>
               </div>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* ── 5. MEET ASK SID (#asksid) ──────────────────────── */}
+      {product.ask_sid_title && (
+        <section id="asksid" className="v2-asksid-section">
+          <div className="v2-container">
+            <div className="v2-asksid-inner">
+              <div className="v2-asksid-info">
+                {product.ask_sid_eyebrow && (
+                  <p className="v2-asksid-eyebrow">{product.ask_sid_eyebrow}</p>
+                )}
+                <h2 className="v2-asksid-heading">{product.ask_sid_title}</h2>
+                {product.ask_sid_tagline && (
+                  <p className="v2-asksid-subhead">{product.ask_sid_tagline}</p>
+                )}
+                {product.ask_sid_paragraphs && product.ask_sid_paragraphs.length > 0 && (
+                  product.ask_sid_paragraphs.map((pText, pIdx) => (
+                    <p key={pIdx} className="v2-asksid-text">{pText}</p>
+                  ))
+                )}
+                <Link to={product.ask_sid_link_url || "/ask-sid"} className="v2-asksid-learnmore">
+                  {product.ask_sid_link_text || "Learn more about Ask SID"}
+                  <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M5 12h14" />
+                    <path d="M13 6l6 6-6 6" />
+                  </svg>
+                </Link>
+              </div>
+
+              {/* Interactive Ask SID Box */}
+              <div className="v2-asksid-box">
+                <div className="v2-asksid-box-header">
+                  <div className="v2-asksid-avatar">SID</div>
+                  <div className="v2-asksid-box-meta">
+                    <span className="v2-asksid-box-title">Ask SID</span>
+                    <span className="v2-asksid-box-subtitle">Book companion for {product.title}</span>
+                  </div>
+                </div>
+
+                {product.ask_sid_questions && product.ask_sid_questions.length > 0 && (
+                  <>
+                    <p className="v2-asksid-chips-label">Try asking:</p>
+                    <div className="v2-asksid-chips">
+                      {product.ask_sid_questions.map((q, idx) => (
+                        <span
+                          key={idx}
+                          className="v2-asksid-chip"
+                          onClick={() => handleAskSidChipClick(q)}
+                          role="button"
+                          tabIndex={0}
+                        >
+                          {q}
+                        </span>
+                      ))}
+                    </div>
+                  </>
+                )}
+
+                <form className="v2-asksid-form" onSubmit={handleAskSidSubmit}>
+                  <label htmlFor="asksid-q" style={{ position: "absolute", width: 1, height: 1, overflow: "hidden", clip: "rect(0 0 0 0)" }}>
+                    Ask a question about the book
+                  </label>
+                  <input
+                    id="asksid-q"
+                    type="text"
+                    placeholder="Ask a question about the book…"
+                    className="v2-asksid-input"
+                    value={askSidQuery}
+                    onChange={(e) => setAskSidQuery(e.target.value)}
+                  />
+                  <button type="submit" aria-label="Send question" className="v2-asksid-send-btn">
+                    <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12h14" />
+                      <path d="M13 6l6 6-6 6" />
+                    </svg>
+                  </button>
+                </form>
+
+                {product.ask_sid_disclaimer && (
+                  <p className="v2-asksid-disclaimer">{product.ask_sid_disclaimer}</p>
+                )}
+              </div>
+
+              {product.ask_sid_bottom_quote && (
+                <p className="v2-asksid-bottom-quote">{product.ask_sid_bottom_quote}</p>
+              )}
             </div>
           </div>
         </section>
       )}
 
-      {/* ══ 7. FAQ ══ */}
-      {hasContent(product.faq) && (
-        <section className="pub-section pub-faq-section">
-          <div className="pub-container">
-            <div className="pub-section-header">
-              <span className="pub-section-eyebrow"><i className="fa-solid fa-circle-question" /> Common Questions</span>
-              <h2 className="pub-section-title">Frequently Asked Questions</h2>
+      {/* ── 6. AUDIENCE & WHAT THIS BOOK IS NOT ────────────── */}
+      {(hasContent(product.who_its_for) || product.what_not_paras.length > 0) && (
+        <section className="v2-audience-section">
+          <div className="v2-container">
+            <div className="v2-audience-grid">
+              {/* Left: Who is this book for */}
+              {hasContent(product.who_its_for) && (
+                <div className="v2-audience-col">
+                  <p className="v2-eyebrow">AUDIENCE</p>
+                  <h2 className="v2-audience-heading">Who Is This Book For?</h2>
+                  <ul className="v2-audience-list">
+                    {product.who_its_for.map((aud, idx) => (
+                      <li key={idx} className="v2-audience-item">
+                        <svg
+                          className="v2-audience-icon"
+                          aria-hidden="true"
+                          width="22"
+                          height="22"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="#A3192F"
+                          strokeWidth="2.4"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M4 12l5 5L20 6" />
+                        </svg>
+                        <span>{typeof aud === "string" ? aud : aud.label || String(aud)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Right: What this book is not */}
+              {product.what_not_paras.length > 0 && (
+                <div className="v2-whatnot-card">
+                  <h2 className="v2-whatnot-heading">What This Book Is Not</h2>
+                  {product.what_not_paras.map((p, idx) => (
+                    <p key={idx} className="v2-whatnot-text">{p}</p>
+                  ))}
+                  {product.what_not_conclusion && (
+                    <p className="v2-whatnot-conclusion">{product.what_not_conclusion}</p>
+                  )}
+                </div>
+              )}
             </div>
-            <div className="pub-faq-list">
-              {product.faq.map((item, i) => (
-                <FaqItem key={i} item={item} index={i} />
+          </div>
+        </section>
+      )}
+
+      {/* ── 7. EDITIONS (#editions) ────────────────────────── */}
+      {hasOptions && (
+        <section id="editions" className="v2-editions-section">
+          <div className="v2-container-medium">
+            <div className="v2-editions-header">
+              <p className="v2-eyebrow">{product.editions_eyebrow || "EDITIONS"}</p>
+              <h2 className="v2-section-heading">{product.editions_heading || "Choose Your Edition"}</h2>
+            </div>
+
+            <div className="v2-editions-grid">
+              {product.access_options.map((opt, i) => {
+                const isFeatured = opt.badge || opt.access_type === "companion" || i === 1;
+                const priceNum = Number(opt.price) || 0;
+                const isOnlineOpt = opt.access_type === "online" || priceNum === 20;
+                const isCompanionOpt = opt.access_type === "companion" || priceNum >= 40;
+
+                const isOwned =
+                  (ownership.edition === "companion") ||
+                  (ownership.edition === "online" && isOnlineOpt);
+
+                const isUpgradeAvailable = ownership.edition === "online" && isCompanionOpt;
+                const displayPrice = isUpgradeAvailable ? 29.99 : priceNum;
+
+                let cardBadge = opt.badge;
+                if (isOwned) cardBadge = "ALREADY OWNED";
+                else if (isUpgradeAvailable) cardBadge = "UPGRADE AVAILABLE · SAVE $20";
+
+                return (
+                  <article key={i} className={`v2-edition-card ${isFeatured ? "featured" : ""} ${isOwned ? "edition-owned" : ""}`}>
+                    <div className="v2-edition-top">
+                      <h3 className="v2-edition-title">
+                        {isUpgradeAvailable ? "Upgrade to Digital Companion Edition" : opt.name}
+                      </h3>
+                      {cardBadge && (
+                        <span className={`v2-edition-badge ${isOwned ? "badge-owned" : isUpgradeAvailable ? "badge-upgrade" : ""}`}>
+                          {cardBadge}
+                        </span>
+                      )}
+                    </div>
+
+                    <p className="v2-edition-price">
+                      ${displayPrice.toFixed(2)}
+                      {isUpgradeAvailable && (
+                        <span style={{ fontSize: "0.45em", color: "#6b7280", marginLeft: 6, fontWeight: 500 }}>
+                          (Price difference from Online Edition)
+                        </span>
+                      )}
+                      {couponDiscount && !isUpgradeAvailable && (
+                        <span style={{ fontSize: "0.5em", color: "#1E7A4F", marginLeft: 8 }}>
+                          (${((priceNum * (100 - (couponDiscount.value || couponDiscount.discount_percentage))) / 100).toFixed(2)})
+                        </span>
+                      )}
+                    </p>
+
+                    {opt.description && (
+                      <p className="v2-edition-desc">
+                        {isUpgradeAvailable
+                          ? "Upgrade your existing Online Reading access to the full Digital Companion Edition. Pay only the difference."
+                          : opt.description}
+                      </p>
+                    )}
+
+                    {safeArr(opt.features).length > 0 && (
+                      <ul className="v2-edition-features">
+                        {safeArr(opt.features).map((feat, fIdx) => {
+                          const isExcluded = typeof feat === "string" && feat.startsWith("__exclude__");
+                          const cleanText = isExcluded ? feat.replace("__exclude__", "") : feat;
+                          return (
+                            <li key={fIdx} className={`v2-feature-item ${isExcluded ? "excluded" : ""}`}>
+                              {isExcluded ? (
+                                <svg className="v2-feature-icon-cross" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8A909C" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                                  <path d="M6 6l12 12" /><path d="M18 6L6 18" />
+                                </svg>
+                              ) : (
+                                <svg className="v2-feature-icon-check" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1E7A4F" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                                  <path d="M4 12l5 5L20 6" />
+                                </svg>
+                              )}
+                              <span>{cleanText}</span>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
+
+                    {isOwned ? (
+                      <button
+                        type="button"
+                        className="v2-edition-btn v2-edition-btn-owned"
+                        onClick={() =>
+                          setOwnershipNotice({
+                            message: "You already own this edition. All your editions are available in your account.",
+                          })
+                        }
+                      >
+                        <i className="fa-solid fa-circle-check" style={{ marginRight: 6 }} />
+                        You already own this edition
+                      </button>
+                    ) : (
+                      <>
+                        <button
+                          type="button"
+                          className={`v2-edition-btn ${isFeatured ? "v2-edition-btn-primary" : "v2-edition-btn-outline"}`}
+                          onClick={() => handlePurchase(opt)}
+                          disabled={processingOption === (opt.access_type || `opt-${i}`)}
+                        >
+                          {processingOption === (opt.access_type || `opt-${i}`)
+                            ? "Connecting to Stripe…"
+                            : isUpgradeAvailable
+                            ? "Upgrade to Digital Companion · $29.99"
+                            : (opt.cta_text || `Get ${opt.name} · $${priceNum.toFixed(2)}`)}
+                        </button>
+
+                        <button
+                          type="button"
+                          className="v2-cart-secondary-btn"
+                          onClick={() => handleAddToCart(opt)}
+                        >
+                          <i className="fa-solid fa-cart-shopping" />{" "}
+                          {isUpgradeAvailable ? "Add Upgrade ($29.99)" : "Add to Cart"}
+                        </button>
+                      </>
+                    )}
+                  </article>
+                );
+              })}
+            </div>
+
+            {/* Coupon Code Redemption Bar */}
+            <div className="v2-coupon-box">
+              <span style={{ fontSize: "14px", fontWeight: 600, color: "var(--v2-navy)" }}>Have a promotional discount code?</span>
+              <div className="v2-coupon-row">
+                <input
+                  type="text"
+                  placeholder="PROMO CODE"
+                  className="v2-coupon-input"
+                  value={couponInput}
+                  onChange={(e) => setCouponInput(e.target.value)}
+                />
+                {couponCode ? (
+                  <button type="button" className="v2-coupon-btn" onClick={handleRemoveCoupon} style={{ background: "#ef4444" }}>
+                    Remove
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="v2-coupon-btn"
+                    onClick={() => handleApplyCoupon(product.price)}
+                    disabled={couponLoading}
+                  >
+                    {couponLoading ? "Applying…" : "Apply"}
+                  </button>
+                )}
+              </div>
+              {couponSuccess && <p style={{ margin: 0, fontSize: "13px", color: "var(--v2-green)", fontWeight: 600 }}>{couponSuccess}</p>}
+              {couponError && <p style={{ margin: 0, fontSize: "13px", color: "#ef4444", fontWeight: 600 }}>{couponError}</p>}
+            </div>
+
+            {product.editions_footnote && (
+              <p className="v2-editions-footnote">
+                <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4A5163" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="5" y="11" width="14" height="10" rx="2" />
+                  <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+                </svg>
+                {product.editions_footnote}
+              </p>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* ── 8. ABOUT THE BOOK + AUTHOR (#author) ───────────── */}
+      {(product.author || product.author_bio.length > 0 || product.meta_stats || product.about_book_summary) && (
+        <section id="author" className="v2-author-section">
+          <div className="v2-container">
+            <div className="v2-author-grid">
+              {/* Left: About the book */}
+              {(product.meta_stats || product.about_book_summary) && (
+                <div className="v2-book-meta-col">
+                  <p className="v2-eyebrow">{product.about_book_eyebrow || "ABOUT THE BOOK"}</p>
+                  <h2 className="v2-book-meta-title">{product.about_book_title || product.title}</h2>
+
+                  {product.meta_stats && (
+                    <div className="v2-stats-grid">
+                      {product.meta_stats.year && (
+                        <div className="v2-stat-tile">
+                          <p className="v2-stat-number">{product.meta_stats.year}</p>
+                          <p className="v2-stat-label">Digital edition</p>
+                        </div>
+                      )}
+                      {product.meta_stats.pages && (
+                        <div className="v2-stat-tile">
+                          <p className="v2-stat-number">{product.meta_stats.pages}</p>
+                          <p className="v2-stat-label">Pages</p>
+                        </div>
+                      )}
+                      {product.meta_stats.chapters && (
+                        <div className="v2-stat-tile">
+                          <p className="v2-stat-number">{product.meta_stats.chapters}</p>
+                          <p className="v2-stat-label">Chapters</p>
+                        </div>
+                      )}
+                      {product.meta_stats.toolkit && (
+                        <div className="v2-stat-tile">
+                          <p className="v2-stat-label" style={{ fontWeight: 700, color: "var(--v2-navy)", fontSize: "16px", lineHeight: 1.3 }}>
+                            {product.meta_stats.toolkit}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {product.about_book_summary && (
+                    <p className="v2-book-meta-desc" style={{ marginTop: 16, fontSize: "17px", lineHeight: 1.6, color: "var(--v2-text-secondary)" }}>
+                      {product.about_book_summary}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {/* Right: About the author */}
+              {(product.author || product.author_bio.length > 0 || product.author_photo) && (
+                <div className="v2-author-profile-col">
+                  {product.author_photo && (
+                    <img
+                      src={product.author_photo}
+                      alt={product.author}
+                      className="v2-author-photo"
+                      onError={(e) => { e.target.style.display = 'none'; }}
+                    />
+                  )}
+                  <div className="v2-author-bio">
+                    <p className="v2-eyebrow">{product.about_author_eyebrow || "ABOUT THE AUTHOR"}</p>
+                    <h2 className="v2-author-name">{product.author}</h2>
+                    {product.author_bio.map((bioP, idx) => (
+                      <p key={idx} className="v2-author-text">{bioP}</p>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── 9. FINAL CALL TO ACTION ───────────────────────── */}
+      {(product.cta_heading || product.cta_paragraphs.length > 0 || product.cta_motto) && (
+        <section className="v2-final-cta-section">
+          <div className="v2-final-cta-inner">
+            {product.cta_heading && (
+              <h2 className="v2-final-cta-heading">{product.cta_heading}</h2>
+            )}
+            {product.cta_paragraphs.map((p, idx) => (
+              <p key={idx} className="v2-final-cta-text">{p}</p>
+            ))}
+            {product.cta_motto && (
+              <p className="v2-final-cta-motto">
+                {product.cta_motto}
+              </p>
+            )}
+          {hasOptions && (
+            <div className="v2-final-cta-buttons">
+              {product.access_options.map((opt, idx) => (
+                <a
+                  key={idx}
+                  href="#editions"
+                  className={idx === 0 ? "v2-final-btn-white" : "v2-final-btn-navy"}
+                >
+                  Explore the {opt.name}
+                </a>
               ))}
             </div>
-          </div>
-        </section>
-      )}
-
-      {/* ══ 8. RELATED LEARNING ══ */}
-      {hasContent(product.related_learning) && (
-        <section className="pub-section pub-related-section pub-learning-section">
-          <div className="pub-container">
-            <div className="pub-related-header">
-              <div>
-                <span className="pub-section-eyebrow"><i className="fa-solid fa-graduation-cap" /> Continue Learning</span>
-                <h2 className="pub-section-title" style={{ marginBottom: "0.5rem" }}>Related Learning</h2>
-                <p className="pub-section-desc">Courses and modules connected to the frameworks in this publication.</p>
-              </div>
-              <Link to="/courses" className="pub-related-cta-link">Explore All Courses <i className="fa-solid fa-arrow-right" /></Link>
-            </div>
-            <div className="pub-learning-grid">
-              {product.related_learning.map((item, i) => {
-                const label = typeof item === "string" ? item : item.label || item.title || String(item);
-                const to = typeof item === "object" ? (item.url || item.to || "/courses") : "/courses";
-                return (
-                  <Link to={to} key={i} className="pub-learning-pill">
-                    <i className="fa-solid fa-book-open" />{label}<i className="fa-solid fa-arrow-right pub-learning-arrow" />
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ══ 9. RELATED FRAMEWORKS ══ */}
-      {hasContent(product.related_frameworks) && (
-        <section className="pub-section pub-related-section pub-frameworks-section">
-          <div className="pub-container">
-            <div className="pub-related-header">
-              <div>
-                <span className="pub-section-eyebrow"><i className="fa-solid fa-diagram-project" /> Strategic Frameworks</span>
-                <h2 className="pub-section-title" style={{ marginBottom: "0.5rem" }}>Related Frameworks</h2>
-                <p className="pub-section-desc">The signature frameworks connected to this publication.</p>
-              </div>
-              <Link to="/frameworks" className="pub-related-cta-link">Explore Frameworks <i className="fa-solid fa-arrow-right" /></Link>
-            </div>
-            <div className="pub-frameworks-grid">
-              {product.related_frameworks.map((item, i) => {
-                // item can be a slug string or an object {code, name, desc, slug}
-                let fw = null;
-                let code, name, desc, to;
-                if (typeof item === "string") {
-                  fw = resolveFramework(item);
-                  code = fw?.code || "";
-                  name = fw?.title || item;
-                  desc = fw?.shortDefinition || "";
-                  to = fw ? `/frameworks/${fw.slug}` : "/frameworks";
-                } else {
-                  code = item.code || "";
-                  name = item.name || item.title || "";
-                  desc = item.desc || item.description || "";
-                  to = item.to || item.url || (item.slug ? `/frameworks/${item.slug}` : "/frameworks");
-                }
-                return (
-                  <motion.div
-                    key={i}
-                    className="pub-fw-card"
-                    initial={{ opacity: 0, y: 24 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-40px" }}
-                    transition={{ duration: 0.4, delay: i * 0.1 }}
-                  >
-                    {code && <span className="pub-fw-code">{code}</span>}
-                    <h4 className="pub-fw-name">{name}</h4>
-                    {desc && <p className="pub-fw-desc">{desc}</p>}
-                    <Link to={to} className="pub-fw-link">Explore Framework <i className="fa-solid fa-arrow-right" /></Link>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ══ 10. BLOG + ADVISORY CARDS ══ */}
-      <section className="pub-section pub-duo-cards-section">
-        <div className="pub-container">
-          <div className="pub-duo-cards-grid">
-            <motion.div className="pub-duo-card pub-duo-card--dark" initial={{ opacity: 0, y: 32 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.5, ease: "easeOut" }}>
-              <div className="pub-duo-card__top"><div className="pub-duo-card__logo"><i className="fa-solid fa-pen-nib" /></div></div>
-              <div className="pub-duo-card__meta"><span className="pub-duo-card__variant">Insights</span><span className="pub-duo-card__date">Updated regularly</span></div>
-              <h3 className="pub-duo-card__title">Read the Blog</h3>
-              <p>Continue exploring articles and reflections on marketing, value creation, relevance, digital transformation, business thinking, and education.</p>
-              <div className="pub-duo-card__footer"><Link to="/blog-page" className="pub-duo-card__cta">Read Related Articles</Link></div>
-            </motion.div>
-
-            <motion.div className="pub-duo-card pub-duo-card--accent" initial={{ opacity: 0, y: 32 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.5, ease: "easeOut", delay: 0.12 }}>
-              <div className="pub-duo-card__top"><div className="pub-duo-card__logo"><i className="fa-solid fa-handshake" /></div></div>
-              <div className="pub-duo-card__meta"><span className="pub-duo-card__variant">Advisory</span><span className="pub-duo-card__date">By appointment</span></div>
-              <h3 className="pub-duo-card__title">Discuss an Engagement</h3>
-              <p>The ideas in this book may also support advisory conversations related to marketing strategy, brand positioning, digital marketing direction, campaign review, career direction, and institutional learning.</p>
-              <div className="pub-duo-card__footer"><Link to="/consultation" className="pub-duo-card__cta pub-duo-card__cta--dark">Discuss an Engagement</Link></div>
-            </motion.div>
-          </div>
+          )}
         </div>
       </section>
+      )}
 
+      {/* ── QUICK CHECKOUT MODAL ───────────────────────────── */}
+      {showQuickForm && (
+        <div className="v2-checkout-modal-backdrop" onClick={() => setShowQuickForm(false)}>
+          <div className="v2-checkout-modal" onClick={(e) => e.stopPropagation()}>
+            <button
+              type="button"
+              className="v2-modal-close-btn"
+              onClick={() => setShowQuickForm(false)}
+            >
+              ×
+            </button>
+            <h3 className="v2-modal-title">Complete Your Order</h3>
+            <p className="v2-modal-desc">
+              Please enter your details to proceed to secure checkout.
+            </p>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (!formData.email.trim()) return;
+                setShowQuickForm(false);
+                handlePurchase(selectedOption);
+              }}
+              style={{ display: "flex", flexDirection: "column", gap: 14 }}
+            >
+              <div>
+                <label style={{ fontSize: "13px", fontWeight: 600, color: "var(--v2-navy)", display: "block", marginBottom: 4 }}>Full Name</label>
+                <input
+                  type="text"
+                  placeholder="e.g. John Doe"
+                  className="v2-modal-input"
+                  value={formData.name}
+                  onChange={(e) => setFormData((p) => ({ ...p, name: e.target.value }))}
+                />
+              </div>
+              <div>
+                <label style={{ fontSize: "13px", fontWeight: 600, color: "var(--v2-navy)", display: "block", marginBottom: 4 }}>Email Address *</label>
+                <input
+                  type="email"
+                  required
+                  placeholder="name@company.com"
+                  className="v2-modal-input"
+                  value={formData.email}
+                  onChange={(e) => setFormData((p) => ({ ...p, email: e.target.value }))}
+                />
+              </div>
+
+              {checkoutError && (
+                <p style={{ color: "#ef4444", fontSize: "14px", margin: 0 }}>{checkoutError}</p>
+              )}
+
+              <button
+                type="submit"
+                className="v2-btn-primary"
+                style={{ width: "100%", marginTop: 4 }}
+              >
+                Continue to Secure Stripe Checkout
+              </button>
+
+              <div style={{ textAlign: "center", marginTop: 10 }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    sessionStorage.setItem("pendingPurchase", JSON.stringify({ slug: slug || id, option: selectedOption }));
+                    navigate(`/login?redirect=${encodeURIComponent(window.location.pathname)}`);
+                  }}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "#c80808",
+                    fontSize: "13px",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    textDecoration: "underline",
+                  }}
+                >
+                  Already have an account? Sign in with Google / Email →
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Ownership Notice Modal */}
+      {ownershipNotice && (
+        <div className="v2-checkout-modal-backdrop" onClick={() => setOwnershipNotice(null)}>
+          <div className="v2-checkout-modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 440, textAlign: "center" }}>
+            <div style={{ width: 50, height: 50, borderRadius: "50%", background: "#ecfdf5", color: "#059669", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", fontSize: 24 }}>
+              <i className="fa-solid fa-circle-check" />
+            </div>
+            <h3 className="v2-modal-title" style={{ marginBottom: 8 }}>You already own this edition</h3>
+            <p className="v2-modal-desc" style={{ marginBottom: 22 }}>
+              {ownershipNotice.message}
+            </p>
+            <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
+              <Link
+                to="/my-orders"
+                className="v2-btn-primary"
+                style={{ textDecoration: "none", padding: "10px 22px" }}
+                onClick={() => setOwnershipNotice(null)}
+              >
+                <i className="fa-solid fa-book" style={{ marginRight: 6 }} /> Go to My Books
+              </Link>
+              <button
+                type="button"
+                className="v2-coupon-btn"
+                style={{ background: "#f3f4f6", color: "#374151" }}
+                onClick={() => setOwnershipNotice(null)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Floating toast */}
+      {toastMessage && (
+        <div className="v2-floating-toast">
+          <i className="fa-solid fa-circle-check" style={{ color: "#10b981" }} />
+          <span>{toastMessage}</span>
+        </div>
+      )}
     </div>
   );
 }

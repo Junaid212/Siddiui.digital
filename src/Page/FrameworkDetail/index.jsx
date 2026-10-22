@@ -309,7 +309,7 @@ export default function FrameworkDetailPage() {
             <div className="fw-capsule-bar-left">
               <div className="fw-capsule-bar-eyebrow">
                 <Sparkles size={13} />
-                <span>Next Strategic Steps</span>
+                <span >Next Strategic Steps</span>
               </div>
               <h2 className="fw-capsule-bar-title">
                 Apply the {framework.title}

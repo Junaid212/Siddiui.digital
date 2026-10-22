@@ -219,14 +219,14 @@
 .fw-positioning-lead {
     font-size: 1.025rem;
     line-height: 1.7;
-    color: #cbd5e1;
+    color: #c5c5c5 !important;
     margin-bottom: 1.15rem;
 }
 
 .fw-positioning-body {
     font-size: 1.025rem;
     line-height: 1.7;
-    color: #94a3b8;
+    color: #b8b8b9 !important;
     margin-bottom: 0;
 }
 
@@ -384,15 +384,15 @@
 .fw-card-short {
     font-size: 0.92rem;
     line-height: 1.55;
-    color: #cbd5e1;
+    color: #cbd5e1 !important;
     margin-bottom: 1rem;
     font-weight: 400;
 }
 
 .fw-card-expanded {
-    font-size: 0.865rem;
+    font-size: 0.92rem;
     line-height: 1.6;
-    color: #94a3b8;
+    color: #cbd5e1 !important;
     margin-bottom: 1.25rem;
 }
 
@@ -421,7 +421,7 @@
 .fw-key-idea-text {
     font-size: 0.835rem;
     line-height: 1.5;
-    color: #f1f5f9;
+    color: #f1f5f9 !important;
     font-style: italic;
     margin: 0;
 }
@@ -434,7 +434,7 @@
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.14);
     border-radius: 50px;
-    color: #ffffff;
+    color: #ffffff !important;
     font-size: 0.85rem;
     font-weight: 600;
     display: flex;
@@ -449,7 +449,7 @@
 .fw-card-btn:hover {
     background: #c80808;
     border-color: #c80808;
-    color: #ffffff;
+    color: #ffffff !important;
     transform: translateY(-2px);
     box-shadow: 0 6px 18px rgba(200, 8, 8, 0.4);
 }
@@ -464,7 +464,7 @@
     font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.06em;
-    color: #ff9e9e;
+    color: #ff9e9e !important;
     transition: all 0.2s ease;
     flex-shrink: 0;
 }
@@ -472,7 +472,7 @@
 .fw-card-btn:hover .fw-card-btn-tag {
     background: rgba(255, 255, 255, 0.22);
     border-color: rgba(255, 255, 255, 0.3);
-    color: #ffffff;
+    color: #ffffff !important;
 }
 
 .fw-card-btn-text {
@@ -484,6 +484,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    color: #ffffff !important;
 }
 
 .fw-card-btn-icon-wrap {
@@ -495,12 +496,12 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    color: #ffffff;
+    color: #ffffff !important;
     transition: transform 0.25s ease, background 0.25s ease, color 0.25s ease;
 }
 
 .fw-card-btn:hover .fw-card-btn-icon-wrap {
-    background: #ffffff;
+    background: #ffffff !important;
     color: #c80808;
     transform: translateX(2px);
 }
@@ -702,7 +703,7 @@
 
 .fw-flow-item-name {
     font-weight: 700;
-    color: #f1f5f9;
+    color: #f1f5f9 !important;
     font-size: 0.8rem;
 }
 
@@ -753,7 +754,7 @@
 }
 
 .fw-cycle-node-pill {
-    background: #151f32;
+    background: #f8b0b0f4;
     border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 6px;
     padding: 0.4rem 0.35rem;
@@ -807,7 +808,7 @@
 
 .fw-vdi-gauge-stage.is-active {
     background: linear-gradient(135deg, #c80808 0%, #8b0000 100%);
-    color: #ffffff;
+    color: #ffffff !important;
     border-color: #ff5e5e;
     box-shadow: 0 0 12px rgba(200, 8, 8, 0.45);
 }
@@ -825,7 +826,7 @@
 }
 
 .fw-vdi-metric-row {
-    background: #151f32;
+    background: #6b6f77b3;
     border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 8px;
     padding: 0.4rem 0.65rem;
@@ -844,13 +845,13 @@
     margin-bottom: 0.3rem;
     font-size: 0.76rem;
     font-weight: 600;
-    color: #e2e8f0;
+    color: #ffffff !important;
 }
 
 .fw-vdi-score-num {
     font-size: 0.74rem;
     font-weight: 700;
-    color: #cbd5e1;
+    color: #cbd5e1 !important;
 }
 
 .fw-vdi-stage-chip {
@@ -882,12 +883,12 @@
     align-items: flex-start;
     gap: 0.45rem;
     padding: 0.55rem 0.65rem;
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(138, 142, 149, 0.61);
     border: 1px dashed rgba(255, 255, 255, 0.1);
     border-radius: 8px;
     font-size: 0.72rem;
     line-height: 1.45;
-    color: #cbd5e1;
+    color: #cbd5e1 !important;
 }
 
 /* Explore Link Button at Card Bottom */
@@ -1370,7 +1371,7 @@
     font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.12em;
-    color: #ff6b6b;
+    color: #ff6b6b !important;
     text-transform: uppercase;
 }
 
@@ -1386,7 +1387,7 @@
 
 .fw-capsule-bar-desc {
     font-size: 0.875rem;
-    color: #94a3b8;
+    color: #94a3b8 !important;
     margin: 0;
     line-height: 1.45;
 }

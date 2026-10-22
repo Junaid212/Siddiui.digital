@@ -74,9 +74,10 @@ const Footer = () => {
                                         <li><Link to="/about">About</Link></li>
                                         <li><Link to="/publication">Books & Digital Publications</Link></li>
                                         <li><Link to="/courses">Learnings</Link></li>
+                                        <li><Link to="/ask-sid">Ask Sid</Link></li>
                                         <li><Link to="/framework">Frameworks</Link></li>
                                         <li><Link to="/consultation">Advisory</Link></li>
-                                        <li><Link to="/contact">Contact</Link></li>
+                                        {/* <li><Link to="/contact">Contact</Link></li> */}
                                     </ul>
                                 </div>
                                 {/* <div className="footer-services">
@@ -98,7 +99,7 @@ const Footer = () => {
                                         <div className="d-flex gspace-2">
                                         <i className="fa-solid accent-color-2 fa-clock"></i>
                                         <p className="accent-color-2">
-                                            Sunday to Friday
+                                            Monday to Friday
                                             </p>
                                     </div>
                                     {/* <div>
