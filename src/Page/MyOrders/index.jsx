@@ -132,7 +132,7 @@ export default function MyOrdersPage() {
 
   /* ── Download ────────────────────────────────────── */
   const handleDownload = async (order) => {
-    const token = order.download_token || order.stripe_session_id || order.id;
+    const token = order.download_token || order.paypal_order_id || order.payhip_transaction_id || order.stripe_session_id || order.id;
     if (!token) return;
     setDownloadingId(order.id);
     try {
@@ -453,7 +453,7 @@ export default function MyOrdersPage() {
                                   )}
 
                                   <Link
-                                    to={`/order-success?session_id=${order.stripe_session_id || order.id}`}
+                                    to={`/order-success?provider=${order.payment_provider || (order.paypal_order_id ? "paypal" : order.payhip_transaction_id ? "payhip" : "stripe")}&order_id=${order.paypal_order_id || order.payhip_transaction_id || order.stripe_session_id || order.id}`}
                                     className="my-order-view-btn"
                                     id={`view-btn-${order.id}`}
                                   >
@@ -560,7 +560,7 @@ export default function MyOrdersPage() {
           </div>
           <div style={{ flex: 1, position: "relative", background: "#09090b" }}>
             <iframe
-              src={`${API_BASE}/payment/read/${readingOrder.download_token || readingOrder.stripe_session_id || readingOrder.id}#toolbar=0&navpanes=0`}
+              src={`${API_BASE}/payment/read/${readingOrder.download_token || readingOrder.paypal_order_id || readingOrder.payhip_transaction_id || readingOrder.stripe_session_id || readingOrder.id}#toolbar=0&navpanes=0`}
               title="Protected Online Book Reader"
               style={{ width: "100%", height: "100%", border: "none" }}
             />

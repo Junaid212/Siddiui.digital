@@ -19,6 +19,9 @@ export default function OrderSuccess() {
     const orderId = searchParams.get("order_id");
     const urlToken = searchParams.get("token");
 
+    const payerId = searchParams.get("PayerID");
+    const provider = searchParams.get("provider");
+
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(true);
     const [verifying, setVerifying] = useState(true);
@@ -44,6 +47,22 @@ export default function OrderSuccess() {
             return;
         }
 
+        async function initAndFetch() {
+            // If returning from PayPal with approval, capture the order first
+            if (payerId || provider === "paypal") {
+                const paypalOrderId = urlToken || orderId || sessionId;
+                if (paypalOrderId) {
+                    try {
+                        await api.capturePayPalOrder({ orderId: paypalOrderId });
+                    } catch (captureErr) {
+                        console.warn("[OrderSuccess] PayPal capture notice:", captureErr.message);
+                    }
+                }
+            }
+
+            await fetchOrder();
+        }
+
         async function fetchOrder() {
             try {
                 const res = await api.getOrderStatus(identifier);
@@ -53,7 +72,7 @@ export default function OrderSuccess() {
                     setOrder(res.order);
                     setDownloadCount(res.order.download_count || 0);
 
-                    // If still pending, poll Stripe confirmation up to 12 times (approx 30s)
+                    // If still pending, poll payment confirmation up to 12 times (approx 30s)
                     if (res.order.status === "pending" && pollCount < 12) {
                         pollCount++;
                         pollTimer = setTimeout(fetchOrder, 2500);
@@ -85,13 +104,13 @@ export default function OrderSuccess() {
             }
         }
 
-        fetchOrder();
+        initAndFetch();
 
         return () => {
             isMounted = false;
             if (pollTimer) clearTimeout(pollTimer);
         };
-    }, [identifier]);
+    }, [identifier, payerId, provider]);
 
     const isPaid = order && (order.status === "paid" || order.status === "successful");
     const isRefunded = order && (order.status === "refunded" || order.isRefunded);
@@ -158,7 +177,7 @@ export default function OrderSuccess() {
                                 : isPaid
                                 ? "Payment Confirmed!"
                                 : verifying
-                                ? "Verifying Payment with Stripe..."
+                                ? (provider === "paypal" ? "Verifying Payment with PayPal..." : "Verifying Payment...")
                                 : "Payment Verification Pending"}
                         </h1>
                         <p className="ordersuccess-subtitle">
@@ -167,7 +186,7 @@ export default function OrderSuccess() {
                                 : isPaid
                                 ? "Thank you for your purchase. Your digital edition is ready for instant download."
                                 : verifying
-                                ? "We're awaiting payment confirmation from Stripe. This page will update automatically once verified."
+                                ? "We're awaiting payment confirmation from the payment provider. This page will update automatically once verified."
                                 : errorMessage || "Payment confirmation is taking slightly longer than usual. If your account was charged, a download link will also arrive in your email shortly."}
                         </p>
                     </div>
@@ -188,14 +207,14 @@ export default function OrderSuccess() {
                             <div className="order-detail-item">
                                 <span className="order-detail-label">Amount</span>
                                 <span className="order-detail-value highlight">
-                                    {order.currency || "AED"} {Number(order.amount || 0).toFixed(2)}
+                                    {order.currency || "USD"} {Number(order.amount || 0).toFixed(2)}
                                 </span>
                             </div>
                             <div className="order-detail-item">
                                 <span className="order-detail-label">Payment Status</span>
                                 <span className={`order-badge ${isRefunded ? 'refunded' : isPaid ? 'paid' : 'pending'}`}>
                                     <i className={`fa-solid ${isRefunded ? 'fa-ban' : isPaid ? 'fa-check' : 'fa-clock'}`} />
-                                    {isRefunded ? "Refunded" : isPaid ? "Paid & Verified" : "Awaiting Stripe Confirmation"}
+                                    {isRefunded ? "Refunded" : isPaid ? "Paid & Verified" : "Awaiting Confirmation"}
                                 </span>
                             </div>
                         </div>

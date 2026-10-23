@@ -519,7 +519,7 @@ export default function BuyBookCheckout() {
                       disabled={processingOption === (opt.access_type || `opt-${i}`)}
                     >
                       {processingOption === (opt.access_type || `opt-${i}`) ? (
-                        <>Connecting to Stripe…</>
+                        <>Connecting to PayPal…</>
                       ) : (
                         <>{opt.cta_text || `${opt.name} · ${opt.currency || product.currency || 'USD'} ${Number(opt.price).toFixed(2)}`}</>
                       )}
@@ -532,7 +532,7 @@ export default function BuyBookCheckout() {
                     onClick={() => handlePurchase("download")}
                     disabled={processingOption === "download"}
                   >
-                    {processingOption === "download" ? "Connecting to Stripe…" : `Get Publication · ${product.currency || "USD"} ${Number(product.price).toFixed(2)}`}
+                    {processingOption === "download" ? "Connecting to PayPal…" : `Get Publication · ${product.currency || "USD"} ${Number(product.price).toFixed(2)}`}
                   </button>
                 ) : null}
               </div>
@@ -919,7 +919,7 @@ export default function BuyBookCheckout() {
                           disabled={processingOption === (opt.access_type || `opt-${i}`)}
                         >
                           {processingOption === (opt.access_type || `opt-${i}`)
-                            ? "Connecting to Stripe…"
+                            ? "Connecting to PayPal…"
                             : isUpgradeAvailable
                             ? "Upgrade to Digital Companion · $29.99"
                             : (opt.cta_text || `Get ${opt.name} · $${priceNum.toFixed(2)}`)}
@@ -1144,7 +1144,7 @@ export default function BuyBookCheckout() {
                 className="v2-btn-primary"
                 style={{ width: "100%", marginTop: 4 }}
               >
-                Continue to Secure Stripe Checkout
+                Continue to Secure PayPal Checkout
               </button>
 
               <div style={{ textAlign: "center", marginTop: 10 }}>

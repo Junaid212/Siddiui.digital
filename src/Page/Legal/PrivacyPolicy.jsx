@@ -42,7 +42,7 @@ export default function PrivacyPolicyPage() {
             <div className="legal-subgroup">
               <h3>Orders and payments</h3>
               <p>
-                What you bought, when, the amount, the edition, your access status and your download history. Payments are processed securely by Stripe; we do not see or store your payment card details.
+                What you bought, when, the amount, the edition, your access status and your download history. Payments are processed securely by PayPal (and Stripe for historical purchases); we do not see or store your payment card details.
               </p>
             </div>
             <div className="legal-subgroup">
@@ -84,7 +84,7 @@ export default function PrivacyPolicyPage() {
             <h2>4. Who We Share Information With</h2>
             <p>We share information only with trusted service providers who help us run the site, and only as needed:</p>
             <ul>
-              <li><strong>Stripe</strong>, our secure payment partner, which processes card payments.</li>
+              <li><strong>PayPal</strong>, our secure payment partner, which processes payments (along with Stripe for historical records).</li>
               <li><strong>Google</strong>, for Google authentication sign-in and website analytics. Google shares only the buyer&rsquo;s name and email with us.</li>
               <li>Our website hosting and email providers.</li>
               <li>Our artificial intelligence provider, for Ask SID.</li>

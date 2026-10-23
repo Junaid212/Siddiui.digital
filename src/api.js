@@ -112,8 +112,63 @@ export const api = {
         return null;
     },
 
+    // PayPal Orders v2 API
+    createPayPalOrder: (data) =>
+        fetch(`${API_BASE}/payment/paypal/create-order`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        }).then(async (res) => {
+            const json = await res.json().catch(() => ({}));
+            if (!res.ok) {
+                throw new Error(json.error || `PayPal order creation failed (${res.status})`);
+            }
+            return json;
+        }),
+
+    capturePayPalOrder: (data) =>
+        fetch(`${API_BASE}/payment/paypal/capture-order`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        }).then(async (res) => {
+            const json = await res.json().catch(() => ({}));
+            if (!res.ok) {
+                throw new Error(json.error || `PayPal order capture failed (${res.status})`);
+            }
+            return json;
+        }),
+
+    // Payhip Account Linking & Claiming
+    claimPayhipPurchase: (data) =>
+        fetch(`${API_BASE}/payment/claim-payhip-purchase`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        }).then(async (res) => {
+            const json = await res.json().catch(() => ({}));
+            if (!res.ok) {
+                throw new Error(json.error || `Failed to initiate Payhip claim (${res.status})`);
+            }
+            return json;
+        }),
+
+    confirmPayhipClaim: (data) =>
+        fetch(`${API_BASE}/payment/confirm-payhip-claim`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        }).then(async (res) => {
+            const json = await res.json().catch(() => ({}));
+            if (!res.ok) {
+                throw new Error(json.error || `Failed to confirm Payhip claim (${res.status})`);
+            }
+            return json;
+        }),
+
+    // Unified Checkout Endpoints (uses PayPal Orders v2 with backward-compatible response)
     createCheckout: (data) =>
-        fetch(`${API_BASE}/payment/create-checkout`, {
+        fetch(`${API_BASE}/payment/paypal/create-order`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
@@ -125,9 +180,9 @@ export const api = {
             return json;
         }),
 
-    // Multi-item Cart Checkout
+    // Multi-item Cart Checkout (PayPal Orders v2)
     createCartCheckout: (data) =>
-        fetch(`${API_BASE}/payment/create-cart-checkout`, {
+        fetch(`${API_BASE}/payment/paypal/create-order`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),

@@ -262,7 +262,7 @@ export default function CartDrawer() {
                 Continue Shopping
               </button>
               <div className="cart-trust">
-                <span><i className="fa-solid fa-lock" />Stripe Secured</span>
+                <span><i className="fa-brands fa-paypal" />PayPal Secured</span>
                 <span><i className="fa-solid fa-bolt" />Instant Delivery</span>
                 <span><i className="fa-solid fa-shield-halved" />Protected</span>
               </div>

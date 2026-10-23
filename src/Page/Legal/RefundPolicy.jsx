@@ -90,7 +90,7 @@ export default function RefundPolicyPage() {
           <section className="legal-section">
             <h2>6. How Refunds Are Paid</h2>
             <p>
-              Approved refunds are returned to the original payment method through Stripe. Banks usually take 5 to 10 business days to show the refund on your statement. When a refund is approved, access to the refunded edition, its downloads and Ask SID ends.
+              Approved refunds are returned to the original payment method through PayPal (or Stripe for historical purchases). Banks usually take 5 to 10 business days to show the refund on your statement. When a refund is approved, access to the refunded edition, its downloads and Ask SID ends.
             </p>
           </section>
 

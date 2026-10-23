@@ -252,7 +252,7 @@ export default function CartCheckoutPage() {
         };
       });
 
-      const res = await fetch(`${API_BASE}/payment/create-cart-checkout`, {
+      const res = await fetch(`${API_BASE}/payment/paypal/create-order`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -276,7 +276,7 @@ export default function CartCheckoutPage() {
       if (result && result.url) {
         window.location.href = result.url;
       } else {
-        throw new Error(result.error || "Failed to create checkout session.");
+        throw new Error(result.error || "Failed to create PayPal checkout session.");
       }
     } catch (err) {
       console.error("Cart checkout error:", err);
@@ -691,17 +691,17 @@ export default function CartCheckoutPage() {
                     id="checkout-submit-btn"
                   >
                     {checkoutLoading ? (
-                      <><span className="checkout-spinner" /> Connecting to Stripe…</>
+                      <><span className="checkout-spinner" /> Connecting to PayPal…</>
                     ) : blockedReason ? (
                       <><i className="fa-solid fa-ban" /> Already Owned</>
                     ) : (
-                      <><i className="fa-solid fa-lock" /> Pay {fmt(effectiveTotal)} Securely</>
+                      <><i className="fa-brands fa-paypal" style={{ marginRight: 8 }} /> Pay {fmt(effectiveTotal)} with PayPal</>
                     )}
                   </button>
 
                   <div className="checkout-trust-row">
                     <span><i className="fa-solid fa-lock" />SSL Secured</span>
-                    <span><i className="fa-brands fa-stripe" />Powered by Stripe</span>
+                    <span><i className="fa-brands fa-paypal" />Powered by PayPal</span>
                     <span><i className="fa-solid fa-bolt" />Instant Delivery</span>
                   </div>
                 </div>

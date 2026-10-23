@@ -58,7 +58,7 @@ export default function TermsOfUsePage() {
             <ul>
               <li>Access begins once payment is confirmed.</li>
               <li>Prices are shown in US dollars (USD). Taxes, where they apply, are shown at checkout.</li>
-              <li>Payments are processed securely via Stripe.</li>
+              <li>Payments are processed securely via PayPal (with historical purchases supported via Stripe).</li>
               <li>If you own the Online Reading Edition, you may upgrade to the Digital Companion Edition by paying only the price difference (USD 29.99).</li>
             </ul>
           </section>

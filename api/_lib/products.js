@@ -107,6 +107,7 @@ async function findOrderByIdentifier(identifier) {
 
   let order = null;
 
+  // 1. Try finding by stripe_session_id
   if (identifier.startsWith("cs_")) {
     try {
       const { data } = await supabase.from("orders").select("*").eq("stripe_session_id", identifier).maybeSingle();
@@ -114,6 +115,7 @@ async function findOrderByIdentifier(identifier) {
     } catch (e) {}
   }
 
+  // 2. Try finding by UUID id
   if (!order && isUUID) {
     try {
       const { data } = await supabase.from("orders").select("*").eq("id", identifier).maybeSingle();
@@ -121,6 +123,31 @@ async function findOrderByIdentifier(identifier) {
     } catch (e) {}
   }
 
+  // 3. Try finding by paypal_order_id or paypal_capture_id
+  if (!order) {
+    try {
+      const { data } = await supabase.from("orders").select("*").or(`paypal_order_id.eq.${identifier},paypal_capture_id.eq.${identifier}`).maybeSingle();
+      if (data) order = data;
+    } catch (e) {}
+  }
+
+  // 4. Try finding by payhip_transaction_id
+  if (!order) {
+    try {
+      const { data } = await supabase.from("orders").select("*").eq("payhip_transaction_id", identifier).maybeSingle();
+      if (data) order = data;
+    } catch (e) {}
+  }
+
+  // 5. Try finding by order_number
+  if (!order && String(identifier).startsWith("ORD-")) {
+    try {
+      const { data } = await supabase.from("orders").select("*").eq("order_number", identifier).maybeSingle();
+      if (data) order = data;
+    } catch (e) {}
+  }
+
+  // 6. Try finding by download_token in Supabase if column exists
   if (!order) {
     try {
       const { data } = await supabase.from("orders").select("*").eq("download_token", identifier).maybeSingle();
@@ -128,6 +155,7 @@ async function findOrderByIdentifier(identifier) {
     } catch (e) {}
   }
 
+  // 7. Try finding in persistent orderStore
   const meta = findOrderMetadataByToken(identifier);
   if (meta && !order && meta.orderId) {
     try {
@@ -136,6 +164,7 @@ async function findOrderByIdentifier(identifier) {
     } catch (e) {}
   }
 
+  // Merge and return
   if (order) {
     const orderMeta = getOrderMetadata(order.id) || {};
     return {
@@ -144,9 +173,11 @@ async function findOrderByIdentifier(identifier) {
       product_id: order.product_id || orderMeta.product_id || null,
       email: order.email || orderMeta.email || null,
       customer_name: order.customer_name || orderMeta.customer_name || null,
+      payment_provider: order.payment_provider || orderMeta.payment_provider || (order.stripe_session_id ? 'stripe' : order.paypal_order_id ? 'paypal' : 'payhip'),
+      access_tier: order.access_tier || orderMeta.access_tier || (Number(order.amount) < 30 ? 'online' : 'companion'),
       download_token: order.download_token || orderMeta.download_token || order.stripe_session_id || order.id,
       download_count: Number(order.download_count !== undefined ? order.download_count : (orderMeta.download_count || 0)),
-      download_limit: Number(order.download_limit || orderMeta.download_limit || 3),
+      download_limit: Number(order.download_limit !== undefined ? order.download_limit : (orderMeta.download_limit !== undefined ? orderMeta.download_limit : 3)),
       download_expires_at: order.download_expires_at || orderMeta.download_expires_at || null,
     };
   }
@@ -154,10 +185,12 @@ async function findOrderByIdentifier(identifier) {
   if (meta) {
     return {
       id: meta.orderId,
-      book_name: meta.productName || "Digital Publication",
+      book_name: meta.productName || meta.book_name || "Digital Publication",
       amount: meta.amount || 49.00,
-      currency: meta.currency || "AED",
+      currency: meta.currency || "USD",
       status: meta.status || "paid",
+      payment_provider: meta.payment_provider || "paypal",
+      access_tier: meta.access_tier || (Number(meta.amount) < 30 ? "online" : "companion"),
       ...meta,
     };
   }
