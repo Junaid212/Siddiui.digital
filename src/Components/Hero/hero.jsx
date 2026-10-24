@@ -20,7 +20,12 @@ const AnimatedCharacters = ({ text, isAccent = false }) => {
             delay: index * 0.115,
             ease: "easeOut"
           }}
-          style={{ display: "inline-block", whiteSpace: "pre" }}
+          className={isAccent ? "hero-title-char" : "hero-title-char"}
+          style={{
+            display: "inline-block",
+            whiteSpace: "pre",
+            color: isAccent ? "var(--text-color)" : "#6C757D"
+          }}
         >
           {char}
         </motion.span>
@@ -78,7 +83,7 @@ export default function Hero({ onBookConsultation }) {
         body.light-mode {
           --primary: #FCFCFC;
           --secondary: #121212;
-          --text-color: #121212;
+          --text-color: #6C757D;
           --accent-color: #C80808;
           --accent-color-2: #f0f0f0;
           --accent-color-3: #a5a4a4ff;
@@ -96,7 +101,7 @@ export default function Hero({ onBookConsultation }) {
         body.dark-mode {
           --primary: #121212;
           --secondary: #FCFCFC;
-          --text-color: #DAFAF4;
+          --text-color: #bbbdbeff;
           --accent-color: #C80808;
           --accent-color-2: #313131;
           --accent-color-3: #8AFFAC;
@@ -215,17 +220,27 @@ export default function Hero({ onBookConsultation }) {
           text-transform: uppercase;
         }
         
+        .hero-title-new,
         .hero-title {
           font-size: 2.25rem;
           font-weight: 700;
-          color: var(--text-color);
+          color: #bbbdbeff !important;
           line-height: 1.1;
           letter-spacing: -0.025em;
           font-family: var(--font-family-1);
           transition: color var(--animation-fast) ease;
         }
+
+        #hero-section .hero-title-new,
+        #hero-section .hero-title,
+        #hero-section .hero-title-new span,
+        #hero-section .hero-title span,
+        #hero-section .hero-title-char {
+          color: ${darkMode ? '#bbbdbeff' : '#6C757D'} !important;
+        }
         
         @media (min-width: 768px) {
+          .hero-title-new,
           .hero-title { 
             font-size: 3rem; 
             line-height: 1.2;
@@ -233,6 +248,7 @@ export default function Hero({ onBookConsultation }) {
         }
         
         @media (min-width: 1024px) {
+          .hero-title-new,
           .hero-title { 
             font-size: 3.75rem; 
             line-height: 0.6;
@@ -241,9 +257,15 @@ export default function Hero({ onBookConsultation }) {
         
         .hero-title-accent {
           display: block;
-          color: var(--accent-color);
+          color: var(--text-color) !important;
           margin-top: 0.5rem;
           font-family: var(--font-family-1);
+        }
+
+        #hero-section .hero-title-accent,
+        #hero-section .hero-title-accent span,
+        #hero-section .hero-title-accent-char {
+          color: var(--text-color) !important;
         }
         
         .hero-description {
@@ -407,7 +429,7 @@ export default function Hero({ onBookConsultation }) {
             max-width: 20rem;
             height: 30rem;
           }
-            .hero-title {
+            .hero-title-new {
               line-height: 0.5 ;
         }
         }
@@ -516,14 +538,14 @@ export default function Hero({ onBookConsultation }) {
                 <span className="badge-text">Marketing Thinker · Educator · Advisor </span>
               </div>
 
-              <h1 className="hero-title">
+              <h1 className="hero-title-new">
                 <span style={{ display: 'none' }}>Marketing Consultant, Courses & Business Growth Solutions</span>
 
                 <AnimatedCharacters text="Marketing," />
-                <span className="hero-title-accent">
+                <div className="hero-title-accent">
                   <br />
                   <AnimatedCharacters text="Reclassified." isAccent={true} />
-                </span>
+                </div>
               </h1>
               <p style={{ display: "none" }}>
                 marketing consultant, online marketing courses, business strategy training, digital marketing ebooks, marketing mentor, business growth advisor

@@ -556,8 +556,8 @@ textarea.error-border {
 }
 
 .no-dark p,
-span,
-h3 {
+.no-dark span,
+.no-dark h3 {
     color: var(--primary) !important;
 }
 
