@@ -78,18 +78,203 @@ const SinglePostSection = ({ blog, relatedArticles = [], loading }) => {
         ].filter(Boolean);
 
     const primaryCategory = categories[0] || 'Perspectives';
-    const readingTime = blog.reading_time || calculateReadingTime(`${blog.content || ''} ${blog.content2 || ''}`);
     const standfirst = blog.standfirst || blog.summary || '';
     const authorByline = blog.author_byline || 'By M. Q. Siddiqui, Founder, Siddiqui.digital';
+    const authorName = authorByline.replace(/^By\s+/i, '').split(',')[0].trim() || 'M. Q. Siddiqui';
+    const rolePart = authorByline.includes(',') ? authorByline.substring(authorByline.indexOf(',') + 1).trim() : 'Founder, Siddiqui.digital';
 
-    // Parse paragraphs for comfortable reading width
-    const renderParagraphs = (text) => {
-        if (!text) return null;
-        return text.split(/\n\n+/).map((para, idx) => (
-            <p key={idx} style={{ margin: '0 0 22px 0', whiteSpace: 'pre-wrap' }}>
-                {para}
-            </p>
-        ));
+    // Normalize repeatable sub-sections with backwards compatibility for title2/content2
+    let normalizedSubSections = [];
+    if (Array.isArray(blog.sub_sections) && blog.sub_sections.length > 0) {
+        normalizedSubSections = blog.sub_sections;
+    } else if (typeof blog.sub_sections === 'string' && blog.sub_sections.trim()) {
+        try {
+            const parsed = JSON.parse(blog.sub_sections);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+                normalizedSubSections = parsed;
+            }
+        } catch (e) {
+            // fallback
+        }
+    }
+
+    // Move current "Additional Sub-Section" content automatically into Sub-section 1 if sub_sections is empty
+    if (normalizedSubSections.length === 0 && (blog.title2 || blog.content2)) {
+        normalizedSubSections = [{
+            heading: blog.title2 || '',
+            body: blog.content2 || '',
+            highlight_type: 'none',
+            highlight_text: ''
+        }];
+    }
+
+    const allSubText = normalizedSubSections.map(s => `${s.heading || ''} ${s.body || ''}`).join(' ');
+    const readingTime = blog.reading_time || calculateReadingTime(`${blog.content || ''} ${allSubText}`);
+
+    // Pull quote placement (0 = after full body, 1 = after sub 1, etc.; default 1)
+    const pullQuotePos = (blog.pull_quote_position !== undefined && blog.pull_quote_position !== null)
+        ? parseInt(blog.pull_quote_position, 10)
+        : 1;
+
+    // Helper functions for bullet lines and paragraphs
+    const isBulletLine = (line) => {
+        if (!line) return false;
+        const t = line.trim();
+        return t.startsWith('•') || t.startsWith('·') || t.startsWith('- ') || t.startsWith('* ');
+    };
+
+    const cleanBulletText = (line) => {
+        if (!line) return '';
+        return line.trim().replace(/^[•·\-\*]\s*/, '').trim();
+    };
+
+    // Parse editorial body: keeps blank lines between paragraphs, and shows lines starting with • as bullets
+    const renderEditorialBody = (text) => {
+        if (!text || typeof text !== 'string') return null;
+        const blocks = text.split(/\n\s*\n/);
+
+        return blocks.map((block, bIdx) => {
+            const trimmed = block.trim();
+            if (!trimmed) return null;
+
+            const lines = trimmed.split('\n').map(l => l.trim()).filter(Boolean);
+            const allBullets = lines.length > 0 && lines.every(isBulletLine);
+
+            if (allBullets) {
+                return (
+                    <ul key={bIdx} style={{ margin: '0 0 24px 0', paddingLeft: '26px', listStyleType: 'disc' }}>
+                        {lines.map((l, lIdx) => (
+                            <li key={lIdx} style={{ marginBottom: '8px', lineHeight: '1.75' }}>
+                                {cleanBulletText(l)}
+                            </li>
+                        ))}
+                    </ul>
+                );
+            }
+
+            const hasBullets = lines.some(isBulletLine);
+            if (hasBullets) {
+                const elements = [];
+                let bulletGroup = [];
+
+                lines.forEach((line, lIdx) => {
+                    if (isBulletLine(line)) {
+                        bulletGroup.push(cleanBulletText(line));
+                    } else {
+                        if (bulletGroup.length > 0) {
+                            elements.push(
+                                <ul key={`ul-${lIdx}`} style={{ margin: '0 0 16px 0', paddingLeft: '26px', listStyleType: 'disc' }}>
+                                    {bulletGroup.map((bText, bi) => (
+                                        <li key={bi} style={{ marginBottom: '8px', lineHeight: '1.75' }}>{bText}</li>
+                                    ))}
+                                </ul>
+                            );
+                            bulletGroup = [];
+                        }
+                        elements.push(
+                            <p key={`p-${lIdx}`} style={{ margin: '0 0 16px 0', lineHeight: '1.75', whiteSpace: 'pre-wrap' }}>
+                                {line}
+                            </p>
+                        );
+                    }
+                });
+
+                if (bulletGroup.length > 0) {
+                    elements.push(
+                        <ul key="ul-end" style={{ margin: '0 0 16px 0', paddingLeft: '26px', listStyleType: 'disc' }}>
+                            {bulletGroup.map((bText, bi) => (
+                                <li key={bi} style={{ marginBottom: '8px', lineHeight: '1.75' }}>{bText}</li>
+                            ))}
+                        </ul>
+                    );
+                }
+
+                return <div key={bIdx} style={{ marginBottom: '24px' }}>{elements}</div>;
+            }
+
+            return (
+                <p key={bIdx} style={{ margin: '0 0 24px 0', lineHeight: '1.75', whiteSpace: 'pre-wrap' }}>
+                    {trimmed}
+                </p>
+            );
+        });
+    };
+
+    // Render Highlight Box directly after sub-section: Quote box (light maroon / maroon text) or Question box (light gray / navy text)
+    const renderHighlightBox = (sub) => {
+        if (!sub || !sub.highlight_type || sub.highlight_type === 'none' || !sub.highlight_text) {
+            return null;
+        }
+
+        if (sub.highlight_type === 'quote') {
+            return (
+                <div style={{
+                    background: '#F7EEF0',
+                    borderLeft: '4px solid #8A1528',
+                    borderRadius: '8px',
+                    padding: '18px 22px',
+                    margin: '24px 0 28px',
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '14px'
+                }}>
+                    <span style={{ fontSize: '28px', lineHeight: 1, color: '#8A1528', fontFamily: 'Georgia, serif' }}>“</span>
+                    <p style={{
+                        margin: 0,
+                        fontFamily: "'Source Serif 4', Georgia, serif",
+                        fontSize: '18px',
+                        lineHeight: '1.5',
+                        fontWeight: '600',
+                        color: '#8A1528',
+                        fontStyle: 'italic'
+                    }}>
+                        {sub.highlight_text}
+                    </p>
+                </div>
+            );
+        }
+
+        if (sub.highlight_type === 'question') {
+            return (
+                <div style={{
+                    background: '#F4F5F8',
+                    borderLeft: '4px solid #13294B',
+                    borderRadius: '8px',
+                    padding: '18px 22px',
+                    margin: '24px 0 28px',
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '14px'
+                }}>
+                    <span style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '26px',
+                        height: '26px',
+                        borderRadius: '50%',
+                        background: '#13294B',
+                        color: '#ffffff',
+                        fontSize: '15px',
+                        fontWeight: '700',
+                        flexShrink: 0
+                    }}>
+                        ?
+                    </span>
+                    <p style={{
+                        margin: 0,
+                        fontSize: '17px',
+                        lineHeight: '1.55',
+                        fontWeight: '600',
+                        color: '#13294B'
+                    }}>
+                        {sub.highlight_text}
+                    </p>
+                </div>
+            );
+        }
+
+        return null;
     };
 
     return (
@@ -110,6 +295,16 @@ const SinglePostSection = ({ blog, relatedArticles = [], loading }) => {
                 .editorial-standfirst {
                     font-size: 22px;
                     line-height: 1.55;
+                }
+                .editorial-author-card {
+                    margin-top: 36px;
+                }
+                @media (max-width: 640px) {
+                    .editorial-author-card {
+                        padding: 18px 20px !important;
+                        flex-direction: column !important;
+                        align-items: flex-start !important;
+                    }
                 }
                 .editorial-featured-img {
                     height: 460px;
@@ -404,88 +599,200 @@ const SinglePostSection = ({ blog, relatedArticles = [], loading }) => {
                     display: 'flex',
                     flexDirection: 'column'
                 }}>
-                    {/* Primary Content Paragraphs */}
-                    {renderParagraphs(blog.content)}
+                    {/* Helper to render Pull Quote */}
+                    {(() => {
+                        const renderPullQuote = () => {
+                            if (!blog.pull_quote) return null;
+                            return (
+                                <figure style={{
+                                    margin: '36px 0',
+                                    padding: '18px 0',
+                                    textAlign: 'center',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: '10px',
+                                    borderTop: '1px solid #E3E6EC',
+                                    borderBottom: '1px solid #E3E6EC'
+                                }}>
+                                    <blockquote style={{
+                                        margin: '14px 0 0',
+                                        fontFamily: "'Source Serif 4', Georgia, serif",
+                                        fontWeight: 600,
+                                        fontSize: '28px',
+                                        lineHeight: 1.4,
+                                        color: '#A3192F',
+                                        fontStyle: 'italic'
+                                    }}>
+                                        “{blog.pull_quote}”
+                                    </blockquote>
+                                    {blog.pull_quote_author && (
+                                        <figcaption style={{ marginBottom: '14px', fontSize: '15px', color: '#4A5163', fontWeight: 600 }}>
+                                            - {blog.pull_quote_author}
+                                        </figcaption>
+                                    )}
+                                </figure>
+                            );
+                        };
 
-                    {/* Pull Quote */}
-                    {blog.pull_quote && (
-                        <figure style={{
-                            margin: '32px 0',
-                            padding: '16px 0',
-                            textAlign: 'center',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: '10px',
-                            borderTop: '1px solid #E3E6EC',
-                            borderBottom: '1px solid #E3E6EC'
-                        }}>
-                            <blockquote style={{
-                                margin: '14px 0 0',
-                                // fontFamily: "'Source Serif 4', Georgia, serif",
-                                fontWeight: 600,
-                                fontSize: '28px',
-                                lineHeight: 1.4,
-                                color: '#A3192F',
-                                fontStyle: 'italic'
-                            }}>
-                                “{blog.pull_quote}”
-                            </blockquote>
-                            {blog.pull_quote_author && (
-                                <figcaption style={{ marginBottom: '14px', fontSize: '15px', color: '#4A5163', fontWeight: 600 }}>
-                                    - {blog.pull_quote_author}
-                                </figcaption>
-                            )}
-                        </figure>
-                    )}
+                        return (
+                            <>
+                                {/* 1. Full Article Body */}
+                                {renderEditorialBody(blog.content)}
 
-                    {/* Secondary Section (title2 & content2) */}
-                    {blog.title2 && (
-                        <div style={{ marginTop: '20px' }}>
-                            <h2 style={{
-                                margin: '24px 0 16px',
-                                // fontFamily: "'Source Serif 4', Georgia, serif",
-                                fontSize: '30px',
-                                lineHeight: 1.3,
-                                color: '#13294B',
-                                fontWeight: 700
-                            }}>
-                                {blog.title2}
-                            </h2>
-                            {renderParagraphs(blog.content2)}
-                        </div>
-                    )}
+                                {/* Pull quote after Full Body if pullQuotePos === 0 */}
+                                {pullQuotePos === 0 && renderPullQuote()}
 
-                    {/* Concluding Insight */}
-                    {blog.concluding_insight && (
-                        <div style={{
-                            background: '#F4F5F8',
-                            borderRadius: '12px',
-                            padding: '24px 28px',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: '10px',
-                            marginTop: '28px'
-                        }}>
-                            <p style={{
-                                margin: 0,
-                                fontSize: '13px',
-                                letterSpacing: '3px',
-                                fontWeight: 700,
-                                color: '#13294B',
-                                textTransform: 'uppercase'
-                            }}>
-                                CONCLUDING INSIGHT
-                            </p>
-                            <p style={{
-                                margin: 0,
-                                fontSize: '14px',
-                                lineHeight: 1.6,
-                                color: '#1B1F2A'
-                            }}>
-                                {blog.concluding_insight}
-                            </p>
-                        </div>
-                    )}
+                                {/* 2. Sub-sections in the order set */}
+                                {normalizedSubSections.map((sub, idx) => {
+                                    const subIndex = idx + 1;
+                                    return (
+                                        <div key={idx} style={{ marginTop: idx === 0 ? '8px' : '16px' }}>
+                                            {sub.heading && (
+                                                <h2 style={{
+                                                    margin: '38px 0 16px',
+                                                    fontFamily: "'Source Serif 4', Georgia, serif",
+                                                    fontSize: '30px',
+                                                    lineHeight: 1.3,
+                                                    color: '#13294B',
+                                                    fontWeight: 700
+                                                }}>
+                                                    {sub.heading}
+                                                </h2>
+                                            )}
+                                            {renderEditorialBody(sub.body)}
+                                            {renderHighlightBox(sub)}
+                                            {pullQuotePos === subIndex && renderPullQuote()}
+                                        </div>
+                                    );
+                                })}
+
+                                {/* Fallback Pull Quote: If pullQuotePos was beyond sub-sections count or if 0 sub-sections and pullQuotePos >= 1 */}
+                                {((pullQuotePos > normalizedSubSections.length && pullQuotePos !== 0) || (normalizedSubSections.length === 0 && pullQuotePos >= 1)) && renderPullQuote()}
+
+                                {/* 3. Concluding Insight */}
+                                {blog.concluding_insight && (
+                                    <div style={{
+                                        background: '#F4F5F8',
+                                        borderRadius: '12px',
+                                        padding: '24px 28px',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        gap: '10px',
+                                        marginTop: '32px'
+                                    }}>
+                                        <p style={{
+                                            margin: 0,
+                                            fontSize: '13px',
+                                            letterSpacing: '3px',
+                                            fontWeight: 700,
+                                            color: '#13294B',
+                                            textTransform: 'uppercase'
+                                        }}>
+                                            CONCLUDING INSIGHT
+                                        </p>
+                                        <p style={{
+                                            margin: 0,
+                                            fontSize: '15px',
+                                            lineHeight: 1.6,
+                                            color: '#1B1F2A'
+                                        }}>
+                                            {blog.concluding_insight}
+                                        </p>
+                                    </div>
+                                )}
+
+                                {/* 4. Author Box directly after Concluding Insight */}
+                                <div className="editorial-author-card" style={{
+                                    marginTop: '36px',
+                                    padding: '24px 28px',
+                                    borderRadius: '14px',
+                                    background: '#FAFBFD',
+                                    border: '1px solid #E3E6EC',
+                                    display: 'flex',
+                                    flexWrap: 'wrap',
+                                    gap: '20px',
+                                    alignItems: 'center'
+                                }}>
+                                    <div style={{
+                                        width: '64px',
+                                        height: '64px',
+                                        borderRadius: '50%',
+                                        overflow: 'hidden',
+                                        background: '#13294B',
+                                        flexShrink: 0,
+                                        border: '2px solid #8A1528',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
+                                    }}>
+                                        <img
+                                            src="/assets/images/img/v2-author-photo.png"
+                                            alt={authorName}
+                                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                            onError={(e) => {
+                                                e.target.style.display = 'none';
+                                                if (e.target.nextSibling) e.target.nextSibling.style.display = 'flex';
+                                            }}
+                                        />
+                                        <span style={{ display: 'none', color: '#ffffff', fontWeight: 700, fontSize: '20px' }}>
+                                            MQS
+                                        </span>
+                                    </div>
+                                    <div style={{ flex: '1 1 240px', minWidth: 0, display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                        <span style={{ fontSize: '12px', fontWeight: 700, letterSpacing: '1.5px', color: '#8A1528', textTransform: 'uppercase' }}>
+                                            Author
+                                        </span>
+                                        <h4 style={{
+                                            margin: 0,
+                                            fontFamily: "'Source Serif 4', Georgia, serif",
+                                            fontSize: '20px',
+                                            color: '#13294B',
+                                            fontWeight: 700
+                                        }}>
+                                            {authorName}
+                                        </h4>
+                                        <p style={{ margin: 0, fontSize: '14px', color: '#4A5163', lineHeight: 1.5 }}>
+                                            {rolePart}
+                                        </p>
+                                    </div>
+                                    {(blog.linkedin_url || blog.instagram_url || blog.facebook_url) && (
+                                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                                            {blog.linkedin_url && (
+                                                <a
+                                                    href={blog.linkedin_url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    style={{ display: 'inline-flex', padding: '8px 14px', borderRadius: '8px', background: '#0A66C2', color: '#ffffff', textDecoration: 'none', fontSize: '13px', fontWeight: 600 }}
+                                                >
+                                                    LinkedIn
+                                                </a>
+                                            )}
+                                            {blog.instagram_url && (
+                                                <a
+                                                    href={blog.instagram_url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    style={{ display: 'inline-flex', padding: '8px 14px', borderRadius: '8px', background: 'radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%)', color: '#ffffff', textDecoration: 'none', fontSize: '13px', fontWeight: 600 }}
+                                                >
+                                                    Instagram
+                                                </a>
+                                            )}
+                                            {blog.facebook_url && (
+                                                <a
+                                                    href={blog.facebook_url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    style={{ display: 'inline-flex', padding: '8px 14px', borderRadius: '8px', background: '#1877F2', color: '#ffffff', textDecoration: 'none', fontSize: '13px', fontWeight: 600 }}
+                                                >
+                                                    Facebook
+                                                </a>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            </>
+                        );
+                    })()}
                 </div>
 
                 {/* BOOK CONNECTION PANEL (Shown ONLY when article connects to book - NO ASK SID) */}

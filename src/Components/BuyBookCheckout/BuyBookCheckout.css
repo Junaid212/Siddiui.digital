@@ -920,7 +920,7 @@ html {
 
 .v2-edition-badge {
   background: var(--v2-crimson);
-  color: #ffffff;
+  color: #ffffff !important;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 1px;

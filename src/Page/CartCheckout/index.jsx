@@ -40,6 +40,7 @@ export default function CartCheckoutPage() {
 
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [checkoutError, setCheckoutError] = useState("");
+  const [showMobileSummary, setShowMobileSummary] = useState(false);
 
   /* ── Auth ───────────────────────────────────────── */
   useEffect(() => {
@@ -296,13 +297,13 @@ export default function CartCheckoutPage() {
         <div className="checkout-page">
           <div className="checkout-container">
             <div className="checkout-empty">
-              <div style={{ fontSize: "4rem", marginBottom: "16px" }}>🛒</div>
+              <div className="checkout-empty-icon">🛒</div>
               <h2>Your cart is empty</h2>
               <p>Add some publications to your cart before checking out.</p>
               <Link
                 to="/publications"
-                className="cart-checkout-btn"
-                style={{ width: "auto", textDecoration: "none", padding: "12px 28px", fontSize: "0.9rem" }}
+                className="checkout-empty-btn"
+                id="checkout-browse-btn"
               >
                 <i className="fa-solid fa-book-open" />
                 Browse Publications
@@ -330,8 +331,96 @@ export default function CartCheckoutPage() {
           </nav>
 
           <div className="checkout-heading">
-            <h1><i className="fa-solid fa-lock" style={{ color: "#c80808", marginRight: 12, fontSize: "0.85em" }} />Secure Checkout</h1>
+            <h1><i className="fa-solid fa-lock" />Secure Checkout</h1>
             <p>Review your order, verify your delivery email, and complete your purchase securely.</p>
+          </div>
+
+          {/* Mobile Collapsible Order Summary Banner (visible on screens <= 900px) */}
+          <div className="checkout-mobile-summary-banner">
+            <button
+              type="button"
+              className="checkout-mobile-summary-toggle"
+              onClick={() => setShowMobileSummary(prev => !prev)}
+              aria-expanded={showMobileSummary}
+              aria-controls="checkout-mobile-summary-dropdown"
+              id="checkout-mobile-summary-toggle-btn"
+            >
+              <span className="checkout-mobile-summary-toggle-left">
+                <i className="fa-solid fa-bag-shopping" />
+                <span>{showMobileSummary ? "Hide order summary" : "Show order summary"}</span>
+                <i className={`fa-solid fa-chevron-${showMobileSummary ? "up" : "down"} checkout-mobile-chevron`} />
+              </span>
+              <span className="checkout-mobile-summary-toggle-price">
+                {fmt(effectiveTotal)}
+              </span>
+            </button>
+
+            {showMobileSummary && (
+              <motion.div
+                id="checkout-mobile-summary-dropdown"
+                className="checkout-mobile-summary-dropdown"
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <div className="checkout-mobile-items-list">
+                  {items.map(item => {
+                    const isComp = Number(item.price) >= 40 ||
+                      item.accessType === "companion" ||
+                      String(item.title).toLowerCase().includes("companion");
+                    const price = (canUpgradeInCart && isComp) ? 29.99 : item.price;
+                    return (
+                      <div className="checkout-mobile-item-row" key={item.id}>
+                        {item.coverImage ? (
+                          <img src={item.coverImage} alt={item.title} className="checkout-mobile-item-thumb" />
+                        ) : (
+                          <div className="checkout-mobile-item-thumb fallback">
+                            <i className="fa-solid fa-book" />
+                          </div>
+                        )}
+                        <div className="checkout-mobile-item-details">
+                          <span className="checkout-mobile-item-title">
+                            {item.title}
+                            {canUpgradeInCart && isComp && <span className="checkout-mobile-upgrade-tag"> (Upgrade)</span>}
+                          </span>
+                          <span className="checkout-mobile-item-edition">
+                            {isComp ? "Digital Companion Edition" : "Online Reading Edition"}
+                          </span>
+                        </div>
+                        <span className="checkout-mobile-item-price">{fmt(price)}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className="checkout-mobile-summary-totals">
+                  <div className="checkout-mobile-summary-subtotal-row">
+                    <span>Subtotal</span>
+                    <span>{fmt(effectiveSubtotal)}</span>
+                  </div>
+                  {canUpgradeInCart && (
+                    <div className="checkout-mobile-summary-subtotal-row discount">
+                      <span>Owner Upgrade Discount</span>
+                      <span>− {fmt(20.00)}</span>
+                    </div>
+                  )}
+                  {discountAmount > 0 && (
+                    <div className="checkout-mobile-summary-subtotal-row discount">
+                      <span>Coupon Discount ({discountCode})</span>
+                      <span>− {fmt(discountAmount)}</span>
+                    </div>
+                  )}
+                  <div className="checkout-mobile-summary-subtotal-row">
+                    <span>Digital Delivery</span>
+                    <span style={{ color: "#059669", fontWeight: 600 }}>FREE</span>
+                  </div>
+                  <div className="checkout-mobile-summary-subtotal-row total">
+                    <span>Total Due</span>
+                    <span className="checkout-mobile-summary-total-num">{fmt(effectiveTotal)}</span>
+                  </div>
+                </div>
+              </motion.div>
+            )}
           </div>
 
           <form onSubmit={handleCheckout} noValidate>
@@ -369,7 +458,9 @@ export default function CartCheckoutPage() {
                         />
                         {authLoading ? "Signing in..." : "Sign in with Google"}
                       </button>
-                      <span className="checkout-auth-divider">or fill in manually</span>
+                      <div className="checkout-auth-divider">
+                        <span>or fill in manually</span>
+                      </div>
                     </div>
                   )}
 
@@ -395,7 +486,7 @@ export default function CartCheckoutPage() {
                         placeholder="Your full name"
                         autoComplete="name"
                       />
-                      {errors.name && <span style={{ fontSize: "0.75rem", color: "#dc2626" }}>{errors.name}</span>}
+                      {errors.name && <span className="checkout-field-error"><i className="fa-solid fa-circle-exclamation" />{errors.name}</span>}
                     </div>
 
                     <div className="checkout-form-group">
@@ -410,7 +501,7 @@ export default function CartCheckoutPage() {
                         placeholder="you@example.com"
                         autoComplete="email"
                       />
-                      {errors.email && <span style={{ fontSize: "0.75rem", color: "#dc2626" }}>{errors.email}</span>}
+                      {errors.email && <span className="checkout-field-error"><i className="fa-solid fa-circle-exclamation" />{errors.email}</span>}
                     </div>
 
                     <div className="checkout-form-group">
@@ -425,7 +516,7 @@ export default function CartCheckoutPage() {
                         placeholder="Re-enter your email"
                         autoComplete="email"
                       />
-                      {errors.confirmEmail && <span style={{ fontSize: "0.75rem", color: "#dc2626" }}>{errors.confirmEmail}</span>}
+                      {errors.confirmEmail && <span className="checkout-field-error"><i className="fa-solid fa-circle-exclamation" />{errors.confirmEmail}</span>}
                     </div>
 
                     <div className="checkout-form-group">
@@ -539,9 +630,9 @@ export default function CartCheckoutPage() {
               {/* ── Right Column — Summary ───────── */}
               <motion.div
                 className="checkout-summary"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.4, delay: 0.12 }}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, delay: 0.08 }}
               >
                 <div className="checkout-card">
                   <h2 className="checkout-summary-title">
@@ -557,10 +648,10 @@ export default function CartCheckoutPage() {
                     const price = (canUpgradeInCart && isComp) ? 29.99 : item.price;
                     return (
                       <div className="checkout-summary-row" key={item.id}>
-                        <span style={{ maxWidth: "60%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                        <span className="checkout-summary-item-name">
                           {item.title} {canUpgradeInCart && isComp && <small style={{ color: "#c80808" }}>(Upgrade)</small>}
                         </span>
-                        <span style={{ color: "var(--text-primary)", fontWeight: 600 }}>{fmt(price)}</span>
+                        <span className="checkout-summary-item-price">{fmt(price)}</span>
                       </div>
                     );
                   })}
@@ -736,7 +827,7 @@ function CheckoutItem({ item, price, isUpgrade, fmt }) {
         <div className="checkout-item-title">
           {item.title}
           {isUpgrade && (
-            <span style={{ marginLeft: 8, fontSize: "0.72rem", color: "#c80808", fontWeight: 700 }}>
+            <span className="checkout-item-upgrade-tag">
               (Upgrade)
             </span>
           )}
