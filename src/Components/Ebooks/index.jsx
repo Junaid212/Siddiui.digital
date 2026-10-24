@@ -57,6 +57,7 @@ const slideDirections = [
   { x: 300, y: 300 },
 ];
 
+
 // Resolve the correct link for a product — prefer slug-based /publications/:slug
 function resolveProductLink(book) {
   if (book.link) return book.link;
@@ -152,13 +153,13 @@ function BookCard({ book, index, direction }) {
             </h3>
           </div>
 
-          <p style={{
-            color: '#cfcfcfff', fontSize: '12px', lineHeight: '1.4',
+          <div style={{
+            color:'#c9c8c8ff', fontSize: '12px', lineHeight: '1.4',
             marginBottom: '12px', overflow: 'hidden', textOverflow: 'ellipsis',
             display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
           }}>
             {book.description}
-          </p>
+          </div>
 
           {/* Action Buttons */}
           {isComingSoon ? (
