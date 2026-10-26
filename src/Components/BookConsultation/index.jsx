@@ -66,6 +66,7 @@ export default function BookConsultation() {
         provider: 'google',
         options: {
           redirectTo: window.location.href,
+          scopes: 'openid email profile',
         },
       });
       if (error) throw error;

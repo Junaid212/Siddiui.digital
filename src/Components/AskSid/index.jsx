@@ -49,7 +49,7 @@ export default function AskSid() {
     publicDemoEnabled: true,
     demoQuestionLimit: 1,
     upgradeCtaText: "Unlock Full Ask SID with the Digital Companion Edition ($49.99)",
-    upgradeUrl: "/publications/marketing-reclassified-principle-first-approach",
+    upgradeUrl: "/publications/marketing-reclassified",
     advisoryCtaEnabled: true,
     advisoryUrl: "/consultation"
   });
@@ -301,7 +301,10 @@ export default function AskSid() {
     try {
       await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: { redirectTo: window.location.href }
+        options: {
+          redirectTo: window.location.href,
+          scopes: "openid email profile",
+        }
       });
     } catch (e) {
       console.error("Sign-in error:", e);
@@ -1137,7 +1140,7 @@ export default function AskSid() {
 
             <div className="asksid-upgrade-price-wrap">
               <div className="asksid-upgrade-price">
-                $49<span>.99</span>
+                $49.99
               </div>
               <div className="asksid-upgrade-price-period">
                 One-time purchase • Full Digital Companion Access

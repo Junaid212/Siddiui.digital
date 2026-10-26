@@ -44,7 +44,10 @@ export default function LoginPage() {
       const redirectUrl = window.location.origin + targetPath;
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: { redirectTo: redirectUrl },
+        options: {
+          redirectTo: redirectUrl,
+          scopes: "openid email profile",
+        },
       });
       if (error) throw error;
     } catch (err) {

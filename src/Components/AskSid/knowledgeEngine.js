@@ -17,8 +17,8 @@
 export const BOOK_METADATA = {
   title: "Marketing Reclassified: A Principle-First Approach",
   author: "M. Q. Siddiqui",
-  slug: "marketing-reclassified-principle-first-approach",
-  publicationUrl: "/publications/marketing-reclassified-principle-first-approach",
+  slug: "marketing-reclassified",
+  publicationUrl: "/publications/marketing-reclassified",
   fullPrice: "$49.99",
   onlinePrice: "$20.00",
   summary:

@@ -4,18 +4,52 @@
  * Implements Payhip's official webhook specification:
  * - Signature verification: SHA-256 of PAYHIP_API_KEY compared to payload.signature
  * - Handles 'paid' events: grants access, creates/links user account, streams confirmation
- * - Handles 'refunded' events: revokes access immediately
+ * - Handles 'refunded' events: revokes full refunds, preserves partial refunds, alerts admin
  * - Idempotent processing ensures retries do not create duplicate records
+ * - Out-of-order protection: prevents delayed 'paid' events from un-refunding cancelled orders
  * - Secure account claim workflow for users whose Payhip email differs from their website account
  */
 
 const crypto = require("crypto");
-const supabase = require("../config/supabaseClient");
-const { verifyPayhipSignature, mapPayhipProductToBook } = require("../utils/payhipVerifier");
-const { sendOrderConfirmationEmail, sendEmail } = require("../utils/orderEmail");
-const { ensureCustomerAccount } = require("../utils/customerAuth");
-const { saveOrderMetadata, getOrderMetadata, findOrderMetadataByToken } = require("../utils/orderStore");
-require("dotenv").config();
+try {
+  require("dotenv").config();
+} catch {}
+
+// Environment-adaptive imports supporting Express and Vercel serverless layouts
+let supabase;
+try {
+  supabase = require("../config/supabaseClient");
+} catch {
+  supabase = require("./supabase");
+}
+
+let payhipVerifier;
+try {
+  payhipVerifier = require("../utils/payhipVerifier");
+} catch {
+  payhipVerifier = require("./payhipVerifier");
+}
+const { verifyPayhipSignature, mapPayhipProductToBook, resolvePayhipProductMapping } = payhipVerifier;
+
+let orderEmailUtils = {};
+try {
+  orderEmailUtils = require("../utils/orderEmail");
+} catch {}
+const { sendOrderConfirmationEmail, sendEmail } = orderEmailUtils;
+
+let customerAuthUtils = {};
+try {
+  customerAuthUtils = require("../utils/customerAuth");
+} catch {}
+const { ensureCustomerAccount } = customerAuthUtils;
+
+let orderStoreUtils;
+try {
+  orderStoreUtils = require("../utils/orderStore");
+} catch {
+  orderStoreUtils = require("./orderStore");
+}
+const { saveOrderMetadata, getOrderMetadata, findOrderMetadataByToken } = orderStoreUtils;
 
 // In-memory store for pending account claim verification codes (15-minute TTL)
 const pendingClaims = new Map();
@@ -26,6 +60,13 @@ async function executeWithSchemaFallback(operationFn, payload) {
   while (true) {
     const res = await operationFn(currentPayload);
     if (!res.error) return res;
+
+    // Handle integer schema constraint for orders.amount
+    if (res.error.code === '22P02' && typeof currentPayload.amount === 'number' && !Number.isInteger(currentPayload.amount)) {
+      console.warn(`[Payhip] orders.amount requires integer in live schema, rounding ${currentPayload.amount} to ${Math.round(currentPayload.amount)}`);
+      currentPayload.amount = Math.round(currentPayload.amount);
+      continue;
+    }
 
     const match = res.error.message?.match(/Could not find the '([^']+)' column/i) ||
                   res.error.message?.match(/column ['"]?([a-zA-Z0-9_]+)['"]? of ['"]?orders['"]? does not exist/i) ||
@@ -44,6 +85,69 @@ async function executeWithSchemaFallback(operationFn, payload) {
 }
 
 /**
+ * Send notification email to admin when a partial refund is issued on Payhip
+ */
+async function sendPartialRefundAdminNotification({
+  transactionId,
+  buyerEmail,
+  orderNumber,
+  bookName,
+  originalAmount,
+  refundAmount,
+  currency,
+  reason,
+}) {
+  const adminEmail = process.env.ADMIN_EMAIL || process.env.SMTP_USER || "info@siddiqui.digital";
+  try {
+    let nodemailer;
+    try {
+      nodemailer = require("nodemailer");
+    } catch {
+      console.warn("[Payhip] nodemailer not available for admin notification.");
+      return;
+    }
+    const port = parseInt(process.env.SMTP_PORT, 10) || 465;
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: port,
+      secure: port === 465,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+      connectionTimeout: 10000,
+    });
+
+    const html = `
+      <div style="font-family:sans-serif; background-color:#18181b; color:#f4f4f5; padding:24px; border-radius:12px;">
+        <h2 style="color:#f59e0b; margin-top:0;">⚠️ Partial Refund Recorded (Payhip)</h2>
+        <p>A partial refund was processed for a Payhip order. Per system compliance rules, the customer's digital access has been <strong>preserved</strong>.</p>
+        <table style="width:100%; border-collapse:collapse; color:#e4e4e7; margin:16px 0;">
+          <tr><td style="padding:8px; border-bottom:1px solid #27272a;"><strong>Transaction ID:</strong></td><td style="padding:8px; border-bottom:1px solid #27272a;">${transactionId}</td></tr>
+          <tr><td style="padding:8px; border-bottom:1px solid #27272a;"><strong>Order Number:</strong></td><td style="padding:8px; border-bottom:1px solid #27272a;">${orderNumber || "N/A"}</td></tr>
+          <tr><td style="padding:8px; border-bottom:1px solid #27272a;"><strong>Customer Email:</strong></td><td style="padding:8px; border-bottom:1px solid #27272a;">${buyerEmail}</td></tr>
+          <tr><td style="padding:8px; border-bottom:1px solid #27272a;"><strong>Product:</strong></td><td style="padding:8px; border-bottom:1px solid #27272a;">${bookName || "Digital Edition"}</td></tr>
+          <tr><td style="padding:8px; border-bottom:1px solid #27272a;"><strong>Original Price:</strong></td><td style="padding:8px; border-bottom:1px solid #27272a;">${currency || "USD"} ${originalAmount || "N/A"}</td></tr>
+          <tr><td style="padding:8px; border-bottom:1px solid #27272a;"><strong>Refunded Amount:</strong></td><td style="padding:8px; border-bottom:1px solid #27272a;">${currency || "USD"} ${refundAmount || "N/A"}</td></tr>
+          <tr><td style="padding:8px; border-bottom:1px solid #27272a;"><strong>Reason / Notes:</strong></td><td style="padding:8px; border-bottom:1px solid #27272a;">${reason || "Partial refund recorded"}</td></tr>
+        </table>
+        <p style="color:#a1a1aa; font-size:13px;">If you need to revoke access or issue a complete refund, manage this order directly in your admin console.</p>
+      </div>
+    `;
+
+    await transporter.sendMail({
+      from: process.env.SMTP_FROM || '"Siddiqui.Digital Alerts" <info@siddiqui.digital>',
+      to: adminEmail,
+      subject: `[ALERT] Partial Refund on Payhip Order: ${orderNumber || transactionId}`,
+      html,
+    });
+    console.log(`[payhipWebhook] Partial refund admin notification sent to ${adminEmail}`);
+  } catch (err) {
+    console.warn(`[payhipWebhook] Failed to send partial refund admin notification:`, err.message);
+  }
+}
+
+/**
  * POST /api/webhooks/payhip
  * Official Payhip Webhook Endpoint (paid and refunded)
  */
@@ -54,7 +158,7 @@ exports.payhipWebhook = async (req, res) => {
     return res.status(400).json({ error: "Invalid payload body." });
   }
 
-  // 1. Signature Verification
+  // 1. Signature Verification (SHA-256 of PAYHIP_API_KEY)
   const isValid = verifyPayhipSignature(payload, req.headers);
   if (!isValid) {
     console.warn("[payhipWebhook] Webhook signature verification failed.");
@@ -74,16 +178,26 @@ exports.payhipWebhook = async (req, res) => {
         return res.status(400).json({ error: "Missing Payhip transaction id." });
       }
 
-      // Idempotency check: see if an order with this payhip_transaction_id already exists and is paid
+      // Check existing records for this transaction ID
       const { data: existingDbOrders } = await supabase
         .from("orders")
         .select("*")
         .eq("payhip_transaction_id", transactionId);
 
-      const isAlreadyPaid = (existingDbOrders || []).some(o => o.status === "paid" || o.status === "successful");
       const existingMeta = findOrderMetadataByToken(transactionId);
+      const allExisting = [...(existingDbOrders || []), ...(existingMeta ? [existingMeta] : [])];
 
-      if (isAlreadyPaid || (existingMeta && existingMeta.status === "paid")) {
+      // Requirement 11: Out-of-order safeguard
+      // If order was already refunded, do NOT restore access or flip status back to paid!
+      const isAlreadyRefunded = allExisting.some(o => o.status === "refunded" || o.refund_status === "refunded");
+      if (isAlreadyRefunded) {
+        console.warn(`[payhipWebhook] Out-of-order event rejected: Transaction ${transactionId} is already refunded. Preserving refund status.`);
+        return res.json({ received: true, ignored: "already_refunded" });
+      }
+
+      // Requirement 3: Idempotency check: see if an order is already paid/successful
+      const isAlreadyPaid = allExisting.some(o => o.status === "paid" || o.status === "successful");
+      if (isAlreadyPaid) {
         console.log(`[payhipWebhook] Transaction ${transactionId} already processed. Skipping duplicate.`);
         return res.json({ received: true, idempotent: true });
       }
@@ -103,7 +217,10 @@ exports.payhipWebhook = async (req, res) => {
 
       // Process items and grant entitlements
       for (const item of items) {
-        const mapping = mapPayhipProductToBook(item, payload);
+        const mapping = typeof resolvePayhipProductMapping === "function"
+          ? await resolvePayhipProductMapping(item, payload)
+          : mapPayhipProductToBook(item, payload);
+
         const orderId = crypto.randomUUID();
         const orderNumber = `ORD-PAYHIP-${transactionId}-${crypto.randomBytes(2).toString("hex").toUpperCase()}`;
 
@@ -114,7 +231,7 @@ exports.payhipWebhook = async (req, res) => {
 
         // Ensure user account exists
         let customerUser = null;
-        if (buyerEmail) {
+        if (buyerEmail && typeof ensureCustomerAccount === "function") {
           try {
             customerUser = await ensureCustomerAccount({
               email: buyerEmail,
@@ -134,7 +251,7 @@ exports.payhipWebhook = async (req, res) => {
           product_id: mapping.productId,
           order_number: orderNumber,
           book_name: mapping.title,
-          amount: parseFloat(totalAmount),
+          amount: Number.isInteger(parseFloat(totalAmount)) ? parseFloat(totalAmount) : Math.round(parseFloat(totalAmount)),
           currency,
           status: "paid",
           payment_provider: "payhip",
@@ -148,6 +265,7 @@ exports.payhipWebhook = async (req, res) => {
           download_limit: isOnline ? 0 : 3,
           webhook_event_id: transactionId,
           raw_metadata: {
+            exact_amount: totalAmount,
             payhip_payload: {
               id: payload.id,
               ip_address: payload.ip_address,
@@ -174,7 +292,7 @@ exports.payhipWebhook = async (req, res) => {
           ? `${clientUrl}/my-orders`
           : `${clientUrl}/order-success?provider=payhip&token=${downloadToken}&order_id=${orderId}`;
 
-        if (buyerEmail) {
+        if (buyerEmail && typeof sendOrderConfirmationEmail === "function") {
           sendOrderConfirmationEmail({
             to: buyerEmail,
             customerName: item.customer_name || "Valued Reader",
@@ -201,30 +319,101 @@ exports.payhipWebhook = async (req, res) => {
         return res.status(400).json({ error: "Missing Payhip transaction id for refund." });
       }
 
-      console.log(`[payhipWebhook] Processing refund for Payhip transaction: ${transactionId}`);
+      console.log(`[payhipWebhook] Processing refund event for Payhip transaction: ${transactionId}`);
 
+      // Fetch existing order record
+      const { data: existingDbOrders } = await supabase
+        .from("orders")
+        .select("*")
+        .eq("payhip_transaction_id", transactionId);
+
+      const existingMeta = findOrderMetadataByToken(transactionId);
+      const existingOrder = existingDbOrders?.[0] || existingMeta;
+
+      // Requirement 11: If order is already completely refunded, safely ignore duplicate
+      if (existingOrder && existingOrder.status === "refunded") {
+        console.log(`[payhipWebhook] Transaction ${transactionId} is already refunded. Skipping duplicate refund.`);
+        return res.json({ received: true, idempotent: true });
+      }
+
+      // Requirement 7: Distinguish between Full Refund and Partial Refund
+      const rawPriceCents = Number(payload.price) || (existingOrder?.amount ? Math.round(existingOrder.amount * 100) : 0);
+      const refundAmountCents = Number(payload.amount_refunded || payload.refund_amount || 0);
+      const isExplicitPartial = Boolean(payload.is_partial || payload.partial || payload.refund_type === "partial");
+      const isPartial = isExplicitPartial || (refundAmountCents > 0 && rawPriceCents > 0 && refundAmountCents < rawPriceCents);
+
+      if (isPartial) {
+        const originalAmt = (rawPriceCents / 100).toFixed(2);
+        const refAmt = (refundAmountCents / 100).toFixed(2);
+        console.log(`[payhipWebhook] Partial refund for ${transactionId}: refunded ${refAmt} of ${originalAmt}. Access preserved.`);
+
+        const partialPayload = {
+          refund_status: "partially_refunded",
+          refund_date: new Date().toISOString(),
+          raw_metadata: {
+            ...(existingOrder?.raw_metadata || {}),
+            partial_refund: {
+              amount_refunded: refAmt,
+              currency: payload.currency || "USD",
+              refund_date: new Date().toISOString(),
+              payload: payload,
+            }
+          }
+        };
+
+        // Update DB without revoking access (status remains 'paid', tokens remain active)
+        await executeWithSchemaFallback(
+          (updateData) => supabase.from("orders").update(updateData).eq("payhip_transaction_id", transactionId),
+          partialPayload
+        );
+
+        if (existingOrder?.id) {
+          saveOrderMetadata(existingOrder.id, {
+            ...(existingOrder || {}),
+            ...partialPayload,
+          });
+        }
+
+        // Notify administrator
+        await sendPartialRefundAdminNotification({
+          transactionId,
+          buyerEmail: buyerEmail || existingOrder?.email,
+          orderNumber: existingOrder?.order_number,
+          bookName: existingOrder?.book_name || payload.product_name,
+          originalAmount: originalAmt,
+          refundAmount: refAmt,
+          currency: payload.currency || "USD",
+          reason: payload.reason || "Partial refund processed on Payhip",
+        });
+
+        return res.json({ received: true, partial_refund: true, access_preserved: true });
+      }
+
+      // Full Refund: revoke entitlements immediately
+      console.log(`[payhipWebhook] Full refund for ${transactionId}. Revoking associated entitlements.`);
       const refundPayload = {
         status: "refunded",
         refund_status: "refunded",
+        download_token: null, // Revoke digital download token
         refund_date: new Date().toISOString(),
       };
 
       // Revoke in Supabase
       await executeWithSchemaFallback(
-        (payload) => supabase.from("orders").update(payload).eq("payhip_transaction_id", transactionId),
+        (data) => supabase.from("orders").update(data).eq("payhip_transaction_id", transactionId),
         refundPayload
       );
 
       // Revoke in orderStore
-      const existingMeta = findOrderMetadataByToken(transactionId);
-      if (existingMeta?.orderId) {
-        saveOrderMetadata(existingMeta.orderId, {
+      if (existingOrder?.id) {
+        saveOrderMetadata(existingOrder.id, {
+          ...(existingOrder || {}),
           ...refundPayload,
           status: "refunded",
         });
       }
 
-      return res.json({ received: true, refunded: true });
+      return res.json({ received: true, refunded: true, access_revoked: true });
     }
 
     // Unhandled event type (e.g. subscription.created, etc.)
@@ -340,7 +529,7 @@ exports.confirmPayhipClaim = async (req, res) => {
   try {
     // Resolve target user in Supabase
     let resolvedUserId = targetUserId || null;
-    if (!resolvedUserId) {
+    if (!resolvedUserId && typeof ensureCustomerAccount === "function") {
       try {
         const userObj = await ensureCustomerAccount({
           email: cleanTargetEmail,

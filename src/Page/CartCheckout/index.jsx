@@ -74,7 +74,10 @@ export default function CartCheckoutPage() {
     try {
       await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: { redirectTo: window.location.href },
+        options: {
+          redirectTo: window.location.href,
+          scopes: "openid email profile",
+        },
       });
     } finally {
       setAuthLoading(false);
@@ -207,6 +210,41 @@ export default function CartCheckoutPage() {
     }
   };
 
+  /* ── Payhip URL Resolver ───────────────────────── */
+  const resolveItemPayhipUrl = (item, isUpgrade = false, email = "") => {
+    let url = "";
+    if (isUpgrade && item?.upgradePayhipUrl) url = item.upgradePayhipUrl;
+    if (!url && item?.payhipCheckoutUrl) url = item.payhipCheckoutUrl;
+    if (!url && item?.payhipProductId) url = `https://payhip.com/b/${item.payhipProductId.trim()}`;
+
+    if (!url) {
+      const isOnline = item?.accessType === "online" || (Number(item?.price) < 30 && !isUpgrade);
+      if (isUpgrade) {
+        url = import.meta.env.VITE_PAYHIP_UPGRADE_URL || (import.meta.env.VITE_PAYHIP_UPGRADE_PRODUCT_ID ? `https://payhip.com/b/${import.meta.env.VITE_PAYHIP_UPGRADE_PRODUCT_ID}` : "");
+      } else if (isOnline) {
+        url = import.meta.env.VITE_PAYHIP_ONLINE_URL || (import.meta.env.VITE_PAYHIP_ONLINE_PRODUCT_ID ? `https://payhip.com/b/${import.meta.env.VITE_PAYHIP_ONLINE_PRODUCT_ID}` : "");
+      } else {
+        url = import.meta.env.VITE_PAYHIP_COMPANION_URL || (import.meta.env.VITE_PAYHIP_COMPANION_PRODUCT_ID ? `https://payhip.com/b/${import.meta.env.VITE_PAYHIP_COMPANION_PRODUCT_ID}` : "");
+      }
+    }
+
+    if (url && email) {
+      const sep = url.includes("?") ? "&" : "?";
+      url = `${url}${sep}email=${encodeURIComponent(email.trim())}`;
+    }
+    return url;
+  };
+
+  const handlePayhipItemCheckout = (item, isUpgrade) => {
+    const email = (user?.email || formData.email || "").trim();
+    const url = resolveItemPayhipUrl(item, isUpgrade, email);
+    if (url) {
+      window.location.href = url;
+    } else {
+      setCheckoutError(`Payhip checkout for "${item.title}" is pending configuration. Please complete checkout directly on the publication page.`);
+    }
+  };
+
   /* ── Checkout ───────────────────────────────────── */
   const handleCheckout = async (e) => {
     e.preventDefault();
@@ -224,6 +262,30 @@ export default function CartCheckoutPage() {
 
     setCheckoutLoading(true);
     setCheckoutError("");
+
+    // Identify if all cart items are book publications
+    const allBooks = items.every(i => i.accessType === "online" || i.accessType === "companion" || i.accessType === "download" || Number(i.price) > 0);
+
+    // If client requested Payhip for books:
+    if (allBooks) {
+      if (items.length === 1) {
+        const item = items[0];
+        const isCompanion = Number(item.price) >= 40 ||
+          item.accessType === "companion" ||
+          String(item.title).toLowerCase().includes("companion");
+        const isUpgrade = canUpgradeInCart && isCompanion;
+        const payhipUrl = resolveItemPayhipUrl(item, isUpgrade, formData.email.trim());
+
+        if (payhipUrl) {
+          window.location.href = payhipUrl;
+          return;
+        }
+      } else {
+        setCheckoutLoading(false);
+        setCheckoutError("Payhip processes book checkouts individually per edition. Please click 'Buy with Payhip' next to your preferred edition in your cart below.");
+        return;
+      }
+    }
 
     try {
       // Build line items, adjusting price for upgrade if applicable
@@ -612,6 +674,7 @@ export default function CartCheckoutPage() {
                           price={displayPrice}
                           isUpgrade={canUpgradeInCart && isComp}
                           fmt={fmt}
+                          onPayhip={handlePayhipItemCheckout}
                         />
                       );
                     })}
@@ -782,9 +845,11 @@ export default function CartCheckoutPage() {
                     id="checkout-submit-btn"
                   >
                     {checkoutLoading ? (
-                      <><span className="checkout-spinner" /> Connecting to PayPal…</>
+                      <><span className="checkout-spinner" /> Connecting…</>
                     ) : blockedReason ? (
                       <><i className="fa-solid fa-ban" /> Already Owned</>
+                    ) : items.every(i => i.accessType === "online" || i.accessType === "companion" || i.accessType === "download") ? (
+                      <><i className="fa-solid fa-bolt" style={{ marginRight: 8 }} /> Proceed to Payhip Checkout ({fmt(effectiveTotal)})</>
                     ) : (
                       <><i className="fa-brands fa-paypal" style={{ marginRight: 8 }} /> Pay {fmt(effectiveTotal)} with PayPal</>
                     )}
@@ -792,7 +857,7 @@ export default function CartCheckoutPage() {
 
                   <div className="checkout-trust-row">
                     <span><i className="fa-solid fa-lock" />SSL Secured</span>
-                    <span><i className="fa-brands fa-paypal" />Powered by PayPal</span>
+                    <span><i className="fa-solid fa-shield-halved" />Payhip &amp; PayPal</span>
                     <span><i className="fa-solid fa-bolt" />Instant Delivery</span>
                   </div>
                 </div>
@@ -806,7 +871,7 @@ export default function CartCheckoutPage() {
 }
 
 /* ── Item row in order list ──────────────────────────────────── */
-function CheckoutItem({ item, price, isUpgrade, fmt }) {
+function CheckoutItem({ item, price, isUpgrade, fmt, onPayhip }) {
   const [imgErr, setImgErr] = useState(false);
   return (
     <div className="checkout-item">
@@ -842,7 +907,30 @@ function CheckoutItem({ item, price, isUpgrade, fmt }) {
             : item.accessLabel || (item.accessType === "online" ? "Online Access" : "Digital Companion Edition")}
         </div>
       </div>
-      <div className="checkout-item-price">{fmt(price ?? item.price)}</div>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
+        <div className="checkout-item-price">{fmt(price ?? item.price)}</div>
+        {onPayhip && (
+          <button
+            type="button"
+            onClick={() => onPayhip(item, isUpgrade)}
+            style={{
+              background: '#10b981',
+              color: '#fff',
+              border: 'none',
+              borderRadius: 6,
+              padding: '4px 8px',
+              fontSize: '0.72rem',
+              fontWeight: 700,
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 4
+            }}
+          >
+            <i className="fa-solid fa-bolt" /> Payhip
+          </button>
+        )}
+      </div>
     </div>
   );
 }

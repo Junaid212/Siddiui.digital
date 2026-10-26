@@ -17,7 +17,7 @@ export default function BuyBookPage() {
                 if (res && (res.product || (res.products && res.products[0]))) {
                     const p = res.product || res.products[0];
                     if (p && p.title) {
-                        setPageTitle(`${p.title} — Siddiqui.Digital`);
+                        setPageTitle(`${p.title} by M. Q. Siddiqui | Siddiqui.digital`);
                     }
                 }
             } catch (e) {

@@ -69,7 +69,10 @@ export default function MyOrdersPage() {
     try {
       await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: { redirectTo: window.location.href },
+        options: {
+          redirectTo: window.location.href,
+          scopes: "openid email profile",
+        },
       });
     } finally {
       setAuthLoading(false);
@@ -170,17 +173,19 @@ export default function MyOrdersPage() {
   const canUpgrade = ownsOnlineEdition && !ownsCompanionEdition;
 
   const handleUpgrade = (order) => {
-    addItem({
-      productId: order?.product_id || "04b84648-3609-4b31-9ded-2486bacf1e74",
-      title: order?.book_name?.replace(/—.*/, "").trim() || "Marketing Reclassified",
-      price: 29.99,
-      currency: "USD",
-      accessType: "companion",
-      accessLabel: "Upgrade to Digital Companion Edition",
-      isUpgrade: true,
-      originalOwnedEdition: "online",
-    });
-    openCart();
+    const upgradeUrl = import.meta.env.VITE_PAYHIP_UPGRADE_URL ||
+      (import.meta.env.VITE_PAYHIP_UPGRADE_PRODUCT_ID ? `https://payhip.com/b/${import.meta.env.VITE_PAYHIP_UPGRADE_PRODUCT_ID}` : "");
+    const email = (user?.email || lookupEmail || "").trim();
+
+    if (upgradeUrl) {
+      const sep = upgradeUrl.includes("?") ? "&" : "?";
+      window.location.href = `${upgradeUrl}${sep}email=${encodeURIComponent(email)}`;
+      return;
+    }
+
+    // Direct to publications page editions anchor
+    const slug = order?.slug || "marketing-reclassified";
+    window.location.href = `/publications/${slug}#editions`;
   };
 
   /* ── Render ─────────────────────────────────────── */

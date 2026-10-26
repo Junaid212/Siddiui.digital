@@ -332,6 +332,8 @@ export default function BuyBookCheckout() {
       accessLabel,
       isUpgrade,
       slug: slug || null,
+      payhipProductId: isUpgrade ? (option?.upgrade_payhip_product_id || "") : (option?.payhip_product_id || ""),
+      payhipCheckoutUrl: isUpgrade ? (option?.upgrade_payhip_checkout_url || "") : (option?.payhip_checkout_url || ""),
     });
 
     if (isUpgrade) {
@@ -346,7 +348,67 @@ export default function BuyBookCheckout() {
     setTimeout(() => setToastMessage(""), 3500);
   };
 
-  // Stripe Checkout with ownership and upgrade rules
+  // Sanitize and extract clean Payhip URL
+  const extractPayhipUrl = (str) => {
+    if (!str) return "";
+    const match = String(str).match(/https?:\/\/payhip\.com\/b\/[a-zA-Z0-9]+/i);
+    return match ? match[0] : str.trim();
+  };
+
+  // Resolve Payhip Checkout URL for selected edition
+  const getPayhipCheckoutUrl = (option, isUpgrade = false, customerEmail = "") => {
+    let url = "";
+
+    // 1. Upgrade-specific Payhip checkout
+    if (isUpgrade) {
+      if (option?.upgrade_payhip_checkout_url) {
+        url = extractPayhipUrl(option.upgrade_payhip_checkout_url);
+      } else if (option?.upgrade_payhip_product_id) {
+        url = `https://payhip.com/b/${option.upgrade_payhip_product_id.trim()}`;
+      } else if (import.meta.env.VITE_PAYHIP_UPGRADE_URL) {
+        url = extractPayhipUrl(import.meta.env.VITE_PAYHIP_UPGRADE_URL);
+      } else if (import.meta.env.VITE_PAYHIP_UPGRADE_PRODUCT_ID) {
+        url = `https://payhip.com/b/${import.meta.env.VITE_PAYHIP_UPGRADE_PRODUCT_ID.trim()}`;
+      }
+    }
+
+    // 2. Direct edition-configured checkout
+    if (!url && option) {
+      if (option.payhip_checkout_url) {
+        url = extractPayhipUrl(option.payhip_checkout_url);
+      } else if (option.payhip_product_id) {
+        url = `https://payhip.com/b/${option.payhip_product_id.trim()}`;
+      }
+    }
+
+    // 3. Fallbacks by edition tier from environment variables
+    if (!url) {
+      const isOnline = option?.access_type === "online" || Number(option?.price) === 20;
+      if (isOnline) {
+        if (import.meta.env.VITE_PAYHIP_ONLINE_URL) {
+          url = import.meta.env.VITE_PAYHIP_ONLINE_URL.trim();
+        } else if (import.meta.env.VITE_PAYHIP_ONLINE_PRODUCT_ID) {
+          url = `https://payhip.com/b/${import.meta.env.VITE_PAYHIP_ONLINE_PRODUCT_ID.trim()}`;
+        }
+      } else {
+        if (import.meta.env.VITE_PAYHIP_COMPANION_URL) {
+          url = import.meta.env.VITE_PAYHIP_COMPANION_URL.trim();
+        } else if (import.meta.env.VITE_PAYHIP_COMPANION_PRODUCT_ID) {
+          url = `https://payhip.com/b/${import.meta.env.VITE_PAYHIP_COMPANION_PRODUCT_ID.trim()}`;
+        }
+      }
+    }
+
+    // 4. Attach buyer email for prefilling on Payhip checkout
+    if (url && customerEmail) {
+      const sep = url.includes("?") ? "&" : "?";
+      url = `${url}${sep}email=${encodeURIComponent(customerEmail.trim())}`;
+    }
+
+    return url;
+  };
+
+  // Payhip Checkout with ownership and upgrade rules
   const handlePurchase = async (option) => {
     setCheckoutError("");
     const isObj = typeof option === "object" && option !== null;
@@ -371,73 +433,40 @@ export default function BuyBookCheckout() {
       return;
     }
 
-    if (!formData.email.trim()) {
+    const customerEmail = (user?.email || formData.email || "").trim();
+    if (!customerEmail) {
       setSelectedOption(option);
       setShowQuickForm(true);
       return;
     }
 
     setProcessingOption(optionKey);
-    try {
-      let productId, bookName, amount, currency;
-      let isUpgrade = false;
 
-      // Rule 3: Owns $20 edition, buying $49.99 edition -> charge difference (USD 29.99)
-      if (ownership.edition === "online" && isCompanionOpt) {
-        productId = option.product_id || product?.id;
-        bookName = `${product?.title || "Publication"} — Upgrade to Digital Companion Edition`;
-        amount = 29.99;
-        currency = option.currency || product?.currency || "USD";
-        isUpgrade = true;
-      } else if (isObj) {
-        productId = option.product_id || product?.id;
-        bookName = `${product?.title || "Publication"} — ${option.name}`;
-        amount = Number(option.price) || 0;
-        currency = option.currency || product?.currency || "USD";
-      } else {
-        productId = product?.id;
-        bookName = product?.title || "Publication";
-        amount = Number(product?.price) || 0;
-        currency = product?.currency || "USD";
-      }
+    const isUpgrade = ownership.edition === "online" && isCompanionOpt;
+    const payhipUrl = getPayhipCheckoutUrl(option, isUpgrade, customerEmail);
 
-      let finalAmount = amount;
-      let appliedDiscountAmount = 0;
-      if (couponDiscount && !isUpgrade) {
-        const pct = Number(couponDiscount.value || couponDiscount.discount_percentage || 0);
-        if (pct > 0) {
-          appliedDiscountAmount = Math.round(((amount * pct) / 100) * 100) / 100;
-          finalAmount = Math.max(0, Math.round((amount - appliedDiscountAmount) * 100) / 100);
-        }
-      }
+    if (payhipUrl) {
+      // Preserve selection in session storage
+      try {
+        sessionStorage.setItem("pendingPurchase", JSON.stringify({
+          option,
+          productTitle: product?.title,
+          isUpgrade,
+          customerEmail,
+          timestamp: Date.now()
+        }));
+      } catch (_) {}
 
-      const result = await api.createCheckout({
-        productId,
-        bookName: couponDiscount && !isUpgrade ? `${bookName} (${couponDiscount.value || couponDiscount.discount_percentage}% OFF - ${couponCode})` : bookName,
-        customerName: formData.name.trim() || "Valued Reader",
-        customerEmail: formData.email.trim(),
-        userId: user?.id || null,
-        accessType: isUpgrade ? "companion" : optionKey,
-        isUpgrade,
-        amount: finalAmount,
-        originalAmount: amount,
-        discountCode: couponDiscount && !isUpgrade ? couponCode : null,
-        discountPercentage: couponDiscount && !isUpgrade ? Number(couponDiscount.value || couponDiscount.discount_percentage) : 0,
-        discountAmount: appliedDiscountAmount,
-        currency,
-      });
-
-      if (result && result.url) {
-        window.location.href = result.url;
-      } else {
-        setCheckoutError(result?.error || "Failed to create checkout session. Please try again.");
-        setProcessingOption(null);
-      }
-    } catch (err) {
-      console.error("Checkout error:", err);
-      setCheckoutError(err.message || "Unable to reach checkout. Please try again.");
-      setProcessingOption(null);
+      // Redirect directly to Payhip checkout for the selected edition
+      window.location.href = payhipUrl;
+      return;
     }
+
+    // Payhip URL not yet configured for this edition
+    setProcessingOption(null);
+    setCheckoutError(
+      `Payhip checkout configuration for ${isObj ? option.name : "this edition"} is pending. Please configure the Payhip Product ID in the Admin Panel.`
+    );
   };
 
   const handleAskSidSubmit = (e) => {
@@ -919,7 +948,7 @@ export default function BuyBookCheckout() {
                           disabled={processingOption === (opt.access_type || `opt-${i}`)}
                         >
                           {processingOption === (opt.access_type || `opt-${i}`)
-                            ? "Connecting to PayPal…"
+                            ? "Connecting to Payhip…"
                             : isUpgradeAvailable
                             ? "Upgrade to Digital Companion · $29.99"
                             : (opt.cta_text || `Get ${opt.name} · $${priceNum.toFixed(2)}`)}

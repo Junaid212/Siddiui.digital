@@ -18,7 +18,7 @@ const Footer = () => {
                                         className="logo"
                                     /> */}
                                     <p className="accent-color-2">
-                                        Siddiqui.digital – Reclassifying marketing as strategic intelligence.
+                                        Siddiqui.digital: Reclassifying marketing as strategic intelligence.
                                     </p>
                                     <ul className="footer-list no-dark">
                                         <li>

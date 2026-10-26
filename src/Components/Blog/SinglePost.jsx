@@ -307,7 +307,7 @@ const SinglePostSection = ({ blog, relatedArticles = [], loading }) => {
                     }
                 }
                 .editorial-featured-img {
-                    height: 460px;
+                    height: 100% !important;
                 }
                 .book-connection-panel,
                 .book-connection-panel *,
@@ -547,7 +547,7 @@ const SinglePostSection = ({ blog, relatedArticles = [], loading }) => {
                 </header>
 
                 {/* FEATURED IMAGE */}
-                <div style={{ maxWidth: '1040px', margin: '0 auto', padding: '0 24px' }}>
+                <div style={{ maxWidth: '1040px', margin: '0 auto', padding: '0 24px', height: 'full' }}>
                     <figure style={{ margin: 0, display: 'flex', flexDirection: 'column', gap: '10px' }}>
                         {blog.image_url ? (
                             <img
@@ -558,7 +558,7 @@ const SinglePostSection = ({ blog, relatedArticles = [], loading }) => {
                                     width: '100%',
                                     borderRadius: '14px',
                                     objectFit: 'cover',
-                                    display: 'block'
+                                    display: 'block',
                                 }}
                             />
                         ) : (

@@ -273,7 +273,7 @@ const BlogSection = () => {
           font-size: 13px;
           letter-spacing: 3px;
           font-weight: 700;
-          color: #F2C6CD;
+          color: #F2C6CD !important;
           text-transform: uppercase;
         }
 
@@ -402,7 +402,7 @@ const BlogSection = () => {
         }
 
         .featured-content {
-          flex: 1 1 460px;
+          flex: 1 1 260px;
           padding: 44px;
           display: flex;
           flex-direction: column;
@@ -432,14 +432,14 @@ const BlogSection = () => {
 
         .featured-excerpt {
           margin: 0;
-          font-size: 17px;
-          line-height: 1.55;
+          font-size: 14px;
+          line-height: 1.5;
           color: #3E4556;
         }
 
         .featured-meta {
           margin: 0;
-          font-size: 14px;
+          font-size: 12px;
           color: #4A5163;
         }
 
@@ -450,7 +450,7 @@ const BlogSection = () => {
           text-decoration: none;
           font-weight: 700;
           font-size: 15px;
-          padding: 12px 24px;
+          padding: 8px 24px;
           border-radius: 8px;
           display: inline-flex;
           align-items: center;
@@ -856,7 +856,7 @@ const BlogSection = () => {
         {/* SECTION 2: BLOG INTRO & WORKING SEARCH */}
         <section className="blog-hero-section">
           <div className="blog-hero-container">
-            <p className="blog-hero-pretitle">Siddiqui.digital Editorial</p>
+            <div className="blog-hero-pretitle">Siddiqui.digital Editorial</div>
             <h1 className="blog-hero-title">Insight and Perspectives</h1>
             <p className="blog-hero-subtitle">
               Ideas that challenge assumptions, improve decisions, and connect purpose with value.
@@ -936,7 +936,7 @@ const BlogSection = () => {
                   })}{' '}
                   · {featuredBlog.reading_time || '4 min read'}
                 </p>
-                {(featuredBlog.linkedin_url || featuredBlog.instagram_url || featuredBlog.facebook_url) && (
+                {/* {(featuredBlog.linkedin_url || featuredBlog.instagram_url || featuredBlog.facebook_url) && (
                   <div className="card-social-links" style={{ marginBottom: '16px' }} onClick={(e) => e.stopPropagation()}>
                     <span style={{ fontSize: '13px', fontWeight: 600, color: '#4A5163', marginRight: '4px' }}>Follow:</span>
                     {featuredBlog.linkedin_url && (
@@ -988,7 +988,7 @@ const BlogSection = () => {
                       </a>
                     )}
                   </div>
-                )}
+                )} */}
                 <Link
                   to={`/blogs/${featuredBlog.slug || featuredBlog.id}`}
                   className="featured-cta"
@@ -1262,7 +1262,7 @@ const BlogSection = () => {
                 A principle-first approach reclassifying marketing as strategic intelligence and corporate governance. Written by M. Q. Siddiqui.
               </p>
               <Link
-                to="/publications/marketing-reclassified-principle-first-approach"
+                to="/publications/marketing-reclassified"
                 className="book-panel-cta"
               >
                 Explore the Book →
