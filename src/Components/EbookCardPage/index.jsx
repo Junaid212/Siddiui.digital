@@ -12,8 +12,8 @@ const DEFAULT_CATALOG = [
     priceNum: 49.00,
     currency: 'AED',
     image: '/assets/images/img/book1.webp',
-    link: '/publications/marketing-reclassified-principle-first-approach',
-    slug: 'marketing-reclassified-principle-first-approach',
+    link: '/publications/marketing-reclassified',
+    slug: 'marketing-reclassified',
     publication_status: 'available',
   },
   {

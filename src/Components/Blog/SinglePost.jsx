@@ -1,3 +1,4 @@
+import DOMPurify from "dompurify";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Check, Link2 } from "lucide-react";
@@ -128,9 +129,29 @@ const SinglePostSection = ({ blog, relatedArticles = [], loading }) => {
         return line.trim().replace(/^[•·\-\*]\s*/, '').trim();
     };
 
-    // Parse editorial body: keeps blank lines between paragraphs, and shows lines starting with • as bullets
+    const isHtmlContent = (str) => {
+        if (!str || typeof str !== 'string') return false;
+        return /<(p|h[1-6]|ul|ol|li|blockquote|div|strong|em|u|a|img|hr|table|span)\b[^>]*>/i.test(str);
+    };
+
+    // Parse editorial body: supports rich HTML as well as legacy plain text
     const renderEditorialBody = (text) => {
         if (!text || typeof text !== 'string') return null;
+
+        if (isHtmlContent(text)) {
+            const cleanHtml = DOMPurify.sanitize(text, {
+                ADD_ATTR: ['target', 'rel', 'class', 'style', 'alt', 'title', 'src'],
+                ADD_TAGS: ['img', 'h2', 'h3', 'h4', 'ul', 'ol', 'li', 'p', 'blockquote', 'strong', 'em', 'u', 'a', 'hr', 'table', 'thead', 'tbody', 'tr', 'th', 'td']
+            });
+
+            return (
+                <div
+                    className="editorial-rendered-content"
+                    dangerouslySetInnerHTML={{ __html: cleanHtml }}
+                />
+            );
+        }
+
         const blocks = text.split(/\n\s*\n/);
 
         return blocks.map((block, bIdx) => {
@@ -291,6 +312,82 @@ const SinglePostSection = ({ blog, relatedArticles = [], loading }) => {
                     font-size: 40px;
                     line-height: 1.15;
                     color: #13294B !important;
+                }
+                .editorial-rendered-content {
+                    font-size: 19px;
+                    line-height: 1.75;
+                    color: #1B1F2A;
+                }
+                .editorial-rendered-content p {
+                    margin: 0 0 24px 0;
+                    line-height: 1.75;
+                }
+                .editorial-rendered-content h2 {
+                    font-size: 30px;
+                    line-height: 1.3;
+                    color: #13294B !important;
+                    font-family: 'Source Serif 4', Georgia, serif;
+                    font-weight: 700;
+                    margin: 38px 0 16px;
+                }
+                .editorial-rendered-content h3 {
+                    font-size: 24px;
+                    line-height: 1.35;
+                    color: #13294B !important;
+                    font-family: 'Source Serif 4', Georgia, serif;
+                    font-weight: 700;
+                    margin: 30px 0 14px;
+                }
+                .editorial-rendered-content h4 {
+                    font-size: 20px;
+                    line-height: 1.4;
+                    color: #13294B !important;
+                    font-weight: 600;
+                    margin: 24px 0 12px;
+                }
+                .editorial-rendered-content ul,
+                .editorial-rendered-content ol {
+                    margin: 0 0 24px 0;
+                    padding-left: 28px;
+                }
+                .editorial-rendered-content ul {
+                    list-style-type: disc;
+                }
+                .editorial-rendered-content ol {
+                    list-style-type: decimal;
+                }
+                .editorial-rendered-content li {
+                    margin-bottom: 8px;
+                    line-height: 1.75;
+                }
+                .editorial-rendered-content blockquote {
+                    margin: 32px 0;
+                    padding: 18px 24px;
+                    border-left: 4px solid #8A1528;
+                    background: #F7EEF0;
+                    border-radius: 0 8px 8px 0;
+                    font-style: italic;
+                    font-family: 'Source Serif 4', Georgia, serif;
+                    font-size: 20px;
+                    color: #8A1528;
+                }
+                .editorial-rendered-content img {
+                    max-width: 100%;
+                    height: auto;
+                    border-radius: 12px;
+                    margin: 28px 0;
+                    display: block;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+                }
+                .editorial-rendered-content a {
+                    color: #8A1528;
+                    text-decoration: underline;
+                    font-weight: 600;
+                }
+                .editorial-rendered-content hr {
+                    border: none;
+                    border-top: 1px solid #E3E6EC;
+                    margin: 36px 0;
                 }
                 .editorial-standfirst {
                     font-size: 22px;
@@ -593,7 +690,7 @@ const SinglePostSection = ({ blog, relatedArticles = [], loading }) => {
 
                 {/* BODY CONTENT */}
                 <div style={{
-                    maxWidth: '720px',
+                    maxWidth: '920px',
                     margin: '0 auto',
                     padding: '48px 24px 24px',
                     display: 'flex',
@@ -844,7 +941,7 @@ const SinglePostSection = ({ blog, relatedArticles = [], loading }) => {
                                     {blog.book_concept || "Explore the foundational principles connecting purpose with measurable business value."}
                                 </p>
                                 <Link
-                                    to="/publications/marketing-reclassified-principle-first-approach"
+                                    to="/publications/marketing-reclassified"
                                     style={{
                                         fontWeight: 700,
                                         display: 'inline-flex',

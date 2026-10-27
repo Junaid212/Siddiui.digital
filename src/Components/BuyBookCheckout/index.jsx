@@ -970,7 +970,7 @@ export default function BuyBookCheckout() {
             </div>
 
             {/* Coupon Code Redemption Bar */}
-            <div className="v2-coupon-box">
+            {/* <div className="v2-coupon-box">
               <span style={{ fontSize: "14px", fontWeight: 600, color: "var(--v2-navy)" }}>Have a promotional discount code?</span>
               <div className="v2-coupon-row">
                 <input
@@ -997,7 +997,7 @@ export default function BuyBookCheckout() {
               </div>
               {couponSuccess && <p style={{ margin: 0, fontSize: "13px", color: "var(--v2-green)", fontWeight: 600 }}>{couponSuccess}</p>}
               {couponError && <p style={{ margin: 0, fontSize: "13px", color: "#ef4444", fontWeight: 600 }}>{couponError}</p>}
-            </div>
+            </div> */}
 
             {product.editions_footnote && (
               <p className="v2-editions-footnote">

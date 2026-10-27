@@ -112,23 +112,13 @@ const Footer = () => {
                             <span className="copyright-text">
                                 Siddiqui.digital © 2026 All Rights Reserved. <a href="https://brightmedia.tech" target="_blank" rel="noopener noreferrer" style={{color:'#C80808'}}>Bright Media</a>
                             </span>
-                            <div className="social-footer" >
-                                {/* <a href="#" className="social-item accent-color" id="accent-color">
-                                    <i className="fa-brands fa-facebook-f"></i>
-                                </a>
-                                <a href="#" className="social-item accent-color">
-                                    <i className="fa-brands fa-x-twitter"></i>
-                                </a>
-                                <a href="#" className="social-item accent-color">
-                                    <i className="fa-brands fa-instagram"></i>
-                                </a>
-                                <a href="#" className="social-item accent-color">
-                                    <i className="fa-brands fa-pinterest"></i>
-                                </a>
-                                <a href="#" className="social-item accent-color">
-                                    <i className="fa-brands fa-youtube"></i>
-                                </a> */}
-                            </div>
+                            <nav className="footer-legal-links" aria-label="Legal & Policies">
+                                <Link to="/privacy-policy" className="footer-legal-link" id="footer-privacy-policy">Privacy Policy</Link>
+                                <span className="footer-legal-divider" aria-hidden="true">·</span>
+                                <Link to="/terms-of-use" className="footer-legal-link" id="footer-terms-of-use">Terms of Use</Link>
+                                <span className="footer-legal-divider" aria-hidden="true">·</span>
+                                <Link to="/refund-policy" className="footer-legal-link" id="footer-refund-policy">Refund Policy</Link>
+                            </nav>
                         </div>
                     </div>
                 </div>

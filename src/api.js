@@ -375,7 +375,7 @@ export const api = {
             publicDemoEnabled: true,
             demoQuestionLimit: 1,
             upgradeCtaText: "Unlock Full Ask SID with the Digital Companion Edition ($49.99)",
-            upgradeUrl: "/publications/marketing-reclassified-principle-first-approach",
+            upgradeUrl: "/publications/marketing-reclassified",
             advisoryCtaEnabled: true,
             advisoryUrl: "/consultation"
         };

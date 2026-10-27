@@ -1186,7 +1186,7 @@ body.light-mode,
 .asksid-sim-pill {
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid var(--sid-border);
-  color: var(--sid-text-muted);
+  color: #ffffff;
   font-size: 0.76rem;
   padding: 5px 11px;
   border-radius: 14px;

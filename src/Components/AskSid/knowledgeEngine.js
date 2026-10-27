@@ -15,7 +15,7 @@
  */
 
 export const BOOK_METADATA = {
-  title: "Marketing Reclassified: A Principle-First Approach",
+  title: "Marketing Reclassified",
   author: "M. Q. Siddiqui",
   slug: "marketing-reclassified",
   publicationUrl: "/publications/marketing-reclassified",

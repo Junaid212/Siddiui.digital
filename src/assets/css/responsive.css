@@ -311,9 +311,16 @@
         padding: 1em 1em 1em 1em;
         flex-direction: column;
         justify-content: center;
+        gap: 12px;
     }
     .copyright-text{
         text-align: center;
+    }
+    .footer-legal-links{
+        justify-content: center;
+        text-align: center;
+        gap: 8px 12px;
+        width: 100%;
     }
 }
 
