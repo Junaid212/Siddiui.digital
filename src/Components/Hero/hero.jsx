@@ -541,18 +541,18 @@ export default function Hero({ onBookConsultation }) {
               <h1 className="hero-title-new">
                 <span style={{ display: 'none' }}>Marketing Consultant, Courses & Business Growth Solutions</span>
 
-                <AnimatedCharacters text="Marketing," />
+                <AnimatedCharacters text="Marketing" />
                 <div className="hero-title-accent">
                   <br />
                   <AnimatedCharacters text="Reclassified." isAccent={true} />
                 </div>
               </h1>
               <p style={{ display: "none" }}>
-                marketing consultant, online marketing courses, business strategy training, digital marketing ebooks, marketing mentor, business growth advisor
+                Marketing consultant, online marketing courses, business strategy training, digital marketing ebooks, marketing mentor, business growth advisor
               </p>
 
               <p className="hero-description">
-                strategic thinking for creating value, strengthening relevance and making more purposeful marketing and business decisions.
+                Strategic thinking for creating value, strengthening relevance and making more purposeful marketing and business decisions.
               </p>
 
               <div className="button-group">
@@ -571,9 +571,9 @@ export default function Hero({ onBookConsultation }) {
               {/* Quick Stats */}
               <div className="stats-grid">
                 {[
-                  { icon: BookOpen, label: "E-Books", value: "Published" },
+                  { icon: BookOpen, label: "E-Books", value: "Author" },
                   { icon: GraduationCap, label: "15000+ Students", value: "Mentored" },
-                  { icon: CalendarCheck, label: "Experience", value: "39 Years" },
+                  { icon: CalendarCheck, label: "Experience", value: "Nearly Four Decades" },
                 ].map((stat, i) => (
                   <motion.div
                     key={stat.label}

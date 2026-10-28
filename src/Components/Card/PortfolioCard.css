@@ -155,7 +155,7 @@
 .portfolio-modal-desc {
     font-size: 0.975rem;
     line-height: 1.68;
-    color: #cbd5e1;
+    color: #cbd5e1 !important;
     margin-bottom: 1.5rem;
 }
 
@@ -173,7 +173,7 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    color: #ff6b6b;
+    color: #ff4242 !important;
     font-size: 0.85rem;
     font-weight: 700;
     letter-spacing: 0.04em;
@@ -184,7 +184,7 @@
 .portfolio-modal-suited-text {
     font-size: 0.925rem;
     line-height: 1.55;
-    color: #e2e8f0;
+    color: #e2e8f0 !important;
     margin: 0;
 }
 

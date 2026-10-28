@@ -77,7 +77,7 @@ const Footer = () => {
                                         <li><Link to="/ask-sid">Ask Sid</Link></li>
                                         <li><Link to="/framework">Frameworks</Link></li>
                                         <li><Link to="/consultation">Advisory</Link></li>
-                                        {/* <li><Link to="/contact">Contact</Link></li> */}
+                                        <li><Link to="/blog">Blog</Link></li>
                                     </ul>
                                 </div>
                                 {/* <div className="footer-services">

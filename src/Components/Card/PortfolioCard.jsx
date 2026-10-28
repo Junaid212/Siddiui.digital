@@ -107,7 +107,7 @@ const PortfolioCard = ({
                                 <div className="portfolio-modal-suited">
                                     <div className="portfolio-modal-suited-header">
                                         <Users size={15} />
-                                        <span>Best suited for</span>
+                                        <div className="portfolio-modal-suited-text">Best suited for</div>
                                     </div>
                                     <p className="portfolio-modal-suited-text">{bestSuitedFor}</p>
                                 </div>

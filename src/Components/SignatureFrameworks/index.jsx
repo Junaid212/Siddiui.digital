@@ -171,16 +171,22 @@ const frameworks = [
       'AVF helps organizations continuously sense market change, shape relevant value propositions, and scale successful solutions — with the value system at the center.',
     image:
       'assets/images/img/75.webp',
-    visual: <AvfModel />,
+    visual: (
+      <img
+        src="assets/images/img/AVF.webp"
+        alt="AVF — Adaptive Value Framework"
+        className="avf-visual-img"
+      />
+    ),
   },
   {
     id: 'c',
     index: '03',
     letter: 'C',
-    title: 'VDI — Value Development Index',
+    title: 'VDI — Value Drift Index',
     sub: 'Low → Moderate → High',
     description:
-      'VDI measures how effectively an organization develops and strengthens value over time through customer relevance, innovation, responsiveness, loyalty, and strategic alignment.',
+      'VDI shows where an organization’s value is drifting from what customers now value, across relevance, innovation, responsiveness, loyalty and strategic alignment, before it appears as churn and margin loss.',
     image:
       'assets/images/img/76.webp',
     visual: <VdiScorecard />,
@@ -284,8 +290,7 @@ export default function SignatureFrameworks() {
               <span className="sf-heading-accent">FRAMEWORKS</span>
             </h2>
             <p className="sf-desc">
-              Proven models that turn purpose into profit, keep organizations adaptive, and measure value development with
-              precision.
+              Original frameworks that connect purpose to profit, keep organizations adaptive, and detect value drift early.
             </p>
 
             {/* progress dots */}

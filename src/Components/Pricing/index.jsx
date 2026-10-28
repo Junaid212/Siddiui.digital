@@ -11,12 +11,12 @@ const PricingSection = () => {
                                 <i className="fa-solid fa-circle-notch"></i>
                                 <h6 className="font-family-1 accent-color">Core philosophy</h6>
                             </div>
-                            <h2 className="animate-box animated animate__animated" data-animate="animate__fadeInUp">Marketing, Reclassified</h2>
+                            <h2 className="animate-box animated animate__animated" data-animate="animate__fadeInUp">Marketing Reclassified</h2>
                         </div>
                         <div className="row row-cols-lg-3 row-cols-md-2 row-cols-1 align-items-center grid-spacer-2">
                             <div className="col">
                                 <div className="card card-pricing">
-                                    <h3 className="secondary-accent">What does “Marketing, Reclassified.” mean?</h3>
+                                    <h3 className="secondary-accent">What does “Marketing Reclassified.” mean?</h3>
 
                                     <div className="card price-container">
                                         <div className="price-wrapper">
@@ -27,7 +27,7 @@ const PricingSection = () => {
                                     <p>Marketing is often mistaken for promotion, advertising, communication, or sales, though its true role is much broader.</p>
                                     {/* <h4 className="secondary-accent">Features</h4> */}
                                     <ul className="circle-notch-list">
-                                        <li>Marketing, Reclassified positions marketing as the strategic intelligence that drives value, innovation, and sustainable business growth.</li>
+                                        <li>Marketing Reclassified positions marketing as the strategic intelligence that drives value, innovation, and sustainable business growth.</li>
                                         <li>Marketing is not simply about communicating value. It is about discovering, creating, adapting, and governing value.</li>
                                         {/* <li>Ad in nullam libero commodo magnis tristique</li>
                                         <li>Elit class porta interdum commodo nisi sociosqu</li>

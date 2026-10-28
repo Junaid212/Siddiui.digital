@@ -33,8 +33,8 @@ const AboutSection = () => {
                                     <h6 className="font-family-1 accent-color">Who is M. Q. Siddiqui </h6>
                                 </div>
                                 <h2 className="animate-box animated animate__animated" data-animate="animate__fadeInUp">A strategic marketing thinker with a philosophy, not just a practice</h2>
-                                <p>M. Q. Siddiqui is a marketing thought leader whose work spans academia, industry, and advisory practice. Over nearly four decades, he has developed a body of thinking that consistently returns to one central question: how do businesses create genuine value — for customers, for organisations, and for the wider environments they operate within.</p>
-                                <p>His frameworks — including AVF, VDI, and From Purpose to Profit — are not borrowed models. They are original tools developed through sustained engagement with real business challenges, teaching, and strategic advisory work.</p>
+                                <p>M. Q. Siddiqui is a marketing thought leader whose work spans academia, industry, and advisory practice. Over nearly four decades, he has developed a body of thinking that consistently returns to one central question: how do businesses create genuine value for customers, for organizations, and for the wider environments they operate within.</p>
+                                <p>His frameworks: including AVF, VDI, and From Purpose to Profit, are not borrowed models. They are original tools developed through sustained engagement with real business challenges, teaching, and strategic advisory work.</p>
                                 <div>
                                     {/* <Link to="/about" className="btn btn-accent">Learn More</Link> */}
                                 </div>
@@ -67,7 +67,7 @@ const AboutSection = () => {
                                         <div className="d-flex flex-column gspace-2">
                                             {/* <h3 className="secondary-accent">Our Philosophy</h3> */}
                                             <p className="secondary-accent">
-                                                Recognised for contributions to marketing education
+                                                Recognized for long service and contribution to higher education
                                             </p>
                                         </div>
                                     </div>

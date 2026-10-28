@@ -10,12 +10,13 @@ import TestimonialSection from "../../Components/Testimonial/TestimonialSection"
 import HeadTitle from "../../Components/Head/HeadTitle";
 import Awards from "../../Components/Awards/awards";
 import WhyChooseUsSection from "../../Components/ChooseUs";
+import OriginPhilosophy from "../../Components/About/OriginPhilosophy";
 
 const AboutPage = () => {
     return(
         <>
             <HeadTitle title="Siddiqui.Digital"/>
-            <BannerInnerSection title="About Siddiqui" currentPage="About Siddiqui" />
+            <BannerInnerSection title="About M. Q. Siddiqui" currentPage="About M. Q. Siddiqui" />
             {/* <PartnersipSection /> */}
             <section className="seo-content container" style={{display:'none'}}>
               <h1>About Siddiqui Digital</h1>
@@ -24,7 +25,7 @@ const AboutPage = () => {
               </p>
             </section>
             <WhyChooseUsSection />
-            
+            <OriginPhilosophy />
             <AchievementSection />
             <ProcessSection />
             <Awards />

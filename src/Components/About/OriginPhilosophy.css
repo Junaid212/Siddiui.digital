@@ -1,0 +1,165 @@
+/* Origin of the Sid Philosophy & Education Section */
+
+.origin-philosophy-section {
+    padding-top: 1rem !important;
+    padding-bottom: 3.5rem !important;
+}
+
+.origin-paragraphs p {
+    font-size: 1.05rem;
+    line-height: 1.85;
+    margin-bottom: 1.25rem;
+}
+
+/* Feature Quote Card */
+.origin-highlight-quote {
+    background-color: var(--card-bg, #ffffff);
+    border: 1px solid var(--border-color, #e0e0e0);
+    border-left: 4px solid var(--accent-color, #C80808);
+    border-radius: var(--global-border-radius, 20px);
+    padding: 2rem 1.75rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+:root[data-theme="dark"] .origin-highlight-quote,
+body.dark-mode .origin-highlight-quote {
+    background-color: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.08);
+    border-left: 4px solid var(--accent-color, #C80808);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+}
+
+.origin-highlight-quote:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent-color, #C80808);
+    box-shadow: 0 15px 35px rgba(200, 8, 8, 0.12);
+}
+
+.origin-quote-text {
+    font-family: var(--font-family-1, sans-serif);
+    font-size: 1.25rem !important;
+    font-weight: 700;
+    line-height: 1.4;
+    font-style: italic;
+    margin-bottom: 0.75rem !important;
+}
+
+.origin-quote-sub {
+    font-size: 0.85rem !important;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--accent-color, #C80808) !important;
+    margin-bottom: 0 !important;
+}
+
+/* Author Signature Line */
+.origin-signature-line {
+    width: 32px;
+    height: 2px;
+    background-color: var(--accent-color, #C80808);
+    border-radius: 2px;
+}
+
+/* ── Education Block ── */
+.education-block {
+    margin-top: 2.75rem;
+}
+
+.education-card {
+    background-color: var(--card-bg, #ffffff);
+    border: 1px solid var(--border-color, #e0e0e0);
+    border-radius: 16px;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    height: 100%;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s ease;
+}
+
+:root[data-theme="dark"] .education-card,
+body.dark-mode .education-card {
+    background-color: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.education-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent-color, #C80808);
+    box-shadow: 0 12px 28px rgba(200, 8, 8, 0.12);
+}
+
+.education-card .icon-circle {
+    font-size: 1.25rem;
+    width: 2.5em;
+    height: 2.5em;
+    min-width: 2.5em;
+    border-radius: 50%;
+    background-color: var(--accent-color, #C80808);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+}
+
+.education-card:hover .icon-circle {
+    transform: scale(1.08);
+}
+
+.education-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.education-degree {
+    font-family: var(--font-family-1, sans-serif);
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    line-height: 1.3;
+}
+
+.education-school {
+    font-family: var(--font-family-2, sans-serif);
+    font-size: 0.92rem;
+    margin-bottom: 0 !important;
+    line-height: 1.4;
+    opacity: 0.85;
+}
+
+@media (max-width: 768px) {
+    .origin-philosophy-section {
+        padding-top: 0.5rem !important;
+        padding-bottom: 2rem !important;
+    }
+
+    .origin-paragraphs p {
+        font-size: 0.98rem;
+    }
+
+    .origin-highlight-quote {
+        margin-top: 1.5rem;
+        padding: 1.5rem 1.25rem;
+    }
+
+    .education-card {
+        padding: 1rem 1.25rem;
+    }
+
+    .education-degree {
+        font-size: 1rem;
+    }
+
+    .education-school {
+        font-size: 0.88rem;
+    }
+}

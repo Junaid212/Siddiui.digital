@@ -15,6 +15,7 @@ import img14 from "/assets/images/img/20.webp"
 import img15 from "/assets/images/img/21.webp"
 import img16 from "/assets/images/img/22.webp"
 import img17 from "/assets/images/img/77.webp"
+import img18 from "/assets/images/img/n-cert.webp"
 
 export const teamdata = [
     {
@@ -37,7 +38,7 @@ export const teamdata = [
     },
     {
         id: 3,
-        image: img3,
+        image: img18,
         name: "Marry Adams",
         designation: "Designer",
         linkedin: "https://www.linkedin.com/",
@@ -164,6 +165,15 @@ export const teamdata = [
     {
         id: 17,
         image: img17,
+        name: "Bruce Parker",
+        designation: "Co-Founder",
+        linkedin: "https://www.linkedin.com/",
+        twitter: "https://x.com/",
+        behance: "https://www.behance.net/"
+    },
+    {
+        id: 18,
+        image: img3,
         name: "Bruce Parker",
         designation: "Co-Founder",
         linkedin: "https://www.linkedin.com/",

@@ -137,7 +137,7 @@ const EbookCardPage = () => {
                 <h6 className="font-family-1 accent-color">Featured Books</h6>
               </div>
               <h2 className="text-center animate-box animated animate__animated" data-animate="animate__fadeInUp">
-                Practical Marketing &amp; Management for Success
+                Books for Leaders Who Decide With the Market
               </h2>
             </div>
           </section>

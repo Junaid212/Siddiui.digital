@@ -19,13 +19,11 @@ const CtaSection = () => {
             <div className="cta-content">
               <div className="cta-container">
                 <h2 className="secondary-accent no-dark">
-                  Schedule a Free Consultation
+                  Discuss a Strategic Challenge
                 </h2>
 
                 <h6 className="no-dark" style={{color:'white !important',fontSize:'16px',fontWeight:'100',lineHeight:'1.5'}}>
-                  Reserve your appointment with an experienced marketing and
-                  business professional. Discuss challenges, growth strategies,
-                  and solutions with practical industry expertise at no cost.
+                  A complimentary 30-minute introductory conversation for leaders exploring how market evidence can better guide their decisions.
                 </h6>
 
                 <div >
@@ -33,7 +31,7 @@ const CtaSection = () => {
                     onClick={() => setIsDrawerOpen(true)}
                     className="btn btn-secondary-accent no-lght"
                   >
-                    Book Free Consultation
+                    Request a Conversation
                   </button>
                 </div>
               </div>

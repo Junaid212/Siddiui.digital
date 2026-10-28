@@ -17,7 +17,8 @@ const Awards = () => {
                                     <i className="fa-solid fa-circle-notch"></i>
                                     <h6 className="font-family-1 accent-color">Awards </h6>
                                 </div>
-                                <h2 className="animate-box animated animate__animated" data-animate="animate__fadeInUp" id="text">Best Teacher <br/><span style={{color:'#DC0909'}}>2019-2020</span></h2>
+                                <h2 className="animate-box animated animate__animated" data-animate="animate__fadeInUp" id="text">Best Teacher Award, <span style={{color:'#DC0909 !important'}}>2019 to 2020</span><br/>
+Recognized as Best Teacher in a College of Business, reflecting a sustained commitment to student development and to changing how marketing and business are understood.</h2>
                                 <div className="meta-info">
   <div className="meta-item">
     <Calendar className="meta-icon" />
@@ -52,16 +53,16 @@ const Awards = () => {
   font-size: 0.875rem;  /* text-sm */
 }
 #text{
-    font-size: 5.25rem;
+    font-size: 2.35rem;
 }
   `}</style>
 </div>
 
-                                <p>r. Muhammad Q. Siddiqui was recognised as the Best Teacher in the College of Business at Ajman University — one of the UAE's leading institutions and ranked among the top 2.8% of universities worldwide. This award reflects not only teaching excellence but a sustained commitment to student development, intellectual depth, and the transformation of how marketing and business are understood by learners.</p>
-                                <div>
+                                {/* <p>r. Muhammad Q. Siddiqui was recognised as the Best Teacher in the College of Business at Ajman University — one of the UAE's leading institutions and ranked among the top 2.8% of universities worldwide. This award reflects not only teaching excellence but a sustained commitment to student development, intellectual depth, and the transformation of how marketing and business are understood by learners.</p> */}
+                                {/* <div>
                                     <a href="#" className="btn btn-accent">
 Ranked among the top 2.8% of universities worldwide</a>
-                                </div>
+                                </div> */}
                             </div>
                             <div className="about-image-wrapper">
                                 <div className="image-container">

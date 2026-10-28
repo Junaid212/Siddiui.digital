@@ -7,10 +7,10 @@ const AchievementSection = () => {
     const clientRef = useRef(null);
     const teamRef = useRef(null);
 
-    const { suffix: expSuffix } = useCounterOnScroll(expRef, 39, 2000);
-    const { suffix: projSuffix } = useCounterOnScroll(projRef, 15, 2000);
+    const { suffix: expSuffix } = useCounterOnScroll(expRef, 40, 2000);
+    const { suffix: teamSuffix } = useCounterOnScroll(teamRef, 'Author', 2000);
+    const { suffix: projSuffix } = useCounterOnScroll(projRef, 3, 2000);
     const { suffix: clientSuffix } = useCounterOnScroll(clientRef, 15000, 2000);
-    const { suffix: teamSuffix } = useCounterOnScroll(teamRef, 5, 2000);
 
     return (
         <div className="section py-0">
@@ -31,11 +31,22 @@ const AchievementSection = () => {
                         <div className="col">
                             <div className="counter-box">
                                 <div className="d-flex flex-row align-items-center justify-content-center">
+                                    <span className="odometer">Author</span>
+                                    {/* <span>{teamSuffix}</span> */}
+                                    {/* <span>+</span> */}
+                                </div>
+                                <p className="counter-text">Marketing Reclassified</p>
+                            </div>
+                        </div>
+
+                        <div className="col">
+                            <div className="counter-box">
+                                <div className="d-flex flex-row align-items-center justify-content-center">
                                     <span ref={projRef} className="odometer">0</span>
                                     <span>{projSuffix}</span>
-                                    <span>+</span>
+                                    {/* <span>+</span> */}
                                 </div>
-                                <p className="counter-text">Certications</p>
+                                <p className="counter-text">Original Frameworks</p>
                             </div>
                         </div>
 
@@ -50,16 +61,6 @@ const AchievementSection = () => {
                             </div>
                         </div>
 
-                        <div className="col">
-                            <div className="counter-box">
-                                <div className="d-flex flex-row align-items-center justify-content-center">
-                                    <span ref={teamRef} className="odometer">0</span>
-                                    <span>{teamSuffix}</span>
-                                    <span>+</span>
-                                </div>
-                                <p className="counter-text">Courses</p>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>

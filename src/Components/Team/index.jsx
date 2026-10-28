@@ -19,7 +19,7 @@ const TeamSection = () => {
                                 <i className="fa-solid fa-circle-notch"></i>
                                 <h6 className="font-family-1 accent-color-1">Certifications</h6>
                             </div>
-                            <h2 className="animate-box animated animate__animated" data-animate="animate__fadeInUp">Industry-Recognized Certifications</h2>
+                            <h2 className="animate-box animated animate__animated" data-animate="animate__fadeInUp">Professional Development</h2>
                         </div>
                         <Swiper className="row row-cols-lg-4 row-cols-md-2 row-cols-1 "
   modules={[Navigation, Pagination, Autoplay]}
