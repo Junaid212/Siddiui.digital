@@ -56,7 +56,7 @@ const FLOW_STEPS = [
 const APPLICATIONS = [
   { title: "Marketing Strategy", icon: Target },
   { title: "Brand & Value Positioning", icon: Award },
-  { title: "Digital Marketing Direction", icon: Compass },
+  { title: "Digital Media Direction", icon: Compass },
   { title: "Business & Market Alignment", icon: Layers },
   { title: "Innovation & Product Development", icon: Lightbulb },
   { title: "Customer Relevance Assessment", icon: Heart },
@@ -67,7 +67,7 @@ const APPLICATIONS = [
 const PUBLICATIONS = [
   {
     title: "Marketing Reclassified",
-    desc: "From transaction to human progress.",
+    desc: "From Promotion to Governed Strategic Intelligence",
     image: "/assets/images/img/book1.webp",
     link: "/buy-book/cff3798b-88bb-41af-8e2a-bc5f7a2a4239",
   },
@@ -302,116 +302,55 @@ function SectionAdaptiveValueCycleVisual() {
       </div> */}
 
       <div className="fw-circular-svg-wrap">
-        <svg viewBox="0 0 280 230" className="fw-circular-svg">
+        <svg 
+        xmlns="http://www.w3.org/2000/svg" width="auto" height="auto" viewBox="0 0 720 1000">
           <defs>
-            <radialGradient id="centerHubGrad" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#db1b02" />
-              <stop offset="100%" stopColor="#800505" />
-            </radialGradient>
-            <marker
-              id="cycleArrow"
-              viewBox="0 0 10 10"
-              refX="6"
-              refY="5"
-              markerWidth="6"
-              markerHeight="6"
-              orient="auto-start-reverse"
-            >
-              <path d="M 0 1 L 9 5 L 0 9 z" fill="#ff5e5e" />
-            </marker>
-          </defs>
-
-          {/* Dashed Orbital Track */}
-          <circle
-            cx="140"
-            cy="115"
-            r="72"
-            fill="none"
-            stroke="rgba(255, 255, 255, 0.15)"
-            strokeWidth="1.5"
-            strokeDasharray="4 4"
-          />
-
-          {/* Curved Flow Connectors with Arrow Markers */}
-          <path
-            d="M 166 60 A 72 72 0 0 1 204 136"
-            fill="none"
-            stroke="#ff5e5e"
-            strokeWidth="2"
-            markerEnd="url(#cycleArrow)"
-          />
-          <path
-            d="M 178 168 A 72 72 0 0 1 96 166"
-            fill="none"
-            stroke="#ff5e5e"
-            strokeWidth="2"
-            markerEnd="url(#cycleArrow)"
-          />
-          <path
-            d="M 74 134 A 72 72 0 0 1 114 60"
-            fill="none"
-            stroke="#ff5e5e"
-            strokeWidth="2"
-            markerEnd="url(#cycleArrow)"
-          />
-
-          {/* Central Hub: Value System */}
-          <circle
-            cx="140"
-            cy="115"
-            r="38"
-            fill="url(#centerHubGrad)"
-            stroke="#ffffff"
-            strokeWidth="2"
-            style={{ filter: "drop-shadow(0 0 14px rgba(219, 27, 2, 0.6))" }}
-          />
-          <text
-            x="140"
-            y="112"
-            textAnchor="middle"
-            fill="#ffffff"
-            fontSize="9"
-            fontWeight="800"
-            letterSpacing="0.02em"
-          >
-            Value System
-          </text>
-          {/* <text
-            x="140"
-            y="125"
-            textAnchor="middle"
-            fill="#ffc0c0"
-            fontSize="8"
-            fontWeight="600"
-            letterSpacing="0.06em"
-          >
-            AT THE CENTER
-          </text> */}
-
-          {/* Node 1: Sense (Top) */}
-          <g transform="translate(140, 38)">
-            <circle cx="0" cy="0" r="22" fill="#1e293b" stroke="#ff5e5e" strokeWidth="1.5" />
-            <text x="0" y="-1" textAnchor="middle" fill="#ffffff" fontSize="9.5" fontWeight="700">Sense</text>
-            {/* <text x="0" y="10" textAnchor="middle" fill="#94a3b8" fontSize="6.5" fontWeight="500">Market Change</text> */}
-          </g>
-
-          {/* Node 2: Shape (Bottom Right) */}
-          <g transform="translate(208, 156)">
-            <circle cx="0" cy="0" r="22" fill="#1e293b" stroke="#ff5e5e" strokeWidth="1.5" />
-            <text x="0" y="-1" textAnchor="middle" fill="#ffffff" fontSize="9.5" fontWeight="700">Shape</text>
-            {/* <text x="0" y="10" textAnchor="middle" fill="#94a3b8" fontSize="6.5" fontWeight="500">Value Props</text> */}
-          </g>
-
-          {/* Node 3: Scale (Bottom Left) */}
-          <g transform="translate(72, 156)">
-            <circle cx="0" cy="0" r="22" fill="#1e293b" stroke="#ff5e5e" strokeWidth="1.5" />
-            <text x="0" y="-1" textAnchor="middle" fill="#ffffff" fontSize="9.5" fontWeight="700">Scale</text>
-            {/* <text x="0" y="10" textAnchor="middle" fill="#94a3b8" fontSize="6.5" fontWeight="500">Solutions</text> */}
-          </g>
+            <radialGradient id="g" cx="50%" cy="45%" r="60%">
+              <stop offset="0" stop-color="#16243F"/>
+              <stop offset="1" stop-color="#0B1220"/>
+              </radialGradient>
+              <radialGradient id="c" cx="50%" cy="40%" r="60%">
+                <stop offset="0" stop-color="#C8243D"/>
+                <stop offset="1" stop-color="#7A0F22"/>
+                </radialGradient>
+                <marker id="a" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#E04A5F"/>
+                  </marker>
+                  </defs>
+                  <rect width="720" height="1000" rx="28" fill="url(#g)"/>
+                  <circle cx="360" cy="400" r="230" fill="none" stroke="#2A3A5C" stroke-width="2" stroke-dasharray="6 8"/>
+                  <path d="M428.0 180.3 A230 230 0 0 1 579.7 332.0" fill="none" stroke="#E04A5F" stroke-width="4" marker-end="url(#a)"/>
+                  <path d="M579.7 468.0 A230 230 0 0 1 428.0 619.7" fill="none" stroke="#E04A5F" stroke-width="4" marker-end="url(#a)"/>
+                  <path d="M292.0 619.7 A230 230 0 0 1 140.3 468.0" fill="none" stroke="#E04A5F" stroke-width="4" marker-end="url(#a)"/>
+                  <path d="M140.3 332.0 A230 230 0 0 1 292.0 180.3" fill="none" stroke="#F2C6CD" stroke-width="4" marker-end="url(#a)"/>
+                  <circle cx="360" cy="400" r="110" fill="url(#c)" stroke="#F2C6CD" stroke-width="4"/>
+                  <text x="360" y="392" text-anchor="middle" fill="#fff" font-family="Inter" font-weight="800" font-size="30">VALUE</text>
+                  <text x="360" y="428" text-anchor="middle" fill="#fff" font-family="Inter" font-weight="800" font-size="30">SYSTEM</text>
+                  <circle cx="360.0" cy="170.0" r="58" fill="#0F1A30" stroke="#E04A5F" stroke-width="4"/>
+                  <text x="360.0" y="177.0" text-anchor="middle" fill="#fff" font-family="Inter" font-weight="800" font-size="22">Sense</text>
+                  <circle cx="590.0" cy="400.0" r="58" fill="#0F1A30" stroke="#E04A5F" stroke-width="4"/>
+                  <text x="590.0" y="407.0" text-anchor="middle" fill="#fff" font-family="Inter" font-weight="800" font-size="22">Shape</text>
+                  <circle cx="360.0" cy="630.0" r="58" fill="#0F1A30" stroke="#E04A5F" stroke-width="4"/>
+                  <text x="360.0" y="637.0" text-anchor="middle" fill="#fff" font-family="Inter" font-weight="800" font-size="22">Scale</text>
+                  <circle cx="130.0" cy="400.0" r="58" fill="#0F1A30" stroke="#E04A5F" stroke-width="4"/>
+                  <text x="130.0" y="407.0" text-anchor="middle" fill="#fff" font-family="Inter" font-weight="800" font-size="19">Experience</text>
+                  <text x="360" y="730" text-anchor="middle" fill="#F2C6CD" font-family="Inter" font-weight="600" font-size="20">Experience feeds back into Sense, so the system keeps learning</text>
+                  <rect x="39.0" y="860" width="150" height="96" rx="12" fill="#F2C6CD"/>
+                  <text x="114.0" y="900" text-anchor="middle" fill="#13294B" font-family="Inter" font-weight="800" font-size="20">Sense</text>
+                  <text x="114.0" y="928" text-anchor="middle" fill="#3E4556" font-family="Inter" font-weight="500" font-size="15">Market reality</text>
+                  <rect x="203.0" y="860" width="150" height="96" rx="12" fill="#F2C6CD"/>
+                  <text x="278.0" y="900" text-anchor="middle" fill="#13294B" font-family="Inter" font-weight="800" font-size="20">Shape</text>
+                  <text x="278.0" y="928" text-anchor="middle" fill="#3E4556" font-family="Inter" font-weight="500" font-size="15">Value choices</text>
+                  <rect x="367.0" y="860" width="150" height="96" rx="12" fill="#F2C6CD"/>
+                  <text x="442.0" y="900" text-anchor="middle" fill="#13294B" font-family="Inter" font-weight="800" font-size="20">Scale</text>
+                  <text x="442.0" y="928" text-anchor="middle" fill="#3E4556" font-family="Inter" font-weight="500" font-size="15">Known and chosen</text>
+                  <rect x="531.0" y="860" width="150" height="96" rx="12" fill="#FFE3E8"/>
+                  <text x="606.0" y="900" text-anchor="middle" fill="#13294B" font-family="Inter" font-weight="800" font-size="20">Experience</text>
+                  <text x="606.0" y="928" text-anchor="middle" fill="#3E4556" font-family="Inter" font-weight="500" font-size="15">Promise tested</text>
         </svg>
       </div>
 
-      <div className="fw-cycle-nodes-summary">
+      {/* <div className="fw-cycle-nodes-summary">
         <div className="fw-cycle-node-pill">
           <span className="fw-cycle-node-pill-title">Sense</span>
           <span className="fw-cycle-node-pill-desc">Market Shifts</span>
@@ -424,7 +363,7 @@ function SectionAdaptiveValueCycleVisual() {
           <span className="fw-cycle-node-pill-title">Scale</span>
           <span className="fw-cycle-node-pill-desc">Solutions</span>
         </div>
-      </div>
+      </div> */}
 
       {/* <div className="fw-visual-footer-callout">
         <RefreshCw size={13} color="#ff5e5e" />
@@ -465,6 +404,7 @@ function SectionValueDevelopmentDashboardVisual() {
 
       {/* 5 Core Dimensions */}
       <div className="fw-vdi-metrics-list">
+        <div style={{fontSize: '12px'}}>Example</div>
         {metrics.map((m) => {
           const Icon = m.icon;
           return (
@@ -472,11 +412,11 @@ function SectionValueDevelopmentDashboardVisual() {
               <div className="fw-vdi-metric-top">
                 <div className="d-flex align-items-center gap-2">
                   <Icon size={12} color="#ff8585" />
-                  <span className="no-light">{m.label}</span>
+                  <div className="no-light">{m.label}</div>
                 </div>
                 <div className="d-flex align-items-center gap-2">
                   <span className="fw-vdi-score-num">{m.score}%</span>
-                  <span className="fw-vdi-stage-chip">High</span>
+                  <div className="fw-vdi-stage-chip">High</div>
                 </div>
               </div>
               <div className="fw-vdi-metric-progress-track">
@@ -492,7 +432,7 @@ function SectionValueDevelopmentDashboardVisual() {
 
       <div className="fw-visual-footer-callout">
         <Gauge size={13} color="#4ade80" />
-        <span>Measures how effectively value develops & strengthens over time across all 5 dimensions.</span>
+        <div>Shows where value is drifting across all five dimensions.</div>
       </div>
     </div>
   );
@@ -708,9 +648,7 @@ export default function FrameworksPage() {
                   and Purposeful Growth
                 </h1>
                 <p className="fw-hero-subheading">
-                  Frameworks developed to reclassify marketing as strategic
-                  intelligence — connecting purpose, value creation, adaptability,
-                  relevance and long-term business outcomes.
+                  Frameworks developed to reclassify marketing as strategic intelligence, connecting purpose, value creation, adaptability, relevance and long-term business outcomes.
                 </p>
               </div>
             </div>
@@ -843,7 +781,7 @@ export default function FrameworksPage() {
               The three frameworks are connected, but each one plays a
               different role. Together, they support the broader philosophy of{" "}
               <strong style={{ color: "#c80808" }}>
-                Marketing, Reclassified
+                Marketing Reclassified
               </strong>
               .
             </p>
@@ -878,11 +816,11 @@ export default function FrameworksPage() {
               <div className="fw-synthesis-role-header">
                 {/* <div className="fw-synthesis-role-num">Lens B // Capability</div> */}
                 <h3 className="fw-synthesis-role-name">
-                  AVF – Adaptive Value Framework
+                  AVF: Adaptive Value Framework
                 </h3>
                 <p className="fw-synthesis-role-desc">
-                  AVF helps organizations continuously sense market change, shape
-                  relevant value propositions, and scale successful solutions.
+                  AVF helps organizations sense market change, shape value customers recognize, 
+                  scale it so it is known and chosen, and learn from what customers experience.
                 </p>
               </div>
 
@@ -902,12 +840,12 @@ export default function FrameworksPage() {
               <div className="fw-synthesis-role-header">
                 {/* <div className="fw-synthesis-role-num">Lens C // Evaluation</div> */}
                 <h3 className="fw-synthesis-role-name">
-                  VDI – Value Development Index
+                  VDI: Value Drift Index
                 </h3>
                 <p className="fw-synthesis-role-desc">
-                  VDI measures how effectively an organization develops and
-                  strengthens value over time through customer relevance,
-                  innovation, responsiveness, loyalty, and strategic alignment.
+                 VDI shows where an organization's value is drifting from what customers now value, 
+                 across relevance, innovation, responsiveness, loyalty and strategic alignment, before 
+                 it appears as churn and margin loss.
                 </p>
               </div>
 
@@ -1004,8 +942,7 @@ export default function FrameworksPage() {
               {/* <span className="fw-pathway-badge">Education</span> */}
               <h3 className="fw-pathway-title">Learn</h3>
               <p className="fw-pathway-desc">
-                Explore courses, workshops and learning areas connected to these
-                frameworks.
+                Learning programs and workshops built on these frameworks, now in development.
               </p>
               <Link to="/courses" className="fw-pathway-cta">
                 Explore Learning <ArrowRight size={16} />

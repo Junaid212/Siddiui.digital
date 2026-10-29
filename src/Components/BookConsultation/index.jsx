@@ -84,7 +84,7 @@ export default function BookConsultation() {
     photo: "/assets/images/img/Siddiqui.webp",
     rating: 4.9,
     reviews: 127,
-    experience: "39 years",
+    experience: "40+ years",
     location: "New York, NY",
     education: "Harvard Business School",
     bio: "Empowering entrepreneurs and ambitious students to realize their highest potential through strategic thinking, data-driven market insights, and scalable growth frameworks. With a strong foundation in business management and modern marketing, I craft intelligent strategies that transform ideas into sustainable success.",
@@ -521,11 +521,11 @@ export default function BookConsultation() {
               >
                 <div className="bc-summary-inner">
                   <div>
-                    <p className="bc-selection-label">Your Selection</p>
+                    <div className="bc-selection-label">Your Selection</div>
                     {selectedDate && selectedTime ? (
                       <div className="bc-selection-details">
-                        <p className="bc-selection-date">{formatDate(selectedDate)}</p>
-                        <p className="bc-selection-time">{selectedTime}</p>
+                        <div className="bc-selection-date">{formatDate(selectedDate)}</div>
+                        <div className="bc-selection-time">{selectedTime}</div>
                       </div>
                     ) : (
                       <p className="bc-no-selection">Select a date and time to continue</p>

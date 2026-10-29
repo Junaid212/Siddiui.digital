@@ -54,7 +54,7 @@ const ContactSection = () =>{
                                         <i className="fa-solid fa-location-dot"></i>
                                     </div>
                                     <span>Location</span>
-                                    <p className="description" style={{fontSize: '14px', textAlign: 'center'}}>Business Centre, Sharjah<br/> Publishing City Free Zone, Sharjah, United Arab Emirates</p>
+                                    <p className="description" style={{fontSize: '14px', textAlign: 'center'}}>Ajman, United Arab Emirates</p>
                                 </div>
                             </div>
                             <div className="col">
@@ -63,7 +63,7 @@ const ContactSection = () =>{
                                         <i className="fa-solid fa-clock"></i>
                                     </div>
                                     <span>Work Days</span>
-                                    <p className="description" style={{fontSize: '14px', textAlign: 'center'}}>Sun to Fri, 09:00 - 17:00</p>
+                                    <p className="description" style={{fontSize: '14px', textAlign: 'center'}}>Monday - Friday</p>
                                 </div>
                             </div>
                         </div>

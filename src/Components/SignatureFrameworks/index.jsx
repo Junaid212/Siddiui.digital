@@ -116,6 +116,85 @@ function AvfModel() {
     </div>
   );
 }
+function SectionAdaptiveValueCycleVisual() {
+  return (
+    <div className="fw-visual-box fw-visual-box-cycle">
+      {/* <div className="fw-visual-top-bar">
+        <span className="fw-visual-tag">Circular Adaptive Model</span>
+        <span className="fw-visual-status-pill fw-visual-status-crimson">Value Centered</span>
+      </div> */}
+
+      <div className="fw-circular-svg-wrap">
+        <svg 
+        xmlns="http://www.w3.org/2000/svg" width="auto" height="300px" viewBox="0 0 720 1000">
+          <defs>
+            <radialGradient id="g" cx="50%" cy="45%" r="60%">
+              <stop offset="0" stop-color="#16243f"/>
+              <stop offset="1" stop-color="#0b1220"/>
+              </radialGradient>
+              <radialGradient id="c" cx="50%" cy="40%" r="60%">
+                <stop offset="0" stop-color="#C8243D"/>
+                <stop offset="1" stop-color="#7A0F22"/>
+                </radialGradient>
+                <marker id="a" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                  <path d="M0 0 L10 5 L0 10 z" fill="#E04A5F"/>
+                  </marker>
+                  </defs>
+                  <rect width="720" height="1000" rx="28" fill="url(#g)"/>
+                  <circle cx="360" cy="400" r="230" fill="none" stroke="#2A3A5C" stroke-width="2" stroke-dasharray="6 8"/>
+                  <path d="M428.0 180.3 A230 230 0 0 1 579.7 332.0" fill="none" stroke="#E04A5F" stroke-width="4" marker-end="url(#a)"/>
+                  <path d="M579.7 468.0 A230 230 0 0 1 428.0 619.7" fill="none" stroke="#E04A5F" stroke-width="4" marker-end="url(#a)"/>
+                  <path d="M292.0 619.7 A230 230 0 0 1 140.3 468.0" fill="none" stroke="#E04A5F" stroke-width="4" marker-end="url(#a)"/>
+                  <path d="M140.3 332.0 A230 230 0 0 1 292.0 180.3" fill="none" stroke="#F2C6CD" stroke-width="4" marker-end="url(#a)"/>
+                  <circle cx="360" cy="400" r="110" fill="url(#c)" stroke="#F2C6CD" stroke-width="4"/>
+                  <text x="360" y="392" text-anchor="middle" fill="#fff" font-family="Roboto" font-weight="800" font-size="30">VALUE</text>
+                  <text x="360" y="428" text-anchor="middle" fill="#fff" font-family="Inter" font-weight="800" font-size="30">SYSTEM</text>
+                  <circle cx="360.0" cy="170.0" r="58" fill="#0F1A30" stroke="#E04A5F" stroke-width="4"/>
+                  <text x="360.0" y="177.0" text-anchor="middle" fill="#fff" font-family="Inter" font-weight="500" font-size="22">Sense</text>
+                  <circle cx="590.0" cy="400.0" r="58" fill="#0F1A30" stroke="#E04A5F" stroke-width="4"/>
+                  <text x="590.0" y="407.0" text-anchor="middle" fill="#fff" font-family="Inter" font-weight="500" font-size="22">Shape</text>
+                  <circle cx="360.0" cy="630.0" r="58" fill="#0F1A30" stroke="#E04A5F" stroke-width="4"/>
+                  <text x="360.0" y="637.0" text-anchor="middle" fill="#fff" font-family="Inter" font-weight="500" font-size="22">Scale</text>
+                  <circle cx="130.0" cy="400.0" r="58" fill="#0F1A30" stroke="#E04A5F" stroke-width="4"/>
+                  <text x="130.0" y="407.0" text-anchor="middle" fill="#fff" font-family="Inter" font-weight="500" font-size="19">Experience</text>
+                  <text x="360" y="730" text-anchor="middle" fill="#F2C6CD" font-family="Inter" font-weight="500" font-size="24">Experience feeds back into Sense, so the system keeps learning</text>
+                  <rect x="39.0" y="860" width="150" height="96" rx="12" fill="#F2C6CD"/>
+                  <text x="114.0" y="900" text-anchor="middle" fill="#13294B" font-family="Inter" font-weight="800" font-size="20">Sense</text>
+                  <text x="114.0" y="928" text-anchor="middle" fill="#3E4556" font-family="Inter" font-weight="500" font-size="18">Market reality</text>
+                  <rect x="203.0" y="860" width="150" height="96" rx="12" fill="#F2C6CD"/>
+                  <text x="278.0" y="900" text-anchor="middle" fill="#13294B" font-family="Inter" font-weight="800" font-size="20">Shape</text>
+                  <text x="278.0" y="928" text-anchor="middle" fill="#3E4556" font-family="Inter" font-weight="500" font-size="18">Value choices</text>
+                  <rect x="367.0" y="860" width="150" height="96" rx="12" fill="#F2C6CD"/>
+                  <text x="442.0" y="900" text-anchor="middle" fill="#13294B" font-family="Inter" font-weight="800" font-size="20">Scale</text>
+                  <text x="442.0" y="928" text-anchor="middle" fill="#3E4556" font-family="Inter" font-weight="500" font-size="18">Known and chosen</text>
+                  <rect x="531.0" y="860" width="150" height="96" rx="12" fill="#FFE3E8"/>
+                  <text x="606.0" y="900" text-anchor="middle" fill="#13294B" font-family="Inter" font-weight="800" font-size="20">Experience</text>
+                  <text x="606.0" y="928" text-anchor="middle" fill="#3E4556" font-family="Inter" font-weight="500" font-size="18">Promise tested</text>
+        </svg>
+      </div>
+
+      {/* <div className="fw-cycle-nodes-summary">
+        <div className="fw-cycle-node-pill">
+          <span className="fw-cycle-node-pill-title">Sense</span>
+          <span className="fw-cycle-node-pill-desc">Market Shifts</span>
+        </div>
+        <div className="fw-cycle-node-pill">
+          <span className="fw-cycle-node-pill-title">Shape</span>
+          <span className="fw-cycle-node-pill-desc">Relevant Props</span>
+        </div>
+        <div className="fw-cycle-node-pill">
+          <span className="fw-cycle-node-pill-title">Scale</span>
+          <span className="fw-cycle-node-pill-desc">Solutions</span>
+        </div>
+      </div> */}
+
+      {/* <div className="fw-visual-footer-callout">
+        <RefreshCw size={13} color="#ff5e5e" />
+        <span>Sense market change, shape relevant value propositions, and scale successful solutions.</span>
+      </div> */}
+    </div>
+  );
+}
 
 function VdiScorecard() {
   return (
@@ -165,25 +244,19 @@ const frameworks = [
     id: 'b',
     index: '02',
     letter: 'B',
-    title: 'AVF — Adaptive Value Framework',
+    title: 'AVF: Adaptive Value Framework',
     sub: 'Sense · Shape · Scale',
     description:
       'AVF helps organizations continuously sense market change, shape relevant value propositions, and scale successful solutions — with the value system at the center.',
     image:
       'assets/images/img/75.webp',
-    visual: (
-      <img
-        src="assets/images/img/AVF.webp"
-        alt="AVF — Adaptive Value Framework"
-        className="avf-visual-img"
-      />
-    ),
+    visual: <SectionAdaptiveValueCycleVisual />,
   },
   {
     id: 'c',
     index: '03',
     letter: 'C',
-    title: 'VDI — Value Drift Index',
+    title: 'VDI: Value Drift Index',
     sub: 'Low → Moderate → High',
     description:
       'VDI shows where an organization’s value is drifting from what customers now value, across relevance, innovation, responsiveness, loyalty and strategic alignment, before it appears as churn and margin loss.',

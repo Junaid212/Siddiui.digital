@@ -4188,7 +4188,7 @@ footer {
     background: linear-gradient(to bottom right, #000, #171717, #000);
     border-radius: 1.5rem;
     padding: 1.5rem;
-    color: #fff;
+    color: #ffffff !important;
 }
 
 .bc-summary-inner {

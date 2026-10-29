@@ -8,7 +8,7 @@ const Footer = () => {
             <div className="section section-footer dark">
                 <div className="hero-container ">
                     <div className="d-flex flex-column gspace-2">
-                        <NewsletterForm/>
+                        {/* <NewsletterForm/> */}
                         <div className="footer-content-container ">
                             <div className="footer-info-container ">    
                                 <div className="footer-info">
@@ -24,7 +24,7 @@ const Footer = () => {
                                         <li>
                                             <div className="d-flex flex-row align-items-center gspace-2 secondary-accent">
                                                 <i className="fa-solid fa-location-dot "></i>
-                                                <span>Business Centre, Sharjah<br/> Publishing City Free Zone, Sharjah, United Arab Emirates</span>
+                                                <span>Ajman, United Arab Emirates</span>
                                             </div>
                                         </li>
                                         <li>
@@ -73,7 +73,7 @@ const Footer = () => {
                                     <ul className="footer-list no-dark">
                                         <li><Link to="/about">About</Link></li>
                                         <li><Link to="/publication">Books & Digital Publications</Link></li>
-                                        <li><Link to="/courses">Learnings</Link></li>
+                                        <li><Link to="/courses">Learning</Link></li>
                                         <li><Link to="/ask-sid">Ask Sid</Link></li>
                                         <li><Link to="/framework">Frameworks</Link></li>
                                         <li><Link to="/consultation">Advisory</Link></li>

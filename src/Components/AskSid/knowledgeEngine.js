@@ -22,7 +22,7 @@ export const BOOK_METADATA = {
   fullPrice: "$49.99",
   onlinePrice: "$20.00",
   summary:
-    "A principle-first strategic playbook challenging transactional and promotional myopia; establishing marketing as an organizational leadership discipline centered on authentic value creation, customer relevance, strategic alignment, and sustainable growth."
+    "From Promotion to Governed strategic playbook challenging transactional and promotional myopia; establishing marketing as an organizational leadership discipline centered on authentic value creation, customer relevance, strategic alignment, and sustainable growth."
 };
 
 export const EXAMPLE_QUESTIONS = [
@@ -259,7 +259,7 @@ export function matchPrincipleInKnowledgeBase(query) {
       understanding:
         "You have submitted an inquiry that sits outside the scope of strategic marketing and business architecture.",
       perspective:
-        "Ask SID is the dedicated digital companion to 'Marketing Reclassified: A Principle-First Approach' by M. Q. Siddiqui. The approved principles of the book do not provide enough basis for an authoritative answer to general or unrelated topics. Ask SID's purpose is to guide readers and leaders through strategic marketing, customer relevance, purposeful growth, and commercial dilemmas.",
+        "Ask SID is the dedicated digital companion to 'Marketing Reclassified: From Promotion to Governed Strategic Intelligence' by M. Q. Siddiqui. The approved principles of the book do not provide enough basis for an authoritative answer to general or unrelated topics. Ask SID's purpose is to guide readers and leaders through strategic marketing, customer relevance, purposeful growth, and commercial dilemmas.",
       questionsToConsider: [
         "What specific marketing or business challenge is currently facing your organization?",
         "Are you exploring dilemmas regarding lead conversion, value proposition relevance, pricing integrity, or customer retention?"
@@ -269,7 +269,7 @@ export function matchPrincipleInKnowledgeBase(query) {
       relevantBookSection: {
         book: BOOK_METADATA.title,
         chapter: "Introduction",
-        section: "A Principle-First Approach to Modern Marketing",
+        section: "From Promotion to Governed Strategic Intelligence",
         page: "Page 12",
         readUrl: BOOK_METADATA.publicationUrl
       },

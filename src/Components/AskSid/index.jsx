@@ -497,7 +497,7 @@ export default function AskSid() {
                 </h1>
 
                 <p className="asksid-subtitle">
-                  A Principle-First Intelligence Companion
+                  YOUR AI COMPANION TO MARKETING RECLASSIFIED
                   
                 </p>
 
@@ -515,7 +515,7 @@ export default function AskSid() {
                 </div>
 
                 <p className="asksid-description">
-                  Describe your business or marketing challenges in your own words. Ask SID analyzes your dilemma strictly through the diagnostic frameworks and foundational principles of <em>Marketing Reclassified: A Principle-First Approach</em>
+                   Describe your business or marketing challenge in your own words. Ask SID explores it through the frameworks and principles of <em>Marketing Reclassified:  From Promotion to Governed Strategic Intelligence</em>
                 </p>
 
                 {/* Trust & Methodology Pillars */}
@@ -567,7 +567,7 @@ export default function AskSid() {
                     id="btn-view-book-details"
                   >
                     <i className="fa-solid fa-book-open" />
-                    <span>About the Book ($49.99)</span>
+                    <span>About the Book </span>
                   </Link>
                 </div>
               </div>
@@ -670,7 +670,7 @@ export default function AskSid() {
                 className="asksid-status-btn upgrade"
                 id="btn-asksid-upgrade"
               >
-                Upgrade to Companion ($49.99) →
+                 Unlock Full Ask SID →
               </Link>
             ) : (
               <span className="asksid-verified-badge">
@@ -783,7 +783,7 @@ export default function AskSid() {
                     </>
                   ) : (
                     <>
-                      <span>Explore Challenge</span>
+                      <div>Explore Challenge</div>
                       <i className="fa-solid fa-arrow-right" />
                     </>
                   )}
@@ -1032,7 +1032,7 @@ export default function AskSid() {
               <div className="asksid-upgrade-card" id="asksid-upgrade-card">
                 <div className="asksid-upgrade-badge">Digital Companion Edition</div>
                 <h2 className="asksid-upgrade-title">
-                  Unlock Full Ask SID Access
+                  Unlock Full Ask SID
                 </h2>
                 <p className="asksid-upgrade-sub">
                   Your complimentary demonstration inquiry has concluded. Full Ask SID conversation access, unlimited follow-ups, and complete downloadable PDF publication are included exclusively with the Digital Companion Edition ($49.99).
@@ -1130,12 +1130,12 @@ export default function AskSid() {
           <div className="asksid-upgrade-card" id="asksid-upgrade-card">
             <div className="asksid-upgrade-badge">Digital Companion Edition</div>
             <h2 className="asksid-upgrade-title">
-              Unlock Full Ask SID with the Digital Companion Edition
+              Unlock Full Ask SID
             </h2>
             <p className="asksid-upgrade-sub">
               {effectiveAccess.demoExhausted
                 ? "Your complimentary demonstration question has been used. Full Ask SID access is included exclusively with the Digital Companion Edition."
-                : "Full Ask SID conversation access, unlimited strategic follow-ups, and downloadable publication access are included with the Digital Companion Edition."}
+                : " Full Ask SID access, the book as your own PDF and the full Companion Pack are included with the Digital Companion Edition."}
             </p>
 
             <div className="asksid-upgrade-price-wrap">
@@ -1149,16 +1149,16 @@ export default function AskSid() {
 
             <ul className="asksid-upgrade-features">
               <li>
-                <i className="fa-solid fa-check" /> Downloadable Marketing Reclassified (Complete PDF)
+                <i className="fa-solid fa-check" /> The complete book online, plus your own PDF
               </li>
               <li>
-                <i className="fa-solid fa-check" /> Full, Unlimited Ask SID Companion Access
+                <i className="fa-solid fa-check" /> Ask SID: 100 questions over 12 months
               </li>
               <li>
-                <i className="fa-solid fa-check" /> Deep Diagnostic Frameworks & Contextual Book Citations
+                <i className="fa-solid fa-check" /> The full Companion Pack: seven practical tools
               </li>
               <li>
-                <i className="fa-solid fa-check" /> Unrestricted Follow-up Conversations
+                <i className="fa-solid fa-check" />  Diagnostic questions based on the book's frameworks
               </li>
             </ul>
 
@@ -1169,7 +1169,7 @@ export default function AskSid() {
                 id="btn-get-digital-companion-empty"
               >
                 <i className="fa-solid fa-lock-open" />
-                <span>Get Digital Companion Edition ($49.99)</span>
+                <div>Get the Digital Companion Edition</div>
               </Link>
             </div>
           </div>
