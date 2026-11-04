@@ -4462,3 +4462,51 @@ footer {
 .bc-done-btn:hover {
     background-color: #262626;
 }
+
+/* Sidebar Account Navigation */
+.sidebar-account-section {
+    margin-top: 15px;
+    padding-bottom: 20px;
+}
+
+.sidebar-account-divider {
+    height: 1px;
+    background: var(--secondary);
+    opacity: 0.2;
+    margin: 10px 10px 15px;
+}
+
+.sidebar-account-heading {
+    padding: 8px 10px;
+    font-size: 13px;
+    font-weight: 700;
+    opacity: 0.65;
+}
+
+.sidebar-account-section a,
+.sidebar-account-button {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 10px;
+    color: var(--secondary);
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    background: transparent;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: left;
+}
+
+.sidebar-account-section a:hover,
+.sidebar-account-button:hover {
+    color: var(--accent-color);
+}
+
+.sidebar-account-section i {
+    width: 20px;
+    text-align: center;
+}

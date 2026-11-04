@@ -140,6 +140,7 @@ import React, { useState, useEffect } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { useCart } from "../Cart/CartContext";
 import "../Cart/CartDrawer.css";
+import { supabase } from "../../supabaseClient";
 
 const Navbar = () => {
     const location = useLocation();
@@ -154,6 +155,46 @@ const Navbar = () => {
         }
         return false;
     });
+
+    const [session, setSession] = useState(null);
+const [accountOpen, setAccountOpen] = useState(false);
+
+useEffect(() => {
+    let mounted = true;
+
+    const getInitialSession = async () => {
+        const { data: { session } } = await supabase.auth.getSession();
+
+        if (mounted) {
+            setSession(session);
+        }
+    };
+
+    getInitialSession();
+
+    const {
+        data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+        setSession(session);
+    });
+
+    return () => {
+        mounted = false;
+        subscription.unsubscribe();
+    };
+}, []);
+
+const handleSignOut = async () => {
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+        console.error("Sign out failed:", error.message);
+        return;
+    }
+
+    setAccountOpen(false);
+    window.location.href = "/";
+};
 
     // Apply dark/light mode to entire website
     useEffect(() => {
@@ -419,17 +460,74 @@ const Navbar = () => {
                         </div>
 
                         {/* Cart Icon */}
-                        <CartNavIcon />
+<CartNavIcon />
+
+{/* Account Navigation */}
+<div className="account-nav">
+    <button
+        type="button"
+        className="account-nav-btn"
+        onClick={() => setAccountOpen(!accountOpen)}
+        aria-label="Account"
+        aria-expanded={accountOpen}
+        title="My Account"
+    >
+        <i className="fa-regular fa-user"></i>
+    </button>
+
+    {accountOpen && (
+        <>
+            <div
+                className="account-dropdown-backdrop"
+                onClick={() => setAccountOpen(false)}
+            />
+
+            <div className="account-dropdown">
+                {session ? (
+                    <>
+                        <div className="account-dropdown-heading">
+                            My Library
+                        </div>
+
+                        <Link
+                            to="/my-library"
+                            onClick={() => setAccountOpen(false)}
+                        >
+                            <i className="fa-solid fa-book-open"></i>
+                            My Books & Orders
+                        </Link>
+
+                        <button
+                            type="button"
+                            onClick={handleSignOut}
+                        >
+                            <i className="fa-solid fa-right-from-bracket"></i>
+                            Sign Out
+                        </button>
+                    </>
+                ) : (
+                    <Link
+                        to="/login?redirect=/my-library"
+                        onClick={() => setAccountOpen(false)}
+                    >
+                        <i className="fa-solid fa-right-to-bracket"></i>
+                        Sign In
+                    </Link>
+                )}
+            </div>
+        </>
+    )}
+</div>
 
                         {/* Theme Toggle Button */}
-                        <button
+                        {/* <button
                             className="theme-toggle-btn"
                             onClick={toggleDarkMode}
                             aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
                             title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
                         >
                             {darkMode ? <MoonIcon /> : <SunIcon />}
-                        </button>
+                        </button> */}
 
                         {/* Mobile Menu Toggle */}
                         <button
@@ -780,6 +878,86 @@ const Navbar = () => {
                     letter-spacing: 0.15em;
                 }
             }
+                /* Account Navigation */
+.account-nav {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    margin-right: 12px;
+    z-index: 1002;
+}
+
+.account-nav-btn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 0px solid var(--border-color);
+    background: transparent;
+    color: var(--text-primary);
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.account-nav-btn:hover {
+    color: var(--accent-color);
+    // border-color: var(--accent-color);
+}
+
+.account-dropdown {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    min-width: 210px;
+    padding: 10px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    box-shadow: 0 10px 30px var(--shadow-color);
+    z-index: 1004;
+}
+
+.account-dropdown-heading {
+    padding: 10px 12px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 5px;
+}
+
+.account-dropdown a,
+.account-dropdown button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 12px;
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 14px;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.account-dropdown a:hover,
+.account-dropdown button:hover {
+    background: var(--bg-tertiary);
+    color: var(--accent-color);
+}
+
+.account-dropdown-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1003;
+}
 
             `}</style>
         </header>

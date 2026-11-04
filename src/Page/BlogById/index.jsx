@@ -101,7 +101,20 @@ const BlogByIdPage = () => {
 
     return (
         <>
-            <HeadTitle title={pageTitle} description={pageDescription} />
+            <HeadTitle
+    title={blog?.seo_title || pageTitle}
+    description={
+        blog?.seo_description ||
+        blog?.standfirst ||
+        pageDescription
+    }
+    image={blog?.image_url}
+    url={
+        typeof window !== "undefined"
+            ? `${window.location.origin}/blogs/${blog?.slug || identifier}`
+            : ""
+    }
+/>
             <SinglePostSection
                 blog={blog}
                 relatedArticles={relatedArticles}

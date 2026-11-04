@@ -95,7 +95,7 @@ async function prerenderBlogs() {
             ? title
             : `${title} | M. Q. Siddiqui`;
         const description = (art.seo_description || art.standfirst || art.summary || 'Empowering entrepreneurs and students through strategic marketing.').trim();
-        const articleUrl = `https://siddiqui.digital/blog/${slug}`;
+        const articleUrl = `https://siddiqui.digital/blogs/${slug}`;
         const socialImageUrl = `${supabaseUrl}/storage/v1/object/public/blogs/blog-images/${slug}-social.png`;
 
         const safeTitle = escapeHtmlAttr(fullTitle);
@@ -137,7 +137,7 @@ async function prerenderBlogs() {
         articleHtml = articleHtml.replace(/<meta\s+name=["']twitter:image["'].*?>/i, `<meta name="twitter:image" content="${safeImg}" />`);
 
         // Ensure directory exists: dist/blog/<slug>/
-        const targetDir = path.join(projectRoot, 'dist', 'blog', slug);
+        const targetDir = path.join(projectRoot, 'dist', 'blogs', slug);
         if (!fs.existsSync(targetDir)) {
             fs.mkdirSync(targetDir, { recursive: true });
         }
@@ -148,8 +148,8 @@ async function prerenderBlogs() {
     }
 
     console.log('================================================================');
-    console.log(`✓ SUCCESS: ${successCount} article metadata pages created in dist/blog/<slug>/index.html`);
-    console.log('  - All 24 published articles have crawler-ready Open Graph and Twitter tags.');
+    console.log(`✓ SUCCESS: ${successCount} article metadata pages created in dist/blogs/<slug>/index.html`);
+    console.log(`  - All ${successCount} published articles have crawler-ready Open Graph and Twitter tags.`);
     console.log('  - Zero scheduled articles were prerendered (protected from premature exposure).');
     console.log('  - React SPA bundle and <div id="root"></div> fully preserved for normal visitor navigation.');
     console.log('================================================================\n');

@@ -1,9 +1,54 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
+import { supabase } from "../../supabaseClient";
 
 function Sidebar() {
     const overlayRef = useRef(null);
     const sidebarRef = useRef(null);
+    const [session, setSession] = useState(null);
+
+useEffect(() => {
+    let mounted = true;
+
+    const getSession = async () => {
+        const { data: { session } } = await supabase.auth.getSession();
+
+        if (mounted) {
+            setSession(session);
+        }
+    };
+
+    getSession();
+
+    const {
+        data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+        setSession(session);
+    });
+
+    return () => {
+        mounted = false;
+        subscription.unsubscribe();
+    };
+}, []);
+
+const handleSidebarSignOut = async () => {
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+        console.error("Sign out failed:", error.message);
+        return;
+    }
+
+    setSession(null);
+
+    // Close the mobile sidebar
+    const sidebar = sidebarRef.current;
+    const overlay = overlayRef.current;
+
+    sidebar?.classList.remove("active");
+    overlay?.classList.remove("active");
+};
 
     useEffect(() => {
         const menuBtn = document.querySelector(".nav-btn"); // tombol dari Navbar
@@ -170,6 +215,37 @@ function Sidebar() {
                     <li className="below-dropdown">
                         <NavLink to="/contact">Contact Us</NavLink>
                     </li>
+                    {/* Account Navigation */}
+<li className="sidebar-account-section">
+    <div className="sidebar-account-divider"></div>
+
+    {session ? (
+        <>
+            <div className="sidebar-account-heading">
+                My Account
+            </div>
+
+            <NavLink to="/my-library">
+                <i className="fa-solid fa-book-open"></i>
+                My Books &amp; Orders
+            </NavLink>
+
+            <button
+                type="button"
+                className="sidebar-account-button"
+                onClick={handleSidebarSignOut}
+            >
+                <i className="fa-solid fa-right-from-bracket"></i>
+                Sign Out
+            </button>
+        </>
+    ) : (
+        <NavLink to="/login?redirect=/my-library">
+            <i className="fa-solid fa-right-to-bracket"></i>
+            Sign In
+        </NavLink>
+    )}
+</li>
                 </ul>
             </div>
         </aside>

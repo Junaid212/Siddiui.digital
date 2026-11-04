@@ -72,11 +72,13 @@ function AppRouters() {
             <Route path="order-cancel" element={<OrderCancelPage />} />
             <Route path="cart/checkout" element={<CartCheckoutPage />} />
             <Route path="my-orders" element={<MyOrdersPage />} />
+            <Route path="my-library" element={<MyOrdersPage />} />
             <Route path="consultation" element={<ConsultantPage />} />
             <Route path="blog-page" element={<BlogSection />} />
             <Route path="blog-page/:slug" element={<BlogByIdPage />} />
+            <Route path="blogs/:slug" element={<BlogByIdPage />} />
             {/* ID-based blog route for admin share links */}
-            <Route path="blogs/:id" element={<BlogByIdPage />} />
+            {/* <Route path="blogs/:id" element={<BlogByIdPage />} /> */}
             <Route path="courses" element={<Courses />} />
             <Route path="frameworks" element={<FrameworksPage />} />
             <Route path="frameworks/:slug" element={<FrameworkDetailPage />} />

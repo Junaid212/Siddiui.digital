@@ -1,9 +1,25 @@
 import DOMPurify from "dompurify";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Check, Link2 } from "lucide-react";
 import { copyToClipboard, showShareToast } from "../../utils/shareToast";
 import CommentSection from "./CommentSection";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+import {
+    faLinkedin,
+    faWhatsapp,
+    faXTwitter,
+    faThreads,
+    faFacebook,
+} from "@fortawesome/free-brands-svg-icons";
+
+import {
+    Mail,
+    Copy,
+    Check,
+    Share2,
+} from "lucide-react";
+
 
 // Helper to calculate reading time from text
 const calculateReadingTime = (text) => {
@@ -13,10 +29,155 @@ const calculateReadingTime = (text) => {
     return `${Math.max(1, minutes)} min read`;
 };
 
+const BrandIcon = ({ icon }) => (
+    <svg
+        viewBox="0 0 24 24"
+        width="17"
+        height="17"
+        fill="currentColor"
+        aria-hidden="true"
+    >
+        <path d={icon.path} />
+    </svg>
+);
+
+const ArticleShareBar = ({ title, url }) => {
+    const [copied, setCopied] = useState(false);
+
+    const encodedUrl = encodeURIComponent(url);
+    const encodedTitle = encodeURIComponent(title);
+    const shareText = encodeURIComponent(`${title}\n${url}`);
+
+    const shareOptions = [
+        {
+            name: "LinkedIn",
+            label: "Share on LinkedIn",
+            url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
+            icon: <FontAwesomeIcon icon={faLinkedin} />,
+        },
+        {
+            name: "WhatsApp",
+            label: "Share on WhatsApp",
+            url: `https://wa.me/?text=${shareText}`,
+            icon: <FontAwesomeIcon icon={faWhatsapp} />,
+        },
+        {
+            name: "X",
+            label: "Share on X",
+            url: `https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}`,
+            icon: <FontAwesomeIcon icon={faXTwitter} />,
+        },
+        {
+            name: "Threads",
+            label: "Share on Threads",
+            url: `https://www.threads.net/intent/post?text=${shareText}`,
+            icon: <FontAwesomeIcon icon={faThreads} />,
+        },
+        {
+            name: "Facebook",
+            label: "Share on Facebook",
+            url: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
+            icon: <FontAwesomeIcon icon={faFacebook} />,
+        },
+    ];
+
+    const handleCopy = async () => {
+        try {
+            await copyToClipboard(url);
+            setCopied(true);
+            showShareToast("Link copied");
+
+            setTimeout(() => setCopied(false), 2000);
+        } catch (error) {
+            console.error("Unable to copy link:", error);
+        }
+    };
+
+    const handleNativeShare = async () => {
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title,
+                    url,
+                    text: title,
+                });
+            } catch (error) {
+                if (error.name !== "AbortError") {
+                    console.error("Native sharing failed:", error);
+                }
+            }
+        } else {
+            handleCopy();
+        }
+    };
+
+    return (
+        <div className="article-share-bar">
+            <span className="article-share-label">
+                Share this article
+            </span>
+
+            <div className="article-share-icons">
+                {shareOptions.map((item) => (
+                    <a
+                        key={item.name}
+                        href={item.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="article-share-icon"
+                        aria-label={item.label}
+                        data-tooltip={item.label}
+                    >
+                        {item.icon}
+                    </a>
+                ))}
+
+                <a
+                    href={`mailto:?subject=${encodedTitle}&body=${shareText}`}
+                    className="article-share-icon"
+                    aria-label="Share by Email"
+                    data-tooltip="Share by Email"
+                >
+                    <Mail />
+                </a>
+
+                <button
+                    type="button"
+                    className="article-share-icon"
+                    onClick={handleCopy}
+                    aria-label="Copy article link"
+                    data-tooltip="Copy Link"
+                >
+                    {copied ? <Check /> : <Copy />}
+                </button>
+
+                <button
+                    type="button"
+                    className="article-share-icon"
+                    onClick={handleNativeShare}
+                    aria-label="More sharing options"
+                    data-tooltip="More sharing options"
+                >
+                    <Share2 />
+                </button>
+            </div>
+
+            {copied && (
+                <span className="article-share-feedback" role="status">
+                    Link copied
+                </span>
+            )}
+        </div>
+    );
+};
+
 const SinglePostSection = ({ blog, relatedArticles = [], loading }) => {
     const [copied, setCopied] = useState(false);
 
-    const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
+    const shareUrl =
+    typeof window !== "undefined"
+        ? `${window.location.origin}${window.location.pathname}`
+        : "";
 
     const handleCopyLink = () => {
         copyToClipboard(shareUrl).then(() => {
@@ -440,6 +601,102 @@ const SinglePostSection = ({ blog, relatedArticles = [], loading }) => {
                         height: 260px !important;
                     }
                 }
+                    .article-share-bar {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    margin-top: 8px;
+}
+
+.article-share-label {
+    color: #13294B;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.article-share-icons {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.article-share-icon {
+    position: relative;
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 1px solid #DCE1E9;
+    border-radius: 50%;
+    background: #FFFFFF;
+    color: #13294B;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.article-share-icon svg {
+    width: 17px;
+    height: 17px;
+    stroke-width: 2;
+}
+
+.article-share-icon:hover {
+    color: #A3192F;
+    border-color: #A3192F;
+    background: #FFFFFF;
+    transform: translateY(-2px);
+}
+
+/* Tooltip */
+.article-share-icon::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: calc(100% + 9px);
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 6px 9px;
+    border-radius: 5px;
+    background: #13294B;
+    color: #FFFFFF;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    z-index: 10;
+}
+
+.article-share-icon:hover::after,
+.article-share-icon:focus-visible::after {
+    opacity: 1;
+    visibility: visible;
+}
+
+.article-share-feedback {
+    color: #A3192F;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+@media (max-width: 600px) {
+    .article-share-icons {
+        gap: 9px;
+    }
+
+    .article-share-icon {
+        width: 38px;
+        height: 38px;
+        min-width: 38px;
+    }
+}
             `}</style>
 
             {/* SUB-NAV / BREADCRUMB */}
@@ -641,6 +898,11 @@ const SinglePostSection = ({ blog, relatedArticles = [], loading }) => {
                             </div>
                         )}
                     </div>
+                    {/* SHARE BUTTONS - BELOW ARTICLE TITLE */}
+<ArticleShareBar
+    title={blog.title}
+    url={shareUrl}
+/>
                 </header>
 
                 {/* FEATURED IMAGE */}
@@ -963,139 +1225,18 @@ const SinglePostSection = ({ blog, relatedArticles = [], loading }) => {
                         </aside>
                     </div>
                 )}
-
-                {/* SHARE ACTIONS */}
-                <div style={{
-                    maxWidth: '720px',
-                    margin: '0 auto',
-                    padding: '16px 24px 48px',
-                    display: 'flex',
-                    flexWrap: 'wrap',
-                    alignItems: 'center',
-                    gap: '12px',
-                    borderBottom: '1px solid #E3E6EC'
+            {/* SHARE ACTIONS - ARTICLE END */}
+            <div style={{
+                maxWidth: "720px",
+                margin: "0 auto",
+                padding: "16px 24px 48px",
+                borderBottom: "1px solid #E3E6EC"
                 }}>
-                    <span
-                        className="editorial-share-label"
-                        style={{ fontSize: '15px', fontWeight: 700, color: '#13294B' }}
-                    >
-                        Share:
-                    </span>
-                    <a
-                        className="editorial-share-linkedin"
-                        href={blog.linkedin_url || `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                            background: '#0A66C2',
-                            color: '#ffffff',
-                            textDecoration: 'none',
-                            fontWeight: 700,
-                            fontSize: '15px',
-                            padding: '10px 18px',
-                            borderRadius: '8px',
-                            minHeight: '44px',
-                            boxSizing: 'border-box',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '8px'
-                        }}
-                    >
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
-                        </svg>
-                        <span>LinkedIn</span>
-                    </a>
-
-                    {blog.instagram_url && (
-                        <a
-                            className="editorial-share-instagram"
-                            href={blog.instagram_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{
-                                background: 'radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%)',
-                                color: '#ffffff',
-                                textDecoration: 'none',
-                                fontWeight: 700,
-                                fontSize: '15px',
-                                padding: '10px 18px',
-                                borderRadius: '8px',
-                                minHeight: '44px',
-                                boxSizing: 'border-box',
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: '8px'
-                            }}
-                        >
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.13-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                            </svg>
-                            <span>Instagram</span>
-                        </a>
-                    )}
-
-                    {blog.facebook_url && (
-                        <a
-                            className="editorial-share-facebook"
-                            href={blog.facebook_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{
-                                background: '#1877F2',
-                                color: '#ffffff',
-                                textDecoration: 'none',
-                                fontWeight: 700,
-                                fontSize: '15px',
-                                padding: '10px 18px',
-                                borderRadius: '8px',
-                                minHeight: '44px',
-                                boxSizing: 'border-box',
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: '8px'
-                            }}
-                        >
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                            </svg>
-                            <span>Facebook</span>
-                        </a>
-                    )}
-
-                    <button
-                        type="button"
-                        onClick={handleCopyLink}
-                        style={{
-                            minHeight: '44px',
-                            padding: '0 18px',
-                            borderRadius: '8px',
-                            border: '1px solid #C9CFDB',
-                            background: copied ? '#E8F5E9' : '#ffffff',
-                            color: copied ? '#1E4620' : '#13294B',
-                            font: 'inherit',
-                            fontWeight: 700,
-                            fontSize: '15px',
-                            cursor: 'pointer',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '8px',
-                            transition: 'all 0.2s'
-                        }}
-                    >
-                        {copied ? (
-                            <>
-                                <Check size={16} color="#2D6A4F" />
-                                <span>Link Copied!</span>
-                            </>
-                        ) : (
-                            <>
-                                <Link2 size={16} />
-                                <span>Copy Link</span>
-                            </>
-                        )}
-                    </button>
-                </div>
+                <ArticleShareBar
+                title={blog.title}
+                url={shareUrl}
+                />
+            </div>
             </article>
 
             {/* RELATED ARTICLES */}
@@ -1127,7 +1268,7 @@ const SinglePostSection = ({ blog, relatedArticles = [], loading }) => {
                                 const relCat = Array.isArray(rel.categories) && rel.categories[0]
                                     ? rel.categories[0]
                                     : (rel.topic || 'Article');
-                                const targetUrl = rel.slug ? `/blog/${rel.slug}` : `/blogs/${rel.id}`;
+                                const targetUrl = `/blogs/${rel.slug || rel.id}`;
 
                                 return (
                                     <Link

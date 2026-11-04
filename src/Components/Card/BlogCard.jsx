@@ -2,16 +2,21 @@ import React, { useState } from "react";
 import { Share2, Check } from "lucide-react";
 import { copyToClipboard, showShareToast } from "../../utils/shareToast";
 
-const BlogCard = ({ image, title, topic, topic2, id, date, linkedin_url, instagram_url, facebook_url }) => {
+const BlogCard = ({ image, title, topic, topic2, id, slug, date, linkedin_url, instagram_url, facebook_url }) => {
     const [copied, setCopied] = useState(false);
 
     const handleShare = (e) => {
         e.preventDefault();
         e.stopPropagation();
 
-        const shareUrl = id
-            ? `${window.location.origin}/blogs/${id}`
-            : `${window.location.origin}/blog/${topic ? topic.toLowerCase().replace(/\s+/g, '-') : 'general'}`;
+        const articleIdentifier = slug || id;
+
+        if (!articleIdentifier) {
+            showShareToast("Article link is unavailable.");
+            return;
+        }
+
+        const shareUrl = `${window.location.origin}/blogs/${articleIdentifier}`;
 
         copyToClipboard(shareUrl).then(() => {
             setCopied(true);
@@ -105,7 +110,11 @@ const BlogCard = ({ image, title, topic, topic2, id, date, linkedin_url, instagr
                         {title}
                     </h3>
                     <div className="card_footer mt-auto pt-3 border-top d-flex align-items-center justify-content-between">
-                        <a href={`/blogs/${id || (topic ? topic.toLowerCase().replace(/\s+/g, '-') : 'general')}`} className="blog-link text-decoration-none" style={{ color: '#C80808', fontWeight: '600' }}>
+                        <a
+                            href={`/blogs/${slug || id}`}
+                            className="blog-link text-decoration-none"
+                            style={{ color: '#C80808', fontWeight: '600' }}
+                        >
                             Read More <i className="fa-solid fa-arrow-right ms-2"></i>
                         </a>
 

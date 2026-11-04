@@ -124,7 +124,6 @@ export default function AskSid() {
 
   const mainInputRef = useRef(null);
   const followUpInputRef = useRef(null);
-  const conversationEndRef = useRef(null);
 
   // Initialize demo session ID
   useEffect(() => {
@@ -238,12 +237,6 @@ export default function AskSid() {
     checkUserPurchases();
   }, [user]);
 
-  // Scroll to conversation end on new messages
-  useEffect(() => {
-    if (conversation.length > 0) {
-      conversationEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [conversation, loading]);
 
   // Derived access considering simulator override
   const effectiveAccess = (() => {
@@ -1023,8 +1016,6 @@ export default function AskSid() {
                 <span>SID is examining the challenge through the principles of Marketing Reclassified…</span>
               </div>
             )}
-
-            <div ref={conversationEndRef} />
 
             {/* ══ FOLLOW-UP COMPOSER AT BOTTOM OF ACTIVE CONVERSATION ══ */}
             {(!effectiveAccess.isFull && effectiveAccess.demoExhausted) ? (
