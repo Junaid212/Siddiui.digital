@@ -10,7 +10,7 @@ const BannerInnerSection = ({title, currentPage}) => {
                             <h1 > {title}</h1>
                             <nav className="breadcrumb">
                                 <a href="#">Home</a>
-                                <i className="fa-solid fa-arrow-right no-dark"></i>
+                                <i className="fa-solid fa-arrow-right"></i>
                                 <a href="#">{currentPage}</a>
                             </nav>
                         </div>

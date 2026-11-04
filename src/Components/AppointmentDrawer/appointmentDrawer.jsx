@@ -5,6 +5,14 @@ import TimeSlotPicker from "../TimeSlotPicker/timeSlotPicker";
 import SuccessModal from "../SuccessModel/successModel";
 import ProfileCard from "../ProfileCard/profileCard";
 import { supabase } from "../../supabaseClient";
+import {
+  to24Hour,
+  isDateDisabled,
+  isSlotInPast,
+  validateBookingForm,
+  getBookingApiBase,
+  formatLocalDate,
+} from "../../utils/booking";
 
 // Mock format function (replace with actual date-fns if available)
 const format = (date, formatStr) => {
@@ -54,9 +62,9 @@ const SimpleCalendar = ({ selected, onSelect, disabled }) => {
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
   const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
 
-  const isDateDisabled = (day) => {
+  const checkDayDisabled = (day) => {
     const date = new Date(currentYear, currentMonth, day);
-    return disabled && disabled(date);
+    return disabled ? disabled(date) : false;
   };
 
   const isSelected = (day) => {
@@ -112,7 +120,7 @@ const SimpleCalendar = ({ selected, onSelect, disabled }) => {
 
         {Array.from({ length: daysInMonth }, (_, i) => i + 1).map(day => {
           const date = new Date(currentYear, currentMonth, day);
-          const isDisabled = isDateDisabled(day);
+          const isDisabled = checkDayDisabled(day);
           const isSelectedDay = isSelected(day);
 
           return (
@@ -134,6 +142,7 @@ const SimpleCalendar = ({ selected, onSelect, disabled }) => {
 };
 
 export default function AppointmentDrawer({ isOpen, onClose }) {
+  const [user, setUser] = useState(null);
   const [selectedDate, setSelectedDate] = useState(undefined);
   const [selectedPeriod, setSelectedPeriod] = useState("morning");
   const [selectedTime, setSelectedTime] = useState("");
@@ -145,10 +154,9 @@ export default function AppointmentDrawer({ isOpen, onClose }) {
   const [formData, setFormData] = useState({ name: '', phone: '', email: '', message: '' });
   const [formErrors, setFormErrors] = useState({});
   const [bookedSlots, setBookedSlots] = useState([]);
-
-  const isLocalhost = typeof window !== "undefined" &&
-    (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
-  const API_BASE = isLocalhost ? "http://localhost:5000/api" : (import.meta.env.VITE_API_URL || "/api");
+  const [slotsError, setSlotsError] = useState(null);
+  const submitLockRef = useRef(false);
+  const API_BASE = getBookingApiBase();
 
   const autoCloseTimeoutRef = useRef(null);
   useEffect(() => {
@@ -159,33 +167,39 @@ export default function AppointmentDrawer({ isOpen, onClose }) {
     };
   }, []);
 
-  // Convert 12-hour display time to 24-hour format for API
-  const to24Hour = (time12) => {
-    const [time, period] = time12.split(' ');
-    let [h, m] = time.split(':').map(Number);
-    if (period === 'PM' && h !== 12) h += 12;
-    if (period === 'AM' && h === 12) h = 0;
-    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-  };
-
   // Fetch booked slots whenever selectedDate changes
   useEffect(() => {
     if (!selectedDate) return;
-    const dateStr = format(selectedDate, "yyyy-MM-dd");
+    const dateStr = formatLocalDate(selectedDate);
+    setSlotsError(null);
     fetch(`${API_BASE}/consultation/slots?date=${dateStr}`)
-      .then(res => res.json())
-      .then(data => setBookedSlots(data.bookedSlots || []))
-      .catch(err => console.error('Failed to fetch slots:', err));
-  }, [selectedDate]);
+      .then(async (res) => {
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || "Failed to load availability");
+        setBookedSlots(data.bookedSlots || []);
+      })
+      .catch(err => {
+        console.error('Failed to fetch slots:', err);
+        setBookedSlots([]);
+        setSlotsError("Unable to load available times. Please try another date.");
+      });
+  }, [selectedDate, API_BASE]);
 
-  // Check if a display time is already booked
-  const isSlotBooked = (displayTime) => bookedSlots.includes(to24Hour(displayTime));
+  const isSlotBooked = (displayTime) => (
+    bookedSlots.includes(to24Hour(displayTime)) || isSlotInPast(selectedDate, displayTime)
+  );
+  const isSlotUnavailable = isSlotBooked;
 
   // Prefill form with Google auth session data
   useEffect(() => {
     const getSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
+        setUser({
+          id: session.user.id,
+          name: session.user.user_metadata?.full_name || session.user.email,
+          email: session.user.email,
+        });
         setFormData(prev => ({
           ...prev,
           name: session.user.user_metadata?.full_name || prev.name,
@@ -194,15 +208,29 @@ export default function AppointmentDrawer({ isOpen, onClose }) {
       }
     };
     getSession();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setUser({
+          id: session.user.id,
+          name: session.user.user_metadata?.full_name || session.user.email,
+          email: session.user.email,
+        });
+        setFormData(prev => ({
+          ...prev,
+          name: session.user.user_metadata?.full_name || prev.name,
+          email: session.user.email || prev.email,
+        }));
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => subscription?.unsubscribe();
   }, []);
 
   const validateForm = () => {
-    const errors = {};
-    if (!formData.name.trim()) errors.name = 'Name is required';
-    if (!formData.email.trim()) errors.email = 'Email is required';
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) errors.email = 'Enter a valid email address';
-    if (!formData.phone.trim()) errors.phone = 'Phone number is required';
-    else if (!/^[+]?[\d\s()-]{7,15}$/.test(formData.phone.trim())) errors.phone = 'Enter a valid phone number';
+    const errors = validateBookingForm(formData);
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -221,18 +249,20 @@ export default function AppointmentDrawer({ isOpen, onClose }) {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) return;
+    if (!validateForm() || submitLockRef.current) return;
 
+    submitLockRef.current = true;
     setIsBooking(true);
     setBookingError(null);
     try {
-      const dateStr = format(selectedDate, "yyyy-MM-dd");
+      const dateStr = formatLocalDate(selectedDate);
       const timeStr = to24Hour(selectedTime);
 
       const response = await fetch(`${API_BASE}/consultation/book`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          userId: user?.id || null,
           name: formData.name.trim(),
           email: formData.email.trim(),
           phone: formData.phone.trim(),
@@ -261,6 +291,7 @@ export default function AppointmentDrawer({ isOpen, onClose }) {
       setBookingError(err.message || 'Failed to book. Please try again.');
     } finally {
       setIsBooking(false);
+      submitLockRef.current = false;
     }
   };
 
@@ -331,7 +362,7 @@ export default function AppointmentDrawer({ isOpen, onClose }) {
                     <SimpleCalendar
                       selected={selectedDate}
                       onSelect={setSelectedDate}
-                      disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                      disabled={isDateDisabled}
                     />
                   </div>
                 </div>

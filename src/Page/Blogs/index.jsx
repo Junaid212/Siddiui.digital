@@ -543,6 +543,7 @@ const BlogSection = () => {
           // font-family: 'Source Serif 4', Georgia, serif;
           font-size: clamp(28px, 4vw, 36px);
           color: #13294B;
+          text-transform: capitalize;
         }
 
         .latest-filter-group {

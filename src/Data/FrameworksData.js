@@ -8,7 +8,7 @@ export const INDIVIDUAL_FRAMEWORKS = [
     tag: "Flagship Concept",
     title: "From Purpose to Profit",
     subtitle: "The DNA of Business",
-    pageHeading: "From Purpose to Profit — The DNA of Business",
+    pageHeading: "From Purpose to Profit: The DNA of Business",
     image: "/assets/images/img/74.webp",
     shortDefinition:
       "From Purpose to Profit is a strategic business framework that explains how purpose, value creation, relevance, strategy, growth, and profit are connected.",
@@ -41,7 +41,7 @@ export const INDIVIDUAL_FRAMEWORKS = [
     relatedPublication: {
       title: "Marketing Reclassified",
       desc: "From transaction to human progress.",
-      image: "/assets/images/img/book1.webp",
+      image: "https://cneariiepqywvjpmznqn.supabase.co/storage/v1/object/public/product-covers/1792073568433-FFF_cove_page_Marketing_Reclassified_Web.jpg",
       link: "/buy-book/cff3798b-88bb-41af-8e2a-bc5f7a2a4239"
     },
     relatedLearning: {

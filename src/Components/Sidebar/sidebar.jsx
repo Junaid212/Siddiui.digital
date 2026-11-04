@@ -111,6 +111,9 @@ function Sidebar() {
                     <li>
                         <NavLink to="/courses">Learning</NavLink>
                     </li>
+                    <li>
+                        <NavLink to="/ask-sid">Ask SID</NavLink>
+                    </li>
                     <li className="below-dropdown">
                         <NavLink to="/blog-page">Blog</NavLink>
                     </li>

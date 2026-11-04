@@ -68,7 +68,7 @@ const PUBLICATIONS = [
   {
     title: "Marketing Reclassified",
     desc: "From Promotion to Governed Strategic Intelligence",
-    image: "/assets/images/img/book1.webp",
+    image: "https://cneariiepqywvjpmznqn.supabase.co/storage/v1/object/public/product-covers/1792073568433-FFF_cove_page_Marketing_Reclassified_Web.jpg",
     link: "/buy-book/cff3798b-88bb-41af-8e2a-bc5f7a2a4239",
   },
   {

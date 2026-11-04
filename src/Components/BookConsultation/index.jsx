@@ -1,7 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, Star, Award, Users, CheckCircle, X, ChevronLeft, ChevronRight, MapPin, Briefcase, GraduationCap, Phone, User, MessageSquare, Mail } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Calendar, CheckCircle, X, ChevronLeft, ChevronRight, Briefcase, Phone, User, MessageSquare, Mail } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../../supabaseClient';
+import {
+  TIME_SLOTS,
+  to24Hour,
+  formatLocalDate,
+  isDateDisabled,
+  isSlotInPast,
+  validateBookingForm,
+  getBookingApiBase,
+} from '../../utils/booking';
 
 export default function BookConsultation() {
   const [selectedDate, setSelectedDate] = useState(null);
@@ -17,8 +26,10 @@ export default function BookConsultation() {
   const [user, setUser] = useState(null);
   const [signingIn, setSigningIn] = useState(false);
   const [bookedSlots, setBookedSlots] = useState([]);
+  const [slotsError, setSlotsError] = useState(null);
+  const submitLockRef = useRef(false);
 
-  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+  const API_BASE = getBookingApiBase();
 
   // Auth logic (shared pattern)
   useEffect(() => {
@@ -92,41 +103,30 @@ export default function BookConsultation() {
     stats: { clients: "15+", sessions: "200+", satisfaction: "98%" }
   };
 
-  const timeSlots = {
-    morning: ["9:00 AM", "9:30 AM", "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM"],
-    afternoon: ["1:00 PM", "1:30 PM", "2:00 PM", "2:30 PM", "3:00 PM", "3:30 PM"],
-    evening: ["5:00 PM", "5:30 PM", "6:00 PM", "6:30 PM", "7:00 PM"]
-  };
-
-  // Convert 12-hour display time to 24-hour format for API comparison
-  const to24Hour = (time12) => {
-    const [time, period] = time12.split(' ');
-    let [h, m] = time.split(':').map(Number);
-    if (period === 'PM' && h !== 12) h += 12;
-    if (period === 'AM' && h === 12) h = 0;
-    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-  };
-
-  const formatLocalDate = (d) => {
-    if (!d) return '';
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
+  const timeSlots = TIME_SLOTS;
 
   // Fetch booked slots whenever selectedDate changes
   useEffect(() => {
     if (!selectedDate) return;
     const dateStr = formatLocalDate(selectedDate);
+    setSlotsError(null);
     fetch(`${API_BASE}/consultation/slots?date=${dateStr}`)
-      .then(res => res.json())
-      .then(data => setBookedSlots(data.bookedSlots || []))
-      .catch(err => console.error('Failed to fetch slots:', err));
+      .then(async (res) => {
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || 'Failed to load availability');
+        setBookedSlots(data.bookedSlots || []);
+      })
+      .catch(err => {
+        console.error('Failed to fetch slots:', err);
+        setBookedSlots([]);
+        setSlotsError('Unable to load available times. Please try another date.');
+      });
   }, [selectedDate]);
 
   // Check if a display time is booked (compare in 24h format)
-  const isSlotBooked = (displayTime) => bookedSlots.includes(to24Hour(displayTime));
+  const isSlotUnavailable = (displayTime) => (
+    bookedSlots.includes(to24Hour(displayTime)) || isSlotInPast(selectedDate, displayTime)
+  );
 
   const getDaysInMonth = (date) => {
     const year = date.getFullYear();
@@ -146,24 +146,12 @@ export default function BookConsultation() {
     return days;
   };
 
-  const isDateDisabled = (date) => {
-    if (!date) return true;
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return date < today ||  date.getDay() === 6;
-  };
-
   const formatDate = (date) => {
     return date?.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
   };
 
   const validateForm = () => {
-    const errors = {};
-    if (!formData.name.trim()) errors.name = 'Name is required';
-    if (!formData.email.trim()) errors.email = 'Email is required';
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) errors.email = 'Enter a valid email address';
-    if (!formData.phone.trim()) errors.phone = 'Phone number is required';
-    else if (!/^[+]?[\d\s()-]{7,15}$/.test(formData.phone.trim())) errors.phone = 'Enter a valid phone number';
+    const errors = validateBookingForm(formData);
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -189,8 +177,9 @@ export default function BookConsultation() {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) return;
+    if (!validateForm() || submitLockRef.current) return;
 
+    submitLockRef.current = true;
     setBookingLoading(true);
     setBookingError(null);
     try {
@@ -213,7 +202,7 @@ export default function BookConsultation() {
         }),
       });
 
-      const result = await response.json();
+      const result = await response.json().catch(() => ({}));
 
       if (!response.ok) {
         throw new Error(result.error || 'Failed to book consultation');
@@ -222,11 +211,13 @@ export default function BookConsultation() {
       setShowFormPopup(false);
       setEmailDelivery(result.emailDelivery || null);
       setShowSuccess(true);
+      setBookedSlots((prev) => (prev.includes(timeStr) ? prev : [...prev, timeStr]));
     } catch (err) {
       console.error('Booking error:', err);
       setBookingError(err.message || 'Failed to book. Please try again.');
     } finally {
       setBookingLoading(false);
+      submitLockRef.current = false;
     }
   };
 
@@ -417,6 +408,9 @@ export default function BookConsultation() {
                   <p className="bc-time-subtitle">
                     {selectedDate ? formatDate(selectedDate) : 'Please select a date first'}
                   </p>
+                  {slotsError && (
+                    <p style={{ color: '#ef4444', fontSize: '0.85rem', marginTop: 8 }}>{slotsError}</p>
+                  )}
                 </div>
 
                 <div className={`${!selectedDate ? 'bc-time-disabled' : ''}`}>
@@ -430,7 +424,7 @@ export default function BookConsultation() {
                     </div>
                     <div className="bc-slots-grid bc-slots-grid-morning">
                       {timeSlots.morning.map((time) => {
-                        const isUnavailable = isSlotBooked(time);
+                        const isUnavailable = isSlotUnavailable(time);
                         const isSelected = selectedTime === time;
                         let slotClass = "bc-slot-btn";
                         if (isUnavailable) slotClass += " bc-slot-unavailable";
@@ -460,7 +454,7 @@ export default function BookConsultation() {
                     </div>
                     <div className="bc-slots-grid bc-slots-grid-afternoon">
                       {timeSlots.afternoon.map((time) => {
-                        const isUnavailable = isSlotBooked(time);
+                        const isUnavailable = isSlotUnavailable(time);
                         const isSelected = selectedTime === time;
                         let slotClass = "bc-slot-btn";
                         if (isUnavailable) slotClass += " bc-slot-unavailable";
@@ -490,7 +484,7 @@ export default function BookConsultation() {
                     </div>
                     <div className="bc-slots-grid bc-slots-grid-evening">
                       {timeSlots.evening.map((time) => {
-                        const isUnavailable = isSlotBooked(time);
+                        const isUnavailable = isSlotUnavailable(time);
                         const isSelected = selectedTime === time;
                         let slotClass = "bc-slot-btn";
                         if (isUnavailable) slotClass += " bc-slot-unavailable";

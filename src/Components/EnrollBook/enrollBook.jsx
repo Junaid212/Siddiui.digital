@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import useAnimateOnScroll from "../Hooks/useAnimateOnScroll";
-// import AppointmentDrawer from "../AppointmentDrawer/appointmentDrawer";
+import AppointmentDrawer from "../AppointmentDrawer/appointmentDrawer";
 
 const EnrollBook = () => {
   useAnimateOnScroll();
@@ -41,7 +41,10 @@ const EnrollBook = () => {
         </div>
       </div>
 
-      
+      <AppointmentDrawer
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+      />
     </>
   );
 };

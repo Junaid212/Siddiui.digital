@@ -7,7 +7,7 @@ const Awards = () => {
     useAnimateOnScroll();
     return(
         <>
-            <div className="section">
+            <div className="section origin-philosophy-section">
                 <div className="hero-container">
                     <div className="d-flex flex-column gspace-2">
                         <div className="d-flex flex-column flex-md-row h-100 gspace-3">
@@ -55,7 +55,11 @@ Recognized as Best Teacher in a College of Business, reflecting a sustained comm
 #text{
     font-size: 2.35rem;
 }
-  `}</style>
+  @media (max-width:768px){
+        .animate-box{
+    font-size: 1.5rem !important;
+}
+  }`}</style>
 </div>
 
                                 {/* <p>r. Muhammad Q. Siddiqui was recognised as the Best Teacher in the College of Business at Ajman University — one of the UAE's leading institutions and ranked among the top 2.8% of universities worldwide. This award reflects not only teaching excellence but a sustained commitment to student development, intellectual depth, and the transformation of how marketing and business are understood by learners.</p> */}

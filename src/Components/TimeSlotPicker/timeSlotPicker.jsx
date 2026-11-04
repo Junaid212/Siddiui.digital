@@ -1,24 +1,25 @@
 import React from "react";
 import { Sun, CloudSun, Moon } from "lucide-react";
+import { TIME_SLOTS } from "../../utils/booking";
 
 const periods = [
   {
     key: "morning",
     label: "Morning",
     icon: Sun,
-    slots: ["9:00 AM", "9:30 AM", "10:00 AM", "10:30 AM", "11:00 AM"],
+    slots: TIME_SLOTS.morning,
   },
   {
     key: "afternoon",
     label: "Afternoon",
     icon: CloudSun,
-    slots: ["12:00 PM", "12:30 PM", "1:00 PM", "2:00 PM", "3:00 PM"],
+    slots: TIME_SLOTS.afternoon,
   },
   {
     key: "evening",
     label: "Evening",
     icon: Moon,
-    slots: ["5:00 PM", "5:30 PM", "6:00 PM", "6:30 PM", "7:00 PM"],
+    slots: TIME_SLOTS.evening,
   },
 ];
 

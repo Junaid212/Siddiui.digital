@@ -3,6 +3,9 @@
    Plain CSS equivalent of all Tailwind utilities used in
    src/Components/SignatureFrameworks/index.jsx
    ============================================================ */
+:root{
+  --sf-red: #dc2626;
+}
 
 /* ── Section root ── */
 .sf-section {

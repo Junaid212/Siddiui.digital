@@ -854,7 +854,7 @@ textarea.error-border {
     border-radius: var(--global-border-radius-btn);
     transition: all 0.15s ease-in-out;
     line-height: 1em;
-    letter-spacing: 1px;
+    /* letter-spacing: 1px; */
     font-family: var(--font-family-2);
 }
 
@@ -1214,7 +1214,7 @@ textarea.error-border {
 
 @media (max-width:768px) {
     .client-rating-card-content span {
-        font-size: 24px;
+        font-size: 30px;
     }
 
     .client-rating-card-content i {
@@ -1222,20 +1222,20 @@ textarea.error-border {
     }
 
     .client-rating-card-content h5 {
-        font-size: 10px;
+        font-size: 14px;
     }
 
     .client-rating-card-content {
-        gap: 5px;
+        gap: 15px;
     }
 
     .client-rating-card {
-        top: 140px;
-        bottom: 100px;
+        top: 150px;
+        bottom: 140px;
     }
 
     .whychooseus-details {
-        margin-top: -130px;
+        margin-top: -150px;
     }
 
 }
@@ -1569,6 +1569,12 @@ textarea.error-border {
     padding: 2em 2em;
 }
 
+@media screen and (max-width:768px){
+    .cta-banner{
+        padding: 0.5em 0.5em;
+    }
+}
+
 .cta-banner::before {
     content: '';
     position: absolute;
@@ -1665,7 +1671,7 @@ textarea.error-border {
 .breadcrumb {
     display: flex;
     flex-direction: row;
-    gap: 20px;
+    gap: 10px;
     align-items: center;
 }
 
@@ -2486,6 +2492,19 @@ textarea.error-border {
     width: 100%;
     height: 100%;
     z-index: 0;
+}
+
+@media (max-width:768px) {
+    .counter-container {
+        padding: 1em 1em 1em 1em;
+    }
+    .counter-box {
+        padding: 1em !important;
+    }
+
+    .counter-text {
+        font-size: 14px !important;
+    }
 }
 
 .counter-box {

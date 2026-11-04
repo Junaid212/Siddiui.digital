@@ -350,7 +350,7 @@ export default function SignatureFrameworks() {
   return (
     <section ref={sectionRef} className="sf-section ">
       {/* ── desktop: sticky left + scrolling right ── */}
-      <div className="sf-desktop">
+      <div className="sf-desktop " data-theme="light">
         {/* LEFT — sticky */}
         <div className="sf-left-col">
           <div className="sf-sticky-inner">
@@ -360,7 +360,7 @@ export default function SignatureFrameworks() {
             </span>
             <h2 className="sf-heading no-dark">
               SIGNATURE<br />
-              <span className="sf-heading-accent">FRAMEWORKS</span>
+              <div className="sf-heading-accent">FRAMEWORKS</div>
             </h2>
             <p className="sf-desc">
               Original frameworks that connect purpose to profit, keep organizations adaptive, and detect value drift early.

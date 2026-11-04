@@ -252,7 +252,7 @@ export default function FrameworkDetailPage() {
             <p className="fwd-section-desc">{framework.applications}</p>
           </div>
 
-          <div className="fwd-app-pills-wrap">
+          <div className="fwd-app-pills-wrap d-flex gspace-1">
             {framework.applicationPills.map((pill) => (
               <span className="fwd-app-pill" key={pill}>
                 <CheckCircle2 size={14} color="#ff6b6b" />
@@ -309,7 +309,7 @@ export default function FrameworkDetailPage() {
             <div className="fw-capsule-bar-left">
               <div className="fw-capsule-bar-eyebrow">
                 <Sparkles size={13} />
-                <span >Next Strategic Steps</span>
+                <div >Next Strategic Steps</div>
               </div>
               <h2 className="fw-capsule-bar-title">
                 Apply the {framework.title}

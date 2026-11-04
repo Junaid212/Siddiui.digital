@@ -7,7 +7,7 @@ const AboutSection = () => {
     useAnimateOnScroll();
     return(
         <>
-            <div className="section">
+            <div className="section spacious-bottom">
                 <div className="hero-container">
                     <div className="d-flex flex-column gspace-2">
                         <div className="d-flex flex-column flex-md-row h-100 gspace-3">
