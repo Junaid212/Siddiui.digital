@@ -45,7 +45,7 @@ module.exports = async function handler(req, res) {
     }
 
     const priceNum = Number(product.price);
-    const currencyStr = (product.currency || 'AED').toLowerCase();
+    const currencyStr = (product.currency || 'USD').toLowerCase();
     const orderNumber = `ORD-${Date.now().toString(36).toUpperCase()}-${crypto.randomBytes(3).toString('hex').toUpperCase()}`;
     const orderId = crypto.randomUUID();
 
@@ -91,7 +91,7 @@ module.exports = async function handler(req, res) {
       stripe_session_id: session.id,
       book_name: product.title,
       amount: priceNum,
-      currency: (product.currency || 'AED').toUpperCase(),
+      currency: (product.currency || 'USD').toUpperCase(),
       status: 'pending',
       download_limit: product.download_limit || 3,
       download_expires_at: new Date(Date.now() + (product.download_expiry_hours || 72) * 3600 * 1000).toISOString(),

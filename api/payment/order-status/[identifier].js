@@ -45,7 +45,7 @@ module.exports = async function handler(req, res) {
         book_name: productTitle,
         product_id: order.product_id || null,
         amount: Number(order.amount) || 0,
-        currency: order.currency || 'AED',
+        currency: order.currency || 'USD',
         status: order.status,
         email: order.email || null,
         download_token: order.download_token || order.stripe_session_id || order.id,

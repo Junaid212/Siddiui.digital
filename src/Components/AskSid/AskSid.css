@@ -1719,6 +1719,7 @@ body.light-mode,
   display: flex;
   flex-direction: column;
   gap: 3px;
+  color: white !important;
 }
 
 .asksid-book-ref-label {
@@ -1732,7 +1733,7 @@ body.light-mode,
 .asksid-book-ref-title {
   font-size: 0.96rem;
   font-weight: 700;
-  color: #ffffff;
+  color: #ffffff !important;
 }
 
 .asksid-page.light-mode .asksid-book-ref-title {
@@ -1741,13 +1742,13 @@ body.light-mode,
 
 .asksid-book-ref-details {
   font-size: 0.84rem;
-  color: var(--sid-text-muted);
+  color: #ECFAF5;
 }
 
 .asksid-book-ref-cta {
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #ffffff;
+  color: #ffffff !important;
   padding: 9px 18px;
   border-radius: 20px;
   font-size: 0.84rem;

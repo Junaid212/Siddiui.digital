@@ -42,6 +42,7 @@ export default function AskSid() {
   const [token, setToken] = useState(null);
   const [demoSessionId, setDemoSessionId] = useState("");
   const [activeHeroTab, setActiveHeroTab] = useState(0);
+  const [authReady, setAuthReady] = useState(false);
 
   // Configuration state
   const [config, setConfig] = useState({
@@ -135,53 +136,98 @@ export default function AskSid() {
     setDemoSessionId(sid);
   }, []);
 
+  
   // Supabase Auth listener
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      setToken(session?.access_token ?? null);
-    });
+    let isMounted = true;
+
+    supabase.auth.getSession()
+      .then(({ data: { session } }) => {
+        if (!isMounted) return;
+
+        setUser(session?.user ?? null);
+        setToken(session?.access_token ?? null);
+        setAuthReady(true);
+      })
+      .catch((error) => {
+        console.warn("Could not restore authentication session:", error);
+        if (isMounted) setAuthReady(true);
+      });
 
     const {
       data: { subscription }
-    } = supabase.auth.onAuthStateChange((_e, session) => {
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!isMounted) return;
+
       setUser(session?.user ?? null);
       setToken(session?.access_token ?? null);
+      setAuthReady(true);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
-  // Check access whenever token or demoSessionId changes
+
+  
+  // Check access after authentication and demo session are initialized
   useEffect(() => {
-    let isMounted = true;
+    let isCurrent = true;
+
     async function loadConfigAndAccess() {
+      setLoadingAccess(true);
+
       try {
         const [cfgData, accData] = await Promise.all([
           api.getAskSidConfig().catch(() => null),
           api.checkAskSidAccess(token, demoSessionId).catch(() => null)
         ]);
 
-        if (isMounted) {
-          if (cfgData) setConfig((prev) => ({ ...prev, ...cfgData }));
-          if (accData) {
-            setAccess(accData);
-            if (accData.accessLevel !== "full" && accData.demoQuestionsRemaining === 0) {
-              setDemoExhausted(true);
-            }
-          }
+        if (!isCurrent) return;
+
+        if (cfgData) {
+          setConfig((prev) => ({ ...prev, ...cfgData }));
         }
-      } catch (e) {
-        console.warn("Could not verify Ask SID status:", e.message);
+
+        if (accData) {
+          setAccess(accData);
+
+          const hasFullAccess =
+            accData.hasCompanionAccess ||
+            accData.accessLevel === "full";
+
+          const remaining = Number(accData.demoQuestionsRemaining);
+
+          const isExhausted =
+            !hasFullAccess &&
+            (
+              accData.demoAvailable === false ||
+              (Number.isFinite(remaining) && remaining <= 0)
+            );
+
+          // Explicitly update both true and false states
+          setDemoExhausted(isExhausted);
+        }
+      } catch (error) {
+        console.warn("Could not verify Ask SID status:", error.message);
       } finally {
-        if (isMounted) setLoadingAccess(false);
+        if (isCurrent) {
+          setLoadingAccess(false);
+        }
       }
     }
 
-    if (demoSessionId) {
+    if (authReady && demoSessionId) {
       loadConfigAndAccess();
     }
-  }, [token, demoSessionId]);
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [authReady, token, demoSessionId]);
+
 
   // (Entitlements are decided by the server and returned by /ask-sid/access above. The page no longer reads the orders table to guess them.)
 
@@ -948,13 +994,13 @@ export default function AskSid() {
                             <i className="fa-solid fa-book" />
                           </div>
                           <div className="asksid-book-ref-meta">
-                            <span className="asksid-book-ref-label">Relevant Book Section</span>
-                            <span className="asksid-book-ref-title">
+                            <div className="asksid-book-ref-label">Relevant Book Section</div>
+                            <div className="asksid-book-ref-title">
                               {msg.answer.relevantBookSection.book}
-                            </span>
-                            <span className="asksid-book-ref-details">
+                            </div>
+                            <div className="asksid-book-ref-details">
                               <strong>{msg.answer.relevantBookSection.chapter}</strong> • {msg.answer.relevantBookSection.section} ({msg.answer.relevantBookSection.page})
-                            </span>
+                            </div>
                           </div>
                         </div>
 
@@ -963,7 +1009,7 @@ export default function AskSid() {
                           className="asksid-book-ref-cta"
                           id={`btn-read-book-ref-${index}`}
                         >
-                          <span>Read Chapter in Book</span>
+                          <div>Read Chapter in Book</div>
                           <i className="fa-solid fa-arrow-right" />
                         </Link>
                       </div>
@@ -1035,59 +1081,51 @@ export default function AskSid() {
             {(!effectiveAccess.isFull && effectiveAccess.demoExhausted) ? (
               /* If demo limit reached, show upgrade card */
               <div className="asksid-upgrade-card" id="asksid-upgrade-card">
-                <div className="asksid-upgrade-badge">Digital Companion Edition</div>
-                <h2 className="asksid-upgrade-title">
-                  Unlock Full Ask SID
-                </h2>
-                <p className="asksid-upgrade-sub">
-                  Your complimentary demonstration inquiry has concluded. Full Ask SID conversation access, unlimited follow-ups, and complete downloadable PDF publication are included exclusively with the Digital Companion Edition ($49.99).
-                </p>
+            <div className="asksid-upgrade-badge">Digital Companion Edition</div>
+            <h2 className="asksid-upgrade-title">
+              Unlock Full Ask SID
+            </h2>
+            <p className="asksid-upgrade-sub">
+              {effectiveAccess.demoExhausted
+                ? "Your complimentary demonstration question has been used. Full Ask SID access is included exclusively with the Digital Companion Edition."
+                : " Full Ask SID access, the book as your own PDF and the full Companion Pack are included with the Digital Companion Edition."}
+            </p>
 
-                <div className="asksid-upgrade-price-wrap">
-                  <div className="asksid-upgrade-price">
-                    $49<span>.99</span>
-                  </div>
-                  <div className="asksid-upgrade-price-period">
-                    One-time purchase • Full Digital Companion Access
-                  </div>
-                </div>
-
-                <ul className="asksid-upgrade-features">
-                  <li>
-                    <i className="fa-solid fa-check" /> Full, Unlimited Ask SID Strategic Conversations
-                  </li>
-                  <li>
-                    <i className="fa-solid fa-check" /> Complete Downloadable Marketing Reclassified (PDF)
-                  </li>
-                  <li>
-                    <i className="fa-solid fa-check" /> Grounded in all 12 chapters & frameworks by M. Q. Siddiqui
-                  </li>
-                  <li>
-                    <i className="fa-solid fa-check" /> Contextual book section citations & reader navigation
-                  </li>
-                </ul>
-
-                <div className="asksid-upgrade-cta-wrap">
-                  <Link
-                    to={config.upgradeUrl || BOOK_METADATA.publicationUrl}
-                    className="asksid-upgrade-btn"
-                    id="btn-get-digital-companion"
-                  >
-                    <i className="fa-solid fa-lock-open" />
-                    <span>Get Digital Companion Edition ($49.99)</span>
-                  </Link>
-
-                  {!user && (
-                    <button
-                      className="asksid-upgrade-secondary-btn"
-                      onClick={handleGoogleSignIn}
-                      type="button"
-                    >
-                      Already purchased? Sign in to verify
-                    </button>
-                  )}
-                </div>
+            <div className="asksid-upgrade-price-wrap">
+              <div className="asksid-upgrade-price">
+                $49.99
               </div>
+              <div className="asksid-upgrade-price-period">
+                One-time purchase • Full Digital Companion Access
+              </div>
+            </div>
+
+            <ul className="asksid-upgrade-features">
+              <li>
+                <i className="fa-solid fa-check" /> The complete book online, plus your own PDF
+              </li>
+              <li>
+                <i className="fa-solid fa-check" /> Ask SID: 100 questions over 12 months
+              </li>
+              <li>
+                <i className="fa-solid fa-check" /> The full Companion Pack: seven practical tools
+              </li>
+              <li>
+                <i className="fa-solid fa-check" />  Diagnostic questions based on the book's frameworks
+              </li>
+            </ul>
+
+            <div className="asksid-upgrade-cta-wrap">
+              <Link
+                to={config.upgradeUrl || BOOK_METADATA.publicationUrl}
+                className="asksid-upgrade-btn"
+                id="btn-get-digital-companion-empty"
+              >
+                <i className="fa-solid fa-lock-open" />
+                <div>Get the Digital Companion Edition</div>
+              </Link>
+            </div>
+          </div>
             ) : (
               /* Follow-up Question Composer */
               <div className="asksid-followup-card">
@@ -1131,7 +1169,9 @@ export default function AskSid() {
         )}
 
         {/* ══ UPGRADE SECTION (Shown when conversation is empty and user lacks full access) ══ */}
-        {conversation.length === 0 && (!effectiveAccess.isFull || effectiveAccess.demoExhausted) && (
+        {!loadingAccess &&
+          conversation.length === 0 &&
+          (!effectiveAccess.isFull || effectiveAccess.demoExhausted) && (
           <div className="asksid-upgrade-card" id="asksid-upgrade-card">
             <div className="asksid-upgrade-badge">Digital Companion Edition</div>
             <h2 className="asksid-upgrade-title">

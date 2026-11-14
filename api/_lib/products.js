@@ -11,7 +11,7 @@ const DEFAULT_PRODUCTS = [
     short_description: "From transaction to human progress. The definitive strategic playbook for modern digital marketing.",
     description: "From transaction to human progress. Marketing Reclassified breaks down cutting-edge marketing frameworks, behavioral psychology, and sustainable growth engines.",
     price: 99.00,
-    currency: "AED",
+    currency: "USD",
     format: "PDF",
     cover_image: "https://cneariiepqywvjpmznqn.supabase.co/storage/v1/object/public/product-covers/1788934311298-book1.webp",
     file_path: "ebooks/marketing-reclassified.pdf",
@@ -28,7 +28,7 @@ const DEFAULT_PRODUCTS = [
     short_description: "A practical approach to creating sustainable value in a changing world.",
     description: "A practical approach to creating sustainable value in a changing world.",
     price: 49.00,
-    currency: "AED",
+    currency: "USD",
     format: "PDF",
     cover_image: "https://cneariiepqywvjpmznqn.supabase.co/storage/v1/object/public/product-covers/1788934505865-book3.webp",
     file_path: null,
@@ -45,7 +45,7 @@ const DEFAULT_PRODUCTS = [
     short_description: "Practical tool for measuring managing and preventing value drift.",
     description: "Practical tool for measuring managing and preventing value drift.",
     price: 79.00,
-    currency: "AED",
+    currency: "USD",
     format: "PDF",
     cover_image: "https://cneariiepqywvjpmznqn.supabase.co/storage/v1/object/public/product-covers/1788934420360-book2.webp",
     file_path: null,
@@ -72,7 +72,7 @@ async function getProductById(id) {
       return {
         ...data,
         price: Number(data.price) || 49.00,
-        currency: data.currency || 'AED',
+        currency: data.currency || 'USD',
         file_path: resolveProductFilePath(data),
       };
     }
