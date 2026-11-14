@@ -1,9 +1,9 @@
 import img1 from "/assets/images/img/43.webp";
-import img2 from "/assets/images/img/68 copy.webp";
-import img3 from "/assets/images/img/69 copy.webp";
-import img4 from "/assets/images/img/70 copy.webp";
-import img5 from "/assets/images/img/71 copy.webp";
-import img6 from "/assets/images/img/72 copy.webp";
+import img2 from "/assets/images/img/68-copy-960.webp";
+import img3 from "/assets/images/img/69-copy-960.webp";
+import img4 from "/assets/images/img/70-copy-960.webp";
+import img5 from "/assets/images/img/71-copy-960.webp";
+import img6 from "/assets/images/img/72-copy-960.webp";
 
 export const portfoliodata = [
     {

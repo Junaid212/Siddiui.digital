@@ -8,6 +8,7 @@ import CtaSection from "../../Components/CallToAction";
 import ProcessSection from "../../Components/ProcessStep";
 import TestimonialSection from "../../Components/Testimonial/TestimonialSection";
 import HeadTitle from "../../Components/Head/HeadTitle";
+import { seoProps } from "../../Data/pageSeo";
 import Awards from "../../Components/Awards/awards";
 import WhyChooseUsSection from "../../Components/ChooseUs";
 import OriginPhilosophy from "../../Components/About/OriginPhilosophy";
@@ -15,7 +16,7 @@ import OriginPhilosophy from "../../Components/About/OriginPhilosophy";
 const AboutPage = () => {
     return(
         <>
-            <HeadTitle title="Siddiqui.Digital"/>
+            <HeadTitle {...seoProps("about")} />
             <BannerInnerSection title="About M. Q. Siddiqui" currentPage="About M. Q. Siddiqui" />
             {/* <PartnersipSection /> */}
             <section className="seo-content container" style={{display:'none'}}>

@@ -167,9 +167,8 @@ html {
     backface-visibility: hidden;
 }
 
-img {
-    content-visibility: auto;
-}
+/* (A global "img { content-visibility: auto }" used to be here: images that leave the screen then have to be painted again
+   when scrolled back into view, which shows up as flicker. Removed.) */
 
 body {
     background-color: var(--primary);

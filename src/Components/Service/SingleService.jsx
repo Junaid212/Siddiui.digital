@@ -154,7 +154,7 @@ advice.
                     onClick={() => navigate('/buy-book/cff3798b-88bb-41af-8e2a-bc5f7a2a4239')}
                     className="btn btn-secondary-accent"
                   >
-                    Buy Now — AED 49.00
+                    Buy Now — USD 49.00
                   </button>
                 </div>
               </div>

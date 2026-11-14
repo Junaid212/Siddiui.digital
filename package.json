@@ -7,13 +7,14 @@
   "scripts": {
     "start": "vite",
     "dev": "vite",
-    "build": "vite build && node scripts/prerender-blogs.mjs",
+    "build": "vite build && node scripts/prerender-pages.mjs && node scripts/prerender-blogs.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
     "write-admin": "node write-admin-files.mjs",
-    "prerender": "node scripts/prerender-blogs.mjs"
+    "prerender": "node scripts/prerender-blogs.mjs",
+    "prerender:pages": "node scripts/prerender-pages.mjs"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",

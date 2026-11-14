@@ -237,7 +237,7 @@ const frameworks = [
     description:
       'A framework showing how meaningful purpose is converted into sustainable business performance. Profit is treated as the outcome of consistent value creation, not the starting point.',
     image:
-      'assets/images/img/74.webp',
+      'assets/images/img/74-1000.webp',
     visual: <PurposeFlow />,
   },
   {
@@ -249,7 +249,7 @@ const frameworks = [
     description:
       'AVF helps organizations continuously sense market change, shape relevant value propositions, and scale successful solutions — with the value system at the center.',
     image:
-      'assets/images/img/75.webp',
+      'assets/images/img/75-1000.webp',
     visual: <SectionAdaptiveValueCycleVisual />,
   },
   {
@@ -261,7 +261,7 @@ const frameworks = [
     description:
       'VDI shows where an organization’s value is drifting from what customers now value, across relevance, innovation, responsiveness, loyalty and strategic alignment, before it appears as churn and margin loss.',
     image:
-      'assets/images/img/76.webp',
+      'assets/images/img/76-1000.webp',
     visual: <VdiScorecard />,
   },
 ];

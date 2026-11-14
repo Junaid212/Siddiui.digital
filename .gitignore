@@ -25,3 +25,9 @@ dist-ssr
 .env
 .env.*
 !.env.example
+.env.development
+
+# local build artefacts and stray files
+*.tar.gz
+console.log*
+haring*

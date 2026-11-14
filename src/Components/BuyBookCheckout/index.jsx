@@ -1,9 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "../../supabaseClient";
 import { api } from "../../api";
 import { useCart } from "../Cart/CartContext";
+import { useOffer } from "../OfferBanner/useOffer";
+import { rememberCheckout, openPayhipTab } from "../../utils/checkoutMemory";
+
+// Shown under the buttons while Online Reading is "coming soon" (the administrator can change the wording).
+const COMING_SOON_NOTE = "Online reading and Ask SID: coming soon, free for Companion buyers.";
 import "./BuyBookCheckout.css";
 
 /* ============================================================
@@ -45,7 +50,7 @@ function hasContent(val) {
 export default function BuyBookCheckout() {
   const { slug, id } = useParams();
   const navigate = useNavigate();
-  const { addItem } = useCart();
+  const { addItem, clearCart, closeCart, setDiscountCode, setDiscountData } = useCart();
 
   const [user, setUser] = useState(null);
   const [product, setProduct] = useState(null);
@@ -70,12 +75,81 @@ export default function BuyBookCheckout() {
 
   const [ownership, setOwnership] = useState({ owned: false, edition: null, canUpgrade: false });
   const [ownershipNotice, setOwnershipNotice] = useState(null);
+  // The launch offer is drawn only once we know who is looking: the session has been read and, for a signed-in buyer, the
+  // ownership check has finished. (Otherwise an owner would see the offer for a moment and then lose it.)
+  const [authChecked, setAuthChecked] = useState(false);
+  const [ownershipFor, setOwnershipFor] = useState(null);
+  const ownershipReady = authChecked && (!user?.email || ownershipFor === user.email);
+
+  // Launch offer (admin dashboard > Products > Launch offer). The CHECKOUT price is set by Payhip: the button shows the
+  // offer price and sends the buyer to Payhip with the coupon code, which must give that price.
+  const offer = useOffer();
+  const offerCta = offer && offer.cta && offer.cta.enabled ? offer.cta : null;
+  // handlePurchase can run later from an older render (purchase resumed after login), so it reads the LIVE values from refs
+  const offerRef = useRef(null);
+  offerRef.current = offerCta;
+  const productRef = useRef(null);
+  productRef.current = product;
+  const isCompanionOption = (o) => !!o && typeof o === "object" && (o.access_type === "companion" || Number(o.price) >= 40);
+  const isOnlineOption = (o) => !!o && typeof o === "object" && (o.access_type === "online" || Number(o.price) === 20);
+  const isComingSoonOption = (o) =>
+    !!o && (o.status === "coming_soon" || /coming\s*soon/i.test(String(o.cta_text || "")) || /coming\s*soon/i.test(String(o.badge || "")));
+  // The offer applies to the Digital Companion edition of Marketing Reclassified, for buyers who do not own anything yet
+  // (an Online Reading owner pays the separate upgrade price).
+  const offerApplyCheck = (cta, prod, own, o) =>
+    !!cta && (slug === "marketing-reclassified" || prod?.slug === "marketing-reclassified") &&
+    isCompanionOption(o) && !own.edition;
+  const offerAppliesTo = (o) => ownershipReady && offerApplyCheck(offerCta, product, ownership, o);
+  const offerPriceText = offerCta ? `$${Number(offerCta.offerPrice).toFixed(2)}` : "";
+  const offerOriginalText = offerCta ? `$${Number(offerCta.originalPrice).toFixed(2)}` : "";
+  const offerButtonLabel = (o) => {
+    const base = o.cta_text || `Get ${o.name}`;
+    const re = /(\$|USD\s?)\s?\d+(\.\d+)?/;
+    // The buyer lands on OUR checkout page with the offer already applied and the final price shown, so the button
+    // simply shows the offer price.
+    return re.test(base) ? base.replace(re, () => offerPriceText) : `${base} · ${offerPriceText}`;
+  };
+  // Launch offer: the Digital Companion edition (alone) goes into the cart with the offer code already applied, and the
+  // buyer continues on OUR checkout page: details, policies to tick, final price - and only then Payhip.
+  const handleOfferCheckout = (option, cta) => {
+    const prod = productRef.current;
+    if (!prod || !cta) return;
+    const original = Number(cta.originalPrice);
+    const offerP = Number(cta.offerPrice);
+    clearCart();
+    addItem({
+      productId: prod.id,
+      title: prod.title,
+      price: original,
+      currency: option.currency || prod.currency || "USD",
+      coverImage: prod.cover_image,
+      accessType: "companion",
+      accessLabel: option.name || "Digital Companion Edition",
+      isUpgrade: false,
+      slug: slug || null,
+      payhipProductId: option.payhip_product_id || "",
+      payhipCheckoutUrl: option.payhip_checkout_url || "",
+    });
+    if (cta.couponCode) {
+      setDiscountCode(cta.couponCode);
+      setDiscountData({
+        code: cta.couponCode,
+        type: "fixed",
+        value: Math.max(0, Math.round((original - offerP) * 100) / 100),
+        description: "Launch offer",
+        source: "launch-offer",
+      });
+    }
+    closeCart();
+    navigate("/cart/checkout");
+  };
 
   // Auth state
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
-    });
+      setAuthChecked(true);
+    }).catch(() => setAuthChecked(true));
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
     });
@@ -90,6 +164,7 @@ export default function BuyBookCheckout() {
       }));
       api.checkOwnership(user.email).then((res) => {
         if (res) setOwnership(res);
+        setOwnershipFor(user.email);
         // Check for preserved selection after returning from login
         const pending = sessionStorage.getItem("pendingPurchase");
         if (pending) {
@@ -101,7 +176,7 @@ export default function BuyBookCheckout() {
             }
           } catch (_) {}
         }
-      }).catch(() => {});
+      }).catch(() => { setOwnershipFor(user.email); });
     } else {
       setOwnership({ owned: false, edition: null, canUpgrade: false });
     }
@@ -433,6 +508,13 @@ export default function BuyBookCheckout() {
       return;
     }
 
+    // Launch offer: continue on our checkout page (details, policies, offer applied) instead of jumping straight to Payhip.
+    const liveCta = offerRef.current;
+    if (offerApplyCheck(liveCta, productRef.current, ownership, option)) {
+      handleOfferCheckout(option, liveCta);
+      return;
+    }
+
     const customerEmail = (user?.email || formData.email || "").trim();
     if (!customerEmail) {
       setSelectedOption(option);
@@ -443,22 +525,22 @@ export default function BuyBookCheckout() {
     setProcessingOption(optionKey);
 
     const isUpgrade = ownership.edition === "online" && isCompanionOpt;
-    const payhipUrl = getPayhipCheckoutUrl(option, isUpgrade, customerEmail);
+    let payhipUrl = getPayhipCheckoutUrl(option, isUpgrade, customerEmail);
+
 
     if (payhipUrl) {
-      // Preserve selection in session storage
-      try {
-        sessionStorage.setItem("pendingPurchase", JSON.stringify({
-          option,
-          productTitle: product?.title,
-          isUpgrade,
-          customerEmail,
-          timestamp: Date.now()
-        }));
-      } catch (_) {}
+      // (No "pending purchase" is stored here: it is only needed when a visitor must sign in first, and a stored one made
+      // a page reload send the buyer back to Payhip again.)
 
       // Redirect directly to Payhip checkout for the selected edition
-      window.location.href = payhipUrl;
+      rememberCheckout({ email: customerEmail, title: product?.title || "", edition: optionKey, payhipUrl });
+      // Payhip opens in a new tab; this tab moves to our thank-you page, which confirms the order by itself.
+      if (openPayhipTab(payhipUrl)) {
+        setProcessingOption(null);
+        navigate("/thank-you?waiting=1");
+      } else {
+        window.location.href = payhipUrl; // pop-up blocked: go there in this tab as before
+      }
       return;
     }
 
@@ -501,6 +583,11 @@ export default function BuyBookCheckout() {
 
   const isComingSoon = product.publication_status === "coming_soon";
   const hasOptions = product.access_options && product.access_options.length > 0;
+  // "Online Reading: Coming Soon" is not a button: it becomes one line of text under the buttons.
+  const isSoonOnline = (o) => isOnlineOption(o) && isComingSoonOption(o);
+  const heroOpts = hasOptions ? product.access_options.slice(0, 2).filter((o) => !isSoonOnline(o)) : [];
+  const showSoonNote = hasOptions && product.access_options.slice(0, 2).some(isSoonOnline);
+  const comingSoonNote = offer && offer.cta && typeof offer.cta.note === "string" ? offer.cta.note : COMING_SOON_NOTE;
 
   return (
     <div className="pub-page-v2">
@@ -535,11 +622,43 @@ export default function BuyBookCheckout() {
               <p className="v2-hero-motto">{product.hero_motto}</p>
             )}
 
+            {/* Launch offer on the Digital Companion button */}
+            {!isComingSoon && hasOptions && product.access_options.slice(0, 2).some((o) => offerAppliesTo(o)) && (
+              <div className="v2-hero-actions v2-hero-actions-offer" data-testid="hero-offer">
+                {heroOpts.map((opt, i) => {
+                  const key = opt.access_type || `opt-${i}`;
+                  // "Online Reading: Coming soon" is replaced by the note line below the button while the offer is on
+                  if (isOnlineOption(opt) && isComingSoonOption(opt)) return null;
+                  if (offerAppliesTo(opt)) {
+                    return (
+                      <div className="v2-offer-row" key={i}>
+                        <button type="button" className="v2-btn-primary" data-testid="offer-cta" onClick={() => handlePurchase(opt)} disabled={processingOption === key}>
+                          {processingOption === key ? "Connecting to Payhip…" : offerButtonLabel(opt)}
+                        </button>
+                        <span className="v2-offer-was" aria-label="Original price">{offerOriginalText}</span>
+                        {(offerCta.badgeText || offerCta.couponCode) && (
+                          <span className="v2-offer-badge">
+                            {offerCta.badgeText}
+                            {offerCta.couponCode && <span className="v2-offer-code">code {offerCta.couponCode}</span>}
+                          </span>
+                        )}
+                      </div>
+                    );
+                  }
+                  return (
+                    <button key={i} type="button" className={i === 0 ? "v2-btn-primary" : "v2-btn-secondary"} onClick={() => handlePurchase(opt)} disabled={processingOption === key}>
+                      {processingOption === key ? "Connecting to Payhip…" : (opt.cta_text || `${opt.name} · ${opt.currency || product.currency || "USD"} ${Number(opt.price).toFixed(2)}`)}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
             {/* CTAs from Access Options or direct price */}
-            {!isComingSoon && (
+            {!isComingSoon && !(hasOptions && product.access_options.slice(0, 2).some((o) => offerAppliesTo(o))) && (
               <div className="v2-hero-actions">
                 {hasOptions ? (
-                  product.access_options.slice(0, 2).map((opt, i) => (
+                  heroOpts.map((opt, i) => (
                     <button
                       key={i}
                       type="button"
@@ -548,7 +667,7 @@ export default function BuyBookCheckout() {
                       disabled={processingOption === (opt.access_type || `opt-${i}`)}
                     >
                       {processingOption === (opt.access_type || `opt-${i}`) ? (
-                        <>Connecting to PayPal…</>
+                        <>Connecting to Payhip…</>
                       ) : (
                         <>{opt.cta_text || `${opt.name} · ${opt.currency || product.currency || 'USD'} ${Number(opt.price).toFixed(2)}`}</>
                       )}
@@ -561,10 +680,14 @@ export default function BuyBookCheckout() {
                     onClick={() => handlePurchase("download")}
                     disabled={processingOption === "download"}
                   >
-                    {processingOption === "download" ? "Connecting to PayPal…" : `Get Publication · ${product.currency || "USD"} ${Number(product.price).toFixed(2)}`}
+                    {processingOption === "download" ? "Connecting to Payhip…" : `Get Publication · ${product.currency || "USD"} ${Number(product.price).toFixed(2)}`}
                   </button>
                 ) : null}
               </div>
+            )}
+
+            {!isComingSoon && showSoonNote && comingSoonNote && (
+              <p className="v2-offer-note" data-testid="offer-note">{comingSoonNote}</p>
             )}
 
             {isComingSoon && (
@@ -862,7 +985,9 @@ export default function BuyBookCheckout() {
                   (ownership.edition === "online" && isOnlineOpt);
 
                 const isUpgradeAvailable = ownership.edition === "online" && isCompanionOpt;
-                const displayPrice = isUpgradeAvailable ? 29.99 : priceNum;
+                const showOffer = offerAppliesTo(opt) && !isOwned;
+                const isSoonEdition = isSoonOnline(opt);
+                const displayPrice = isUpgradeAvailable ? 29.99 : showOffer ? Number(offerCta.offerPrice) : priceNum;
 
                 let cardBadge = opt.badge;
                 if (isOwned) cardBadge = "ALREADY OWNED";
@@ -883,6 +1008,9 @@ export default function BuyBookCheckout() {
 
                     <p className="v2-edition-price">
                       ${displayPrice.toFixed(2)}
+                      {showOffer && (
+                        <span style={{ fontSize: "0.5em", color: "#6b7280", marginLeft: 8, fontWeight: 500, textDecoration: "line-through" }}>{offerOriginalText}</span>
+                      )}
                       {isUpgradeAvailable && (
                         <span style={{ fontSize: "0.45em", color: "#6b7280", marginLeft: 6, fontWeight: 500 }}>
                           (Price difference from Online Edition)
@@ -926,7 +1054,11 @@ export default function BuyBookCheckout() {
                       </ul>
                     )}
 
-                    {isOwned ? (
+                    {isSoonEdition ? (
+                      <button type="button" className="v2-edition-btn v2-edition-btn-outline" disabled data-testid="edition-soon" style={{ opacity: 0.8, cursor: "default" }}>
+                        {opt.cta_text || "Coming soon"}
+                      </button>
+                    ) : isOwned ? (
                       <button
                         type="button"
                         className="v2-edition-btn v2-edition-btn-owned"
@@ -951,9 +1083,12 @@ export default function BuyBookCheckout() {
                             ? "Connecting to Payhip…"
                             : isUpgradeAvailable
                             ? "Upgrade to Digital Companion · $29.99"
+                            : showOffer
+                            ? offerButtonLabel(opt)
                             : (opt.cta_text || `Get ${opt.name} · $${priceNum.toFixed(2)}`)}
                         </button>
 
+                        {!showOffer && (
                         <button
                           type="button"
                           className="v2-cart-secondary-btn"
@@ -962,6 +1097,12 @@ export default function BuyBookCheckout() {
                           <i className="fa-solid fa-cart-shopping" />{" "}
                           {isUpgradeAvailable ? "Add Upgrade ($29.99)" : "Add to Cart"}
                         </button>
+                        )}
+                        {showOffer && offerCta.couponCode && (
+                          <p className="v2-offer-card-note">
+                            Offer code <strong>{offerCta.couponCode}</strong> is applied automatically at checkout.
+                          </p>
+                        )}
                       </>
                     )}
                   </article>
@@ -1173,7 +1314,7 @@ export default function BuyBookCheckout() {
                 className="v2-btn-primary"
                 style={{ width: "100%", marginTop: 4 }}
               >
-                Continue to Secure PayPal Checkout
+                Continue to Secure Checkout
               </button>
 
               <div style={{ textAlign: "center", marginTop: 10 }}>

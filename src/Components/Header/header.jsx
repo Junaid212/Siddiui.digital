@@ -342,7 +342,7 @@ const handleSignOut = async () => {
                                         </NavLink>
                                     </li>
                                     <li className="nav-item">
-                                        <NavLink to="/framework" className="nav-link" onClick={closeMenu}>
+                                        <NavLink to="/frameworks" className="nav-link" onClick={closeMenu}>
                                             Frameworks
                                         </NavLink>
                                     </li>

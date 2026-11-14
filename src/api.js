@@ -1,17 +1,66 @@
+import { supabase } from "./supabaseClient";
+
 const isLocalhost =
     typeof window !== "undefined" &&
     (window.location.hostname === "localhost" ||
      window.location.hostname === "127.0.0.1");
 
-const API_BASE = isLocalhost
-    ? "http://localhost:5000/api"
-    : (import.meta.env.VITE_API_URL || "/api");
+// Same-origin by default: nginx proxies /api to the customer backend. The old `VITE_API_URL` override pointed production
+// builds at https://api.siddiqui.digital, whose TLS certificate is issued for admin.siddiqui.digital only, so every
+// browser refused those calls (net::ERR_CERT_COMMON_NAME_INVALID). The override is therefore no longer honoured.
+const API_BASE = isLocalhost ? "http://localhost:5000/api" : "/api";
 
 const ADMIN_API_BASE = isLocalhost
     ? "http://localhost:5001"
     : (import.meta.env.VITE_ADMIN_API_URL || "http://localhost:5001");
 
+// Order history and ownership are personal data: the server identifies the customer from the signed-in
+// session (bearer token) and ignores any e-mail in the URL. Returns null when nobody is signed in.
+const authHeaders = async () => {
+    try {
+        const { data: { session } } = await supabase.auth.getSession();
+        return session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : null;
+    } catch {
+        return null;
+    }
+};
+
+// GET for the signed-in customer. The NEW backend identifies the customer from the session alone, so the request
+// carries no e-mail. A PREVIOUS backend answers 400 "email required"; only then is the request repeated once with the
+// user's OWN address, so the site keeps working whichever backend version is live (deploy order does not matter).
+const authedGet = async (pathname, ownEmail) => {
+    const headers = await authHeaders();
+    if (!headers) return null;
+    let res = await fetch(`${API_BASE}${pathname}`, { headers });
+    if (res.status === 400 && ownEmail) {
+        const body = await res.clone().json().catch(() => ({}));
+        if (/email/i.test(body.error || "")) {
+            res = await fetch(`${API_BASE}${pathname}?email=${encodeURIComponent(ownEmail)}`, { headers });
+        }
+    }
+    return res;
+};
+
 export const api = {
+    // Launch offer settings (banner + Digital Companion button offer) edited in the admin dashboard.
+    // The banner and the button share ONE request (cached for 30 s). Resolves to null on any failure.
+    getOfferBanner() {
+        const now = Date.now();
+        if (!api._offerCache || now - api._offerCache.at > 30000) {
+            const p = (async () => {
+                try {
+                    const res = await fetch(`${ADMIN_API_BASE}/api/public/offer-banner`);
+                    if (!res.ok) return null;
+                    return await res.json();
+                } catch {
+                    return null;
+                }
+            })();
+            api._offerCache = { at: now, p };
+        }
+        return api._offerCache.p;
+    },
+
     // Auth
     googleSignIn: (idToken) =>
         fetch(`${API_BASE}/auth/google`, {
@@ -32,10 +81,16 @@ export const api = {
             body: JSON.stringify({ email }),
         }).then((res) => res.json()),
 
-    checkOwnership: (email) =>
-        fetch(`${API_BASE}/payment/check-ownership?email=${encodeURIComponent(email)}`)
-            .then((res) => res.json())
-            .catch(() => ({ owned: false, edition: null, canUpgrade: false })),
+    // Signed-out visitors have nothing to check; signed-in customers are identified by their session.
+    checkOwnership: async (ownEmail) => {
+        const none = { owned: false, edition: null, canUpgrade: false };
+        try {
+            const res = await authedGet("/payment/check-ownership", ownEmail);
+            return res && res.ok ? await res.json() : none;
+        } catch {
+            return none;
+        }
+    },
 
     // Digital Products & Ebooks
     getProducts: async () => {
@@ -221,8 +276,39 @@ export const api = {
     },
 
     // Customer Order History
-    getCustomerOrders: (email) =>
-        fetch(`${API_BASE}/payment/my-orders?email=${encodeURIComponent(email)}`).then((res) => res.json()),
+    getCustomerOrders: async (ownEmail) => {
+        const res = await authedGet("/payment/my-orders", ownEmail);
+        return res ? res.json() : { error: "Please sign in to view your orders." };
+    },
+
+    // Same as getCustomerOrders but also reports the HTTP outcome (used by My Orders).
+    listMyOrders: async (ownEmail) => {
+        try {
+            const res = await authedGet("/payment/my-orders", ownEmail);
+            if (!res) return { ok: false, status: 401, data: { error: "Please sign in to view your orders." } };
+            return { ok: res.ok, status: res.status, data: await res.json().catch(() => ({})) };
+        } catch {
+            return { ok: false, status: 0, data: { error: "Unable to load orders. Please try again." } };
+        }
+    },
+
+    // Asks the server for a short-lived link (about 2 minutes) to ONE of the customer's own orders.
+    // purpose: "download" | "read".  { ok:true, path } on success; { ok:false, status, error } otherwise.
+    createAccessLink: async (orderId, purpose) => {
+        try {
+            const headers = await authHeaders();
+            if (!headers) return { ok: false, status: 401, error: "Please sign in again." };
+            const res = await fetch(`${API_BASE}/payment/orders/${encodeURIComponent(orderId)}/access-link`, {
+                method: "POST",
+                headers: { ...headers, "Content-Type": "application/json" },
+                body: JSON.stringify({ purpose }),
+            });
+            const data = await res.json().catch(() => null);
+            return res.ok && data && data.path ? { ok: true, path: data.path } : { ok: false, status: res.status, error: data && data.error };
+        } catch {
+            return { ok: false, status: 0, error: "Network error." };
+        }
+    },
 
     getOrderStatus: (identifier) =>
         fetch(`${API_BASE}/payment/order-status/${identifier}`).then((res) =>
@@ -417,6 +503,27 @@ export const api = {
         }
         return data;
     },
+
+    // Online Reading (signed-in customers with the Online Reading edition only; the server enforces it)
+    readerRequest: async (pathname, options = {}) => {
+        const headers = await authHeaders();
+        if (!headers) return { ok: false, status: 401, data: { error: "Please sign in to read online." } };
+        try {
+            const res = await fetch(`${API_BASE}/reader${pathname}`, {
+                ...options,
+                headers: { ...headers, ...(options.body ? { "Content-Type": "application/json" } : {}) },
+            });
+            return { ok: res.ok, status: res.status, data: await res.json().catch(() => ({})) };
+        } catch {
+            return { ok: false, status: 0, data: { error: "Unable to reach the reader. Please try again." } };
+        }
+    },
+    readerAccess: () => api.readerRequest("/access"),
+    readerBooks: () => api.readerRequest("/books"),
+    readerBook: (bookSlug) => api.readerRequest(`/books/${encodeURIComponent(bookSlug)}`),
+    readerChapter: (bookSlug, chapterSlug) => api.readerRequest(`/books/${encodeURIComponent(bookSlug)}/chapters/${encodeURIComponent(chapterSlug)}`),
+    saveReaderProgress: (bookSlug, chapterSlug, percent) =>
+        api.readerRequest(`/books/${encodeURIComponent(bookSlug)}/progress`, { method: "PUT", body: JSON.stringify({ chapterSlug, percent }) }),
 
     resetAskSidDemo: (demoSessionId) =>
         fetch(`${API_BASE}/ask-sid/reset-demo`, {

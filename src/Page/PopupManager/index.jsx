@@ -80,10 +80,15 @@ const Modal = ({ children, onClose }) => (
   </div>
 );
 
+// The survey pop-up is switched off for now. Set this to true to bring it back (it then appears once, 10 seconds after the first page load).
+const SURVEY_POPUP_ENABLED = false;
+
 export default function PopupManager() {
   const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
+    if (!SURVEY_POPUP_ENABLED) return undefined;
+
     // Don't show if user already completed the questionnaire
     if (localStorage.getItem("questionnaireCompleted")) return;
 
@@ -103,7 +108,7 @@ export default function PopupManager() {
     setShowPopup(false);
   };
 
-  if (!showPopup) return null;
+  if (!SURVEY_POPUP_ENABLED || !showPopup) return null;
 
   return (
     <Modal onClose={handleClose}>

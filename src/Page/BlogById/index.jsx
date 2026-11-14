@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { api } from "../../api";
 import HeadTitle from "../../Components/Head/HeadTitle";
+import { SITE_URL } from "../../Data/pageSeo";
 import SinglePostSection from "../../Components/Blog/SinglePost";
 
 const BlogByIdPage = () => {
@@ -91,27 +92,29 @@ const BlogByIdPage = () => {
         };
     }, [identifier, isPreview, navigate]);
 
-    const pageTitle = blog
-        ? (blog.seo_title || `${blog.title} - Siddiqui Digital`)
-        : (loading ? "Loading Article - Siddiqui Digital" : "Article - Siddiqui Digital");
+    // Same rules as the prerendered article pages (scripts/lib/blogPrerenderCore.cjs), so the title and
+    // description do not change when the app loads: seo_title or title, plus the site-wide title suffix.
+    const rawTitle = blog
+        ? ((blog.seo_title || blog.title || "").trim() || "Siddiqui.Digital")
+        : (loading ? "Loading Article" : "Article");
+    const pageTitle = rawTitle.includes("M. Q. Siddiqui") || rawTitle.includes("Siddiqui.digital")
+        ? rawTitle
+        : `${rawTitle} | M. Q. Siddiqui`;
 
-    const pageDescription = blog
-        ? (blog.seo_description || blog.standfirst || blog.summary || "Editorial insights, frameworks, and strategic perspectives by M. Q. Siddiqui.")
-        : "Editorial insights and strategic perspectives by M. Q. Siddiqui.";
+    const pageDescription = (blog
+        ? (blog.seo_description || blog.standfirst || blog.summary || "")
+        : "").trim() || "Empowering entrepreneurs and students through strategic marketing.";
 
     return (
         <>
             <HeadTitle
-    title={blog?.seo_title || pageTitle}
-    description={
-        blog?.seo_description ||
-        blog?.standfirst ||
-        pageDescription
-    }
-    image={blog?.image_url}
+    title={pageTitle}
+    description={pageDescription}
+    image={blog?.social_image_url || blog?.image_url}
+    type="article"
     url={
         typeof window !== "undefined"
-            ? `${window.location.origin}/blogs/${blog?.slug || identifier}`
+            ? `${SITE_URL}/blogs/${blog?.slug || identifier}`
             : ""
     }
 />

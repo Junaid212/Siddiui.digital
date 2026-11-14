@@ -64,5 +64,8 @@ export function getBookingApiBase() {
   const isLocalhost =
     typeof window !== "undefined" &&
     (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
-  return isLocalhost ? "http://localhost:5000/api" : (import.meta.env.VITE_API_URL || "/api");
+  // Same-origin by default: nginx proxies /api to the customer backend. The old `VITE_API_URL` override pointed production
+  // builds at https://api.siddiqui.digital, whose TLS certificate is issued for admin.siddiqui.digital only, so every
+  // browser refused those calls (net::ERR_CERT_COMMON_NAME_INVALID). The override is therefore no longer honoured.
+  return isLocalhost ? "http://localhost:5000/api" : "/api";
 }

@@ -1,0 +1,40 @@
+.ordersuccess-section { background: #0b0b0e !important; }
+.thankyou-card { text-align: left; background: #18181b !important; color: #e4e4e7 !important; }
+.thankyou-check {
+  width: 64px; height: 64px; margin: 0 auto 14px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(34, 197, 94, 0.15); color: #22c55e; font-size: 34px; font-weight: 800;
+  border: 2px solid rgba(34, 197, 94, 0.5);
+}
+.thankyou-title { font-size: 2rem; margin: 0 0 8px; color: #fff !important; }
+.thankyou-lead { margin: 0 auto 8px; max-width: 560px; color: #d4d4d8 !important; line-height: 1.6; }
+.thankyou-lead strong { color: #fff !important; }
+.thankyou-status {
+  display: flex; flex-direction: column; gap: 8px; margin: 22px 0 18px; padding: 18px 20px;
+  border-radius: 12px; line-height: 1.55; color: #e4e4e7 !important;
+}
+.thankyou-status.ok { background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.45); }
+.thankyou-status.wait { background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.4); }
+.thankyou-status strong { font-size: 1.1rem; color: #fff !important; }
+.thankyou-status span, .thankyou-status b { color: #e4e4e7 !important; }
+.thankyou-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+.thankyou-btn {
+  display: inline-flex; align-items: center; justify-content: center; text-decoration: none; cursor: pointer;
+  padding: 11px 20px; border-radius: 8px; font-weight: 700; font-size: 15px; min-height: 44px; box-sizing: border-box;
+  background: transparent; color: #fff !important; border: 1px solid rgba(255, 255, 255, 0.35);
+}
+.thankyou-btn:hover { background: rgba(255, 255, 255, 0.1); }
+.thankyou-btn.primary { background: #c80808; border-color: #c80808; }
+.thankyou-btn.primary:hover { background: #a50d0d; }
+.thankyou-btn:disabled { opacity: 0.6; cursor: default; }
+.thankyou-steps { margin: 8px 0 0; padding-left: 20px; color: #a1a1aa !important; font-size: 14px; line-height: 1.8; }
+.thankyou-spinner {
+  display: inline-block; width: 14px; height: 14px; margin-right: 8px; vertical-align: -2px;
+  border: 2px solid rgba(255, 255, 255, 0.3); border-top-color: #f59e0b; border-radius: 50%;
+  animation: thankyou-spin 0.9s linear infinite;
+}
+@keyframes thankyou-spin { to { transform: rotate(360deg); } }
+@media (max-width: 640px) {
+  .thankyou-title { font-size: 1.5rem; }
+  .thankyou-actions .thankyou-btn { width: 100%; }
+}

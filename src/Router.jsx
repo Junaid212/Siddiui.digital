@@ -1,4 +1,5 @@
-import { Routes, Route, Outlet, useLocation, BrowserRouter } from "react-router-dom";
+import { Routes, Route, Outlet, useLocation, BrowserRouter, Navigate } from "react-router-dom";
+import { useEffect } from "react";
 import HomePage from "./Page/Home";
 import AboutPage from "./Page/About";
 import ServicePage from "./Page/Service";
@@ -26,20 +27,58 @@ import Courses from "./Page/Courses";
 import FrameworksPage from "./Page/Frameworks";
 import FrameworkDetailPage from "./Page/FrameworkDetail";
 import OrderSuccessPage from "./Page/OrderSuccess";
+import ThankYouPage from "./Page/ThankYou";
 import OrderCancelPage from "./Page/OrderCancel";
 import CartCheckoutPage from "./Page/CartCheckout";
 import MyOrdersPage from "./Page/MyOrders";
 import AskSidPage from "./Page/AskSid";
+import ReaderPage from "./Page/Reader";
 import PrivacyPolicyPage from "./Page/Legal/PrivacyPolicy";
 import RefundPolicyPage from "./Page/Legal/RefundPolicy";
 import TermsOfUsePage from "./Page/Legal/TermsOfUse";
 import LoginPage from "./Page/Login";
 import ResetPasswordPage from "./Page/ResetPassword";
+import { canonicalFor } from "./Data/pageSeo";
 // import BookAppointment from "./Page/BookAppointment";
+
+function RouteCanonical() {
+    const location = useLocation();
+
+    useEffect(() => {
+        const canonicalUrl = canonicalFor(location.pathname);
+
+        let canonical = document.querySelector(
+            'link[rel="canonical"]'
+        );
+
+        if (!canonical) {
+            canonical = document.createElement("link");
+            canonical.setAttribute("rel", "canonical");
+            document.head.appendChild(canonical);
+        }
+
+        canonical.setAttribute("href", canonicalUrl);
+
+        let ogUrl = document.querySelector(
+            'meta[property="og:url"]'
+        );
+
+        if (!ogUrl) {
+            ogUrl = document.createElement("meta");
+            ogUrl.setAttribute("property", "og:url");
+            document.head.appendChild(ogUrl);
+        }
+
+        ogUrl.setAttribute("content", canonicalUrl);
+    }, [location.pathname]);
+
+    return null;
+}
 
 function AppRouters() {
     return (
-
+        <>
+        <RouteCanonical />
         <Routes>
 
             <Route path="/" element={<HomePage />} />
@@ -52,7 +91,8 @@ function AppRouters() {
             <Route path="team" element={<TeamPage />} />
             <Route path="testimonial" element={<TestimonialPage />} />
             <Route path="faq" element={<FaqPage />} />
-            <Route path="blog" element={<BlogSection />} />
+            {/* /blog is a duplicate of the canonical /blog-page — redirect, do not index twice */}
+            <Route path="blog" element={<Navigate to="/blog-page" replace />} />
             <Route path="blog/:slug" element={<BlogByIdPage />} />
             <Route path="contact" element={<ContactPage />} />
             <Route path="404-page" element={<PageNotFound />} />
@@ -69,6 +109,7 @@ function AppRouters() {
             <Route path="buy-book/:id" element={<BuyBookPage />} />
 
             <Route path="order-success" element={<OrderSuccessPage />} />
+            <Route path="thank-you" element={<ThankYouPage />} />
             <Route path="order-cancel" element={<OrderCancelPage />} />
             <Route path="cart/checkout" element={<CartCheckoutPage />} />
             <Route path="my-orders" element={<MyOrdersPage />} />
@@ -82,9 +123,14 @@ function AppRouters() {
             <Route path="courses" element={<Courses />} />
             <Route path="frameworks" element={<FrameworksPage />} />
             <Route path="frameworks/:slug" element={<FrameworkDetailPage />} />
-            <Route path="framework" element={<FrameworksPage />} />
+            {/* /framework is a duplicate of the canonical /frameworks */}
+            <Route path="framework" element={<Navigate to="/frameworks" replace />} />
             <Route path="framework/:slug" element={<FrameworkDetailPage />} />
             <Route path="publication" element={<BookPage />} />
+            {/* Online Reading edition: signed-in readers only (noindex; not in the sitemap) */}
+            <Route path="read" element={<ReaderPage />} />
+            <Route path="read/:bookSlug" element={<ReaderPage />} />
+            <Route path="read/:bookSlug/:chapterSlug" element={<ReaderPage />} />
             <Route path="ask-sid" element={<AskSidPage />} />
             <Route path="ask-sid/*" element={<AskSidPage />} />
 
@@ -95,6 +141,7 @@ function AppRouters() {
             <Route path="login" element={<LoginPage />} />
             <Route path="reset-password" element={<ResetPasswordPage />} />
         </Routes>
+        </>
     );
 }
 

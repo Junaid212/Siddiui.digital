@@ -151,7 +151,7 @@ const handleSidebarSignOut = async () => {
                         <NavLink to="/about">About Us</NavLink>
                     </li>
                     <li>
-                        <NavLink to="/framework">Frameworks</NavLink>
+                        <NavLink to="/frameworks">Frameworks</NavLink>
                     </li>
                     <li>
                         <NavLink to="/courses">Learning</NavLink>
@@ -203,7 +203,7 @@ const handleSidebarSignOut = async () => {
                                 <NavLink to="/404-page">404 Page</NavLink>
                             </li>
                             <li>
-                                <NavLink to="/blog">Blog Archive</NavLink>
+                                <NavLink to="/blog-page">Blog Archive</NavLink>
                             </li>
                             <li>
                                 <NavLink to="/single-post">Single Post</NavLink>

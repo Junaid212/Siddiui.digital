@@ -75,9 +75,9 @@ const Footer = () => {
                                         <li><Link to="/publication">Books & Digital Publications</Link></li>
                                         <li><Link to="/courses">Learning</Link></li>
                                         <li><Link to="/ask-sid">Ask Sid</Link></li>
-                                        <li><Link to="/framework">Frameworks</Link></li>
+                                        <li><Link to="/frameworks">Frameworks</Link></li>
                                         <li><Link to="/consultation">Advisory</Link></li>
-                                        <li><Link to="/blog">Blog</Link></li>
+                                        <li><Link to="/blog-page">Blog</Link></li>
                                     </ul>
                                 </div>
                                 {/* <div className="footer-services">
@@ -110,7 +110,7 @@ const Footer = () => {
                         </div>
                         <div className="copyright-container">
                             <span className="copyright-text">
-                                Siddiqui.digital © 2026 All Rights Reserved. <a href="https://brightmedia.tech" target="_blank" rel="noopener noreferrer" style={{color:'#C80808'}}>Bright Media</a>
+                                 © 2026 siddiqui.digital All Rights Reserved. <a href="https://brightmedia.tech" target="_blank" rel="noopener noreferrer" style={{color:'#C80808'}}>Bright Media</a>
                             </span>
                             <nav className="footer-legal-links" aria-label="Legal & Policies">
                                 <Link to="/privacy-policy" className="footer-legal-link" id="footer-privacy-policy">Privacy Policy</Link>

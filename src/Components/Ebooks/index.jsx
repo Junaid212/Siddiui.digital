@@ -10,9 +10,9 @@ const DEFAULT_CATALOG = [
     sku: "EBOOK-001",
     title: "Marketing Reclassified",
     author: "Qutub Siddiqui",
-    price: "AED 49.00",
+    price: "USD 49.00",
     priceNum: 49.00,
-    currency: "AED",
+    currency: "USD",
     format: "Digital Edition (PDF)",
     description: "From transaction to human progress.",
     image: "/assets/images/img/book1.webp",
@@ -24,9 +24,9 @@ const DEFAULT_CATALOG = [
     sku: "WORKBOOK-002",
     title: "The Value Drift Index",
     author: "Qutub Siddiqui",
-    price: "AED 79.00",
+    price: "USD 79.00",
     priceNum: 79.00,
-    currency: "AED",
+    currency: "USD",
     format: "Interactive Workbook (PDF)",
     description: "Practical tool for measuring managing and preventing value drift",
     image: "/assets/images/img/book2.webp",
@@ -38,9 +38,9 @@ const DEFAULT_CATALOG = [
     sku: "REPORT-003",
     title: "The Adaptive Value Framework",
     author: "Qutub Siddiqui",
-    price: "AED 99.00",
+    price: "USD 99.00",
     priceNum: 99.00,
-    currency: "AED",
+    currency: "USD",
     format: "Research Publication (PDF)",
     description: "A practical approach to creating sustainable value in a changing world.",
     image: "/assets/images/img/book3.webp",
@@ -72,7 +72,7 @@ function BookCard({ book, index, direction }) {
   const { addItem, items } = useCart();
 
   const checkoutLink = resolveProductLink(book);
-  const displayPrice = book.price || `${book.currency || "AED"} ${Number(book.priceNum || 49).toFixed(2)}`;
+  const displayPrice = book.price || `${book.currency || "USD"} ${Number(book.priceNum || 49).toFixed(2)}`;
   const isComingSoon = book.publication_status === "coming_soon";
 
   // Check if already in cart
@@ -89,7 +89,7 @@ function BookCard({ book, index, direction }) {
       productId: book.id,
       title: book.title,
       price: Number(book.priceNum) || 49,
-      currency: book.currency || "AED",
+      currency: book.currency || "USD",
       coverImage: book.image || book.cover_image,
       accessType: "download",
       accessLabel: "Digital Companion Edition",
@@ -237,9 +237,9 @@ export default function Ebooks() {
             sku: p.sku || `PROD-${String(idx + 1).padStart(3, '0')}`,
             title: p.title || "Digital Publication",
             author: p.author || "Qutub Siddiqui",
-            price: `${p.currency || "AED"} ${Number(p.price || 49).toFixed(2)}`,
+            price: `${p.currency || "USD"} ${Number(p.price || 49).toFixed(2)}`,
             priceNum: Number(p.price) || 49,
-            currency: p.currency || "AED",
+            currency: p.currency || "USD",
             format: p.format || "Digital Edition (PDF)",
             description: p.description || p.short_description || "High-performance digital publication.",
             image: p.cover_image || p.image || `/assets/images/img/${30 + (idx % 5)}.webp`,

@@ -556,7 +556,7 @@ export default function Hero({ onBookConsultation }) {
               </p>
 
               <div className="button-group">
-                <button onClick={() => navigate("/framework", { state: { type: "consultation" } })} className="btn-primary">
+                <button onClick={() => navigate("/frameworks", { state: { type: "consultation" } })} className="btn-primary">
                   Explore My Thinking
                   <ArrowRight className="icon-arrow" />
                 </button>

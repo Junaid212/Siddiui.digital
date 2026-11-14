@@ -1,36 +1,48 @@
-import React, { useState, useEffect } from "react";
+
+import React from "react";
 import { useParams } from "react-router-dom";
 import BuyBookCheckout from "../../Components/BuyBookCheckout";
+import OfferBanner from "../../Components/OfferBanner";
 import HeadTitle from "../../Components/Head/HeadTitle";
-import { api } from "../../api";
+import { PAGE_SEO, SITE_URL } from "../../Data/pageSeo";
+
+const MR = PAGE_SEO.marketingReclassified;
+const PUBLICATION_TITLE = MR.title;
+const PUBLICATION_DESCRIPTION = MR.description;
+const PUBLICATION_IMAGE = MR.image;
 
 export default function BuyBookPage() {
-    const { slug, id } = useParams();
-    const [pageTitle, setPageTitle] = useState("Digital Publications — Siddiqui.Digital");
+  const { slug, id } = useParams();
 
-    useEffect(() => {
-        async function fetchTitle() {
-            try {
-                let res = null;
-                if (slug) res = await api.getProductBySlug(slug);
-                if (!res && id) res = await api.getProductById(id);
-                if (res && (res.product || (res.products && res.products[0]))) {
-                    const p = res.product || res.products[0];
-                    if (p && p.title) {
-                        setPageTitle(`${p.title} by M. Q. Siddiqui | Siddiqui.digital`);
-                    }
-                }
-            } catch (e) {
-                setPageTitle("Digital Publications — Siddiqui.Digital");
-            }
+  const isMarketingReclassified =
+    slug === "marketing-reclassified";
+
+  return (
+    <>
+      <HeadTitle
+        title={
+          isMarketingReclassified
+            ? PUBLICATION_TITLE
+            : "Digital Publications | M. Q. Siddiqui"
         }
-        fetchTitle();
-    }, [slug, id]);
-
-    return (
-        <>
-            <HeadTitle title={pageTitle} />
-            <BuyBookCheckout />
-        </>
-    );
+        description={
+          isMarketingReclassified
+            ? PUBLICATION_DESCRIPTION
+            : undefined
+        }
+        image={
+          isMarketingReclassified
+            ? PUBLICATION_IMAGE
+            : undefined
+        }
+        url={
+          isMarketingReclassified
+            ? `${SITE_URL}${MR.path}`
+            : undefined
+        }
+      />
+      {isMarketingReclassified && <OfferBanner />}
+      <BuyBookCheckout />
+    </>
+  );
 }

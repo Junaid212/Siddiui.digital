@@ -6,6 +6,8 @@ import SignatureSection from "../../Components/SignatureSection";
 import CategorySection from "../../Components/CategorySection";
 import CourseDetailDialog from "../../Components/CourseDetailDialog";
 import BannerHome from "../../Components/Banner";
+import HeadTitle from "../../Components/Head/HeadTitle";
+import { seoProps } from "../../Data/pageSeo";
 
 
 export default function Courses() {
@@ -19,6 +21,7 @@ export default function Courses() {
 
   return (
     <div className="courses-page">
+      <HeadTitle {...seoProps("learning")} />
       <BannerHome />
       <CoursesNav categories={CATEGORIES} />
 

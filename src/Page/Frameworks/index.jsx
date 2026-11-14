@@ -26,6 +26,8 @@ import {
   X,
   CheckCircle2,
 } from "lucide-react";
+import HeadTitle from "../../Components/Head/HeadTitle";
+import { seoProps } from "../../Data/pageSeo";
 import "./Frameworks.css";
 
 
@@ -625,6 +627,7 @@ export default function FrameworksPage() {
 
   return (
     <div className={`frameworks-page courses-page ${darkMode ? "dark-mode" : "light-mode"}`}>
+      <HeadTitle {...seoProps("frameworks")} />
       {/* Hidden SVG definition for the banner cutout clip path */}
       <svg width="0" height="0" style={{ position: "absolute", pointerEvents: "none" }}>
         <defs>

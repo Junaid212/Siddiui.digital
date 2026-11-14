@@ -6,6 +6,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "../../supabaseClient";
+import { api } from "../../api";
 import HeadTitle from "../../Components/Head/HeadTitle";
 import BannerInnerSection from "../../Components/Banner/inner";
 import { useCart } from "../../Components/Cart/CartContext";
@@ -42,16 +43,13 @@ export default function MyOrdersPage() {
 
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(false);
-  const [guestEmail, setGuestEmail] = useState("");
-  const [lookupEmail, setLookupEmail] = useState("");
-  const [lookupLoading, setLookupLoading] = useState(false);
-  const [lookupError, setLookupError] = useState("");
 
   const [orders, setOrders] = useState([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [ordersError, setOrdersError] = useState("");
   const [downloadingId, setDownloadingId] = useState(null);
   const [readingOrder, setReadingOrder] = useState(null);
+  const [readerUrl, setReaderUrl] = useState("");
 
   /* ── Auth ───────────────────────────────────────── */
   useEffect(() => {
@@ -82,7 +80,6 @@ export default function MyOrdersPage() {
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     setOrders([]);
-    setLookupEmail("");
   };
 
   /* ── Load orders (authenticated) ───────────────── */
@@ -91,9 +88,10 @@ export default function MyOrdersPage() {
     setOrdersLoading(true);
     setOrdersError("");
     try {
-      const res = await fetch(`${API_BASE}/payment/my-orders?email=${encodeURIComponent(email)}`);
-      const data = await res.json();
-      if (res.ok) {
+      // The server returns the SIGNED-IN customer's orders from the session (the helper adds nothing to the URL;
+      // only a previous backend version makes it repeat the request once with the user's own address).
+      const { ok, data } = await api.listMyOrders(email);
+      if (ok) {
         setOrders(Array.isArray(data.orders) ? data.orders : []);
       } else {
         setOrdersError(data.error || "Failed to load orders.");
@@ -111,36 +109,29 @@ export default function MyOrdersPage() {
     }
   }, [user, loadUserOrders]);
 
-  /* ── Guest email lookup ─────────────────────────── */
-  const handleGuestLookup = async (e) => {
-    e.preventDefault();
-    if (!guestEmail.trim()) return;
-    setLookupLoading(true);
-    setLookupError("");
-    try {
-      const res = await fetch(`${API_BASE}/payment/my-orders?email=${encodeURIComponent(guestEmail.trim())}`);
-      const data = await res.json();
-      if (res.ok) {
-        setLookupEmail(guestEmail.trim());
-        setOrders(Array.isArray(data.orders) ? data.orders : []);
-      } else {
-        setLookupError(data.error || "No orders found for this email.");
-      }
-    } catch {
-      setLookupError("Unable to search. Please try again.");
-    } finally {
-      setLookupLoading(false);
+  /* ── Download ────────────────────────────────────── */
+  // Resolves a URL for the file or the reader of one order.
+  //  - Current backend: a short-lived link issued for this signed-in customer (nothing reusable is listed).
+  //  - Previous backend (no such endpoint): falls back to the credential that backend still lists.
+  const resolveFileUrl = async (order, purpose) => {
+    const link = await api.createAccessLink(order.id, purpose);
+    if (link.ok) return `${API_BASE}${link.path}`;
+    const endpointMissing = link.status === 404 && !link.error; // an older server answers with its generic 404, not JSON
+    if (endpointMissing || link.status === 405) {
+      const legacy = order.download_token || order.paypal_order_id || order.payhip_transaction_id || order.stripe_session_id || order.id;
+      return legacy ? `${API_BASE}/payment/${purpose === "read" ? "read" : "download"}/${legacy}` : null;
     }
+    setOrdersError(link.error || "That file is not available right now. Please try again.");
+    return null;
   };
 
-  /* ── Download ────────────────────────────────────── */
   const handleDownload = async (order) => {
-    const token = order.download_token || order.paypal_order_id || order.payhip_transaction_id || order.stripe_session_id || order.id;
-    if (!token) return;
     setDownloadingId(order.id);
     try {
+      const url = await resolveFileUrl(order, "download");
+      if (!url) return;
       const link = document.createElement("a");
-      link.href = `${API_BASE}/payment/download/${token}`;
+      link.href = url;
       link.setAttribute("download", "");
       document.body.appendChild(link);
       link.click();
@@ -148,13 +139,33 @@ export default function MyOrdersPage() {
       // Refresh orders after download to show updated count
       setTimeout(() => {
         if (user?.email) loadUserOrders(user.email);
-        else if (lookupEmail) loadUserOrders(lookupEmail);
       }, 2000);
     } catch (err) {
       console.error("Download error:", err);
     } finally {
       setTimeout(() => setDownloadingId(null), 3000);
     }
+  };
+
+  const openReader = async (order) => {
+    // Preferred: the chapter reader (content managed in the admin dashboard). If it has no published book yet, or the
+    // server is a previous version without it, the original in-page PDF reader is used exactly as before.
+    try {
+      const books = await api.readerBooks();
+      if (books.ok && Array.isArray(books.data.books) && books.data.books.length > 0) {
+        navigate("/read");
+        return;
+      }
+    } catch { /* fall back to the PDF reader */ }
+    const url = await resolveFileUrl(order, "read");
+    if (!url) return;
+    setReaderUrl(url);
+    setReadingOrder(order);
+  };
+
+  const closeReader = () => {
+    setReadingOrder(null);
+    setReaderUrl("");
   };
 
   /* ── Ownership & Upgrades ───────────────────────── */
@@ -175,7 +186,7 @@ export default function MyOrdersPage() {
   const handleUpgrade = (order) => {
     const upgradeUrl = import.meta.env.VITE_PAYHIP_UPGRADE_URL ||
       (import.meta.env.VITE_PAYHIP_UPGRADE_PRODUCT_ID ? `https://payhip.com/b/${import.meta.env.VITE_PAYHIP_UPGRADE_PRODUCT_ID}` : "");
-    const email = (user?.email || lookupEmail || "").trim();
+    const email = (user?.email || "").trim();
 
     if (upgradeUrl) {
       const sep = upgradeUrl.includes("?") ? "&" : "?";
@@ -189,7 +200,7 @@ export default function MyOrdersPage() {
   };
 
   /* ── Render ─────────────────────────────────────── */
-  const isAuthenticated = !!user || !!lookupEmail;
+  const isAuthenticated = !!user;
 
   return (
     <>
@@ -208,9 +219,7 @@ export default function MyOrdersPage() {
               <p className="my-orders-subtitle">
                 {user
                   ? `Signed in as ${user.email}`
-                  : lookupEmail
-                  ? `Showing orders for ${lookupEmail}`
-                  : "Sign in or enter your email to view order history"}
+                  : "Sign in to view your order history"}
               </p>
             </div>
             {user && (
@@ -260,36 +269,6 @@ export default function MyOrdersPage() {
                 </Link>
               </div>
 
-              <div className="my-orders-divider-text">or look up by email</div>
-
-              <form onSubmit={handleGuestLookup}>
-                <div className="my-orders-lookup-form">
-                  <input
-                    type="email"
-                    className="my-orders-lookup-input"
-                    placeholder="your@email.com"
-                    value={guestEmail}
-                    onChange={(e) => setGuestEmail(e.target.value)}
-                    required
-                    id="my-orders-email-input"
-                    aria-label="Email address for order lookup"
-                  />
-                  <button
-                    type="submit"
-                    className="my-orders-lookup-btn"
-                    disabled={lookupLoading || !guestEmail.trim()}
-                    id="my-orders-lookup-btn"
-                  >
-                    {lookupLoading ? "…" : "Find Orders"}
-                  </button>
-                </div>
-                {lookupError && (
-                  <div className="my-orders-error" style={{ marginTop: 10 }} role="alert">
-                    <i className="fa-solid fa-circle-exclamation" />
-                    {lookupError}
-                  </div>
-                )}
-              </form>
             </motion.div>
           )}
 
@@ -436,15 +415,17 @@ export default function MyOrdersPage() {
                                     </button>
                                   )}
 
-                                  <button
-                                    type="button"
-                                    className="my-order-view-btn"
-                                    style={{ borderColor: "#c80808", color: "#c80808", background: "none", cursor: "pointer" }}
-                                    onClick={() => setReadingOrder(order)}
-                                    id={`read-btn-${order.id}`}
-                                  >
-                                    <i className="fa-solid fa-book-open" /> Read Online
-                                  </button>
+                                  {isOnlineOrder && (
+                                    <button
+                                      type="button"
+                                      className="my-order-view-btn"
+                                      style={{ borderColor: "#c80808", color: "#c80808", background: "none", cursor: "pointer" }}
+                                      onClick={() => openReader(order)}
+                                      id={`read-btn-${order.id}`}
+                                    >
+                                      <i className="fa-solid fa-book-open" /> Read Online
+                                    </button>
+                                  )}
 
                                   {isOnlineOrder && canUpgrade && (
                                     <button
@@ -536,7 +517,7 @@ export default function MyOrdersPage() {
                   {readingOrder.book_name || "Marketing Reclassified — Online Reader"}
                 </h3>
                 <p style={{ margin: 0, fontSize: "0.75rem", color: "#a1a1aa" }}>
-                  Protected In-Browser Edition · Authorized Reader: {user?.email || lookupEmail}
+                  Protected In-Browser Edition · Authorized Reader: {user?.email}
                 </p>
               </div>
             </div>
@@ -546,7 +527,7 @@ export default function MyOrdersPage() {
               </span>
               <button
                 type="button"
-                onClick={() => setReadingOrder(null)}
+                onClick={closeReader}
                 style={{
                   background: "#27272a",
                   border: "1px solid #3f3f46",
@@ -565,7 +546,7 @@ export default function MyOrdersPage() {
           </div>
           <div style={{ flex: 1, position: "relative", background: "#09090b" }}>
             <iframe
-              src={`${API_BASE}/payment/read/${readingOrder.download_token || readingOrder.paypal_order_id || readingOrder.payhip_transaction_id || readingOrder.stripe_session_id || readingOrder.id}#toolbar=0&navpanes=0`}
+              src={readerUrl}
               title="Protected Online Book Reader"
               style={{ width: "100%", height: "100%", border: "none" }}
             />

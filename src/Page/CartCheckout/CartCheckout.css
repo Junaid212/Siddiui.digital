@@ -1491,3 +1491,24 @@
 [data-theme="dark"] .checkout-section-divider {
   background: #1f2937;
 }
+
+
+/* ── Launch offer notice ──────────────────────────── */
+.checkout-offer-note {
+  background: #fff8e1;
+  border: 1px solid #f2c94c;
+  color: #5b4300;
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0 0 14px;
+}
+[data-theme="dark"] .checkout-offer-note { background: rgba(242, 201, 76, 0.12); color: #f6e2a0; border-color: rgba(242, 201, 76, 0.45); }
+
+
+.checkout-offer-copy {
+  background: #8a0808; color: #fff; border: 0; border-radius: 6px; padding: 4px 12px;
+  font-size: 13px; font-weight: 700; cursor: pointer; vertical-align: baseline;
+}
+.checkout-offer-copy:hover { background: #a50d0d; }

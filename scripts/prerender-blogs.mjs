@@ -1,11 +1,42 @@
+// Generates the prerendered, crawler-ready HTML page for every PUBLIC blog article:  <dist>/blogs/<slug>/index.html
+//
+// Every tag (title, description, canonical, Open Graph, Twitter) comes from scripts/lib/blogPrerenderCore.cjs, the
+// same renderer the admin server uses to refresh a single page right after an article is saved.
+//
+//  - The image is the one SAVED on the article row: social_image_url -> image_url -> website default.
+//    Nothing is ever built from a slug or a guessed file name.
+//  - "Public" means exactly what the website means: published, or scheduled with a date that has passed.
+//  - Real image sizes are read from the image files (og:image:width/height).
+//  - Every file is read back and verified after it is written; the script exits non-zero if any page failed.
+//
+// Usage:
+//   node scripts/prerender-blogs.mjs                         # normal build step: writes into ./dist
+//   node scripts/prerender-blogs.mjs --dist /var/www/frontend --prune   # regenerate the LIVE folder without a rebuild
+//   node scripts/prerender-blogs.mjs --dry-run               # show what would change, write nothing
+//   node scripts/prerender-blogs.mjs --slug my-article       # one article only
+//   (--dist can also be set with PRERENDER_DIST_DIR)
+
 import fs from 'fs';
 import path from 'path';
+import { createRequire } from 'module';
 import { fileURLToPath } from 'url';
 import { createClient } from '@supabase/supabase-js';
+
+const require = createRequire(import.meta.url);
+const core = require('./lib/blogPrerenderCore.cjs');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, '..');
+
+// ── arguments ───────────────────────────────────────────────────────────────────────────────────────────
+const argv = process.argv.slice(2);
+const flag = (name) => argv.includes(name);
+const option = (name) => { const i = argv.indexOf(name); return i >= 0 ? argv[i + 1] : undefined; };
+const distDir = path.resolve(option('--dist') || process.env.PRERENDER_DIST_DIR || path.join(projectRoot, 'dist'));
+const DRY_RUN = flag('--dry-run');
+const PRUNE = flag('--prune');
+const ONLY_SLUG = option('--slug');
 
 // Helper to safely load env variables without exposing secrets
 function loadEnv() {
@@ -49,110 +80,107 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     auth: { persistSession: false }
 });
 
-function escapeHtmlAttr(str) {
-    if (!str) return '';
-    return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
+const FIELDS = 'id, title, slug, summary, standfirst, seo_title, seo_description, published_date, status, scheduled_for, image_url, social_image_url';
+
+function writeVerified(file, html, article, opts) {
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    const tmp = `${file}.tmp-${process.pid}`;
+    fs.writeFileSync(tmp, html, 'utf8');
+    fs.renameSync(tmp, file);
+    const back = fs.readFileSync(file, 'utf8');
+    if (back !== html) throw new Error('file on disk does not match what was written');
+    const problems = core.verifyRendered(back, article, opts);
+    if (problems.length) throw new Error(`written page failed verification (${problems.join(', ')})`);
+}
+
+async function mapPool(items, limit, fn) {
+    const out = new Array(items.length); let next = 0;
+    await Promise.all(Array.from({ length: Math.min(limit, items.length) }, async () => {
+        while (next < items.length) { const i = next++; out[i] = await fn(items[i], i); }
+    }));
+    return out;
 }
 
 async function prerenderBlogs() {
-    console.log('=== PRERENDERING BLOG OPENGRAPH / TWITTER METADATA (OPTION A) ===\n');
+    console.log('=== PRERENDERING BLOG ARTICLE PAGES (metadata for crawlers) ===\n');
+    console.log(`Target folder: ${distDir}${DRY_RUN ? '   [DRY RUN - nothing will be written]' : ''}`);
 
-    const distIndexPath = path.join(projectRoot, 'dist', 'index.html');
-    if (!fs.existsSync(distIndexPath)) {
-        console.error('ERROR: dist/index.html not found! Please run "npm run build" first.');
+    const templatePath = path.join(distDir, 'index.html');
+    if (!fs.existsSync(templatePath)) {
+        console.error(`ERROR: ${templatePath} not found! Please run "npm run build" first (or pass --dist <folder containing index.html>).`);
         process.exit(1);
     }
+    const template = fs.readFileSync(templatePath, 'utf8');
+    console.log(`Loaded page template: ${templatePath} (${template.length} bytes)`);
 
-    const baseHtml = fs.readFileSync(distIndexPath, 'utf8');
-    console.log(`Loaded base HTML template from: ${distIndexPath} (${baseHtml.length} bytes)`);
-
-    // Fetch ONLY published articles
-    console.log('Querying Supabase for published articles...');
-    const { data: articles, error } = await supabase
-        .from('blogs')
-        .select('title, slug, summary, standfirst, seo_title, seo_description, published_date, status')
-        .eq('status', 'published')
-        .order('published_date', { ascending: false });
-
+    console.log('Querying Supabase for articles...');
+    const { data: rows, error } = await supabase.from('blogs').select(FIELDS).order('published_date', { ascending: false }).limit(5000);
     if (error) {
-        console.error('Failed to fetch published articles from Supabase:', error.message);
+        console.error('Failed to fetch articles from Supabase:', error.message);
+        if (/social_image_url/i.test(error.message || '')) console.error('The blogs.social_image_url column is missing: apply supabase/migrations/add_social_image_to_blogs.sql first.');
         process.exit(1);
     }
 
-    console.log(`Found ${articles.length} published articles. Prerendering metadata pages...\n`);
+    const now = new Date();
+    const all = rows || [];
+    const publicArticles = all.filter((a) => core.isPubliclyVisible(a, now)).filter((a) => !ONLY_SLUG || a.slug === ONLY_SLUG);
+    console.log(`Found ${all.length} articles; ${publicArticles.length} are public (published, or scheduled and due). Rendering...\n`);
 
-    let successCount = 0;
+    const allowHosts = [new URL(supabaseUrl).hostname];
+    const dimsCache = new Map();
+    const stats = { written: 0, unchanged: 0, failed: [], skipped: [], sources: { social: 0, cover: 0, default: 0 }, sizesRead: 0 };
+    const visibleSlugs = new Set();
 
-    for (const art of articles) {
-        const slug = art.slug;
-        const title = (art.seo_title || art.title || 'Siddiqui.Digital').trim();
-        const fullTitle = title.includes('M. Q. Siddiqui') || title.includes('Siddiqui.digital')
-            ? title
-            : `${title} | M. Q. Siddiqui`;
-        const description = (art.seo_description || art.standfirst || art.summary || 'Empowering entrepreneurs and students through strategic marketing.').trim();
-        const articleUrl = `https://siddiqui.digital/blogs/${slug}`;
-        const socialImageUrl = `${supabaseUrl}/storage/v1/object/public/blogs/blog-images/${slug}-social.png`;
-
-        const safeTitle = escapeHtmlAttr(fullTitle);
-        const safeDesc = escapeHtmlAttr(description);
-        const safeUrl = escapeHtmlAttr(articleUrl);
-        const safeImg = escapeHtmlAttr(socialImageUrl);
-        const safeDate = art.published_date ? new Date(art.published_date).toISOString().split('T')[0] : '';
-
-        let articleHtml = baseHtml;
-
-        // 1. Title
-        articleHtml = articleHtml.replace(/<title>.*?<\/title>/i, `<title>${safeTitle}</title>`);
-
-        // 2. Meta description
-        if (articleHtml.match(/<meta\s+name=["']description["'].*?>/i)) {
-            articleHtml = articleHtml.replace(/<meta\s+name=["']description["'].*?>/i, `<meta name="description" content="${safeDesc}" />`);
+    await mapPool(publicArticles, 4, async (art) => {
+        if (!core.isValidSlug(art.slug)) { stats.skipped.push({ slug: art.slug, reason: 'invalid slug' }); return; }
+        visibleSlugs.add(art.slug);
+        try {
+            const image = core.pickImage(art);
+            stats.sources[image.source]++;
+            const dims = image.source === 'default' ? null : await core.probeImageDimensions(image.url, { allowHosts, cache: dimsCache });
+            if (dims) stats.sizesRead++;
+            const opts = dims ? { dims } : {};
+            const html = core.renderArticleHtml(template, art, opts);
+            const problems = core.verifyRendered(html, art, opts);
+            if (problems.length) throw new Error(`rendered page failed verification (${problems.join(', ')})`);
+            const file = path.join(distDir, 'blogs', art.slug, 'index.html');
+            const existing = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : null;
+            if (existing === html) { stats.unchanged++; return; }
+            if (!DRY_RUN) writeVerified(file, html, art, opts);
+            stats.written++;
+        } catch (err) {
+            stats.failed.push({ slug: art.slug, error: err.message });
         }
+    });
 
-        // 3. Canonical URL
-        if (articleHtml.match(/<link\s+rel=["']canonical["'].*?>/i)) {
-            articleHtml = articleHtml.replace(/<link\s+rel=["']canonical["'].*?>/i, `<link rel="canonical" href="${safeUrl}" />`);
+    // Optional: remove generated pages of articles that are no longer public (only generated pages; only if the read looked complete)
+    const pruned = [];
+    if (PRUNE && !ONLY_SLUG && all.length > 0) {
+        const blogsDir = path.join(distDir, 'blogs');
+        const names = fs.existsSync(blogsDir) ? fs.readdirSync(blogsDir) : [];
+        for (const name of names) {
+            if (visibleSlugs.has(name) || !core.isValidSlug(name)) continue;
+            const file = path.join(blogsDir, name, 'index.html');
+            if (!fs.existsSync(file)) continue;
+            const html = fs.readFileSync(file, 'utf8');
+            if (!core.looksGenerated(html) || core.isRedirectStub(html)) continue;
+            if (!DRY_RUN) { fs.unlinkSync(file); try { fs.rmdirSync(path.dirname(file)); } catch (_) { /* not empty: leave */ } }
+            pruned.push(name);
         }
-
-        // 4. OpenGraph Tags
-        articleHtml = articleHtml.replace(/<meta\s+property=["']og:type["'].*?>/i, `<meta property="og:type" content="article" />`);
-        articleHtml = articleHtml.replace(/<meta\s+property=["']og:url["'].*?>/i, `<meta property="og:url" content="${safeUrl}" />`);
-        articleHtml = articleHtml.replace(/<meta\s+property=["']og:title["'].*?>/i, `<meta property="og:title" content="${safeTitle}" />`);
-        articleHtml = articleHtml.replace(/<meta\s+property=["']og:description["'].*?>/i, `<meta property="og:description" content="${safeDesc}" />`);
-        articleHtml = articleHtml.replace(/<meta\s+property=["']og:image["'].*?>/i, `<meta property="og:image" content="${safeImg}" />
-        <meta property="og:image:width" content="1600" />
-        <meta property="og:image:height" content="820" />` + (safeDate ? `\n        <meta property="article:published_time" content="${safeDate}" />` : '') + `
-        <meta property="article:author" content="M. Q. Siddiqui" />`);
-
-        // 5. Twitter Card Tags
-        articleHtml = articleHtml.replace(/<meta\s+name=["']twitter:card["'].*?>/i, `<meta name="twitter:card" content="summary_large_image" />`);
-        articleHtml = articleHtml.replace(/<meta\s+name=["']twitter:url["'].*?>/i, `<meta name="twitter:url" content="${safeUrl}" />`);
-        articleHtml = articleHtml.replace(/<meta\s+name=["']twitter:title["'].*?>/i, `<meta name="twitter:title" content="${safeTitle}" />`);
-        articleHtml = articleHtml.replace(/<meta\s+name=["']twitter:description["'].*?>/i, `<meta name="twitter:description" content="${safeDesc}" />`);
-        articleHtml = articleHtml.replace(/<meta\s+name=["']twitter:image["'].*?>/i, `<meta name="twitter:image" content="${safeImg}" />`);
-
-        // Ensure directory exists: dist/blog/<slug>/
-        const targetDir = path.join(projectRoot, 'dist', 'blogs', slug);
-        if (!fs.existsSync(targetDir)) {
-            fs.mkdirSync(targetDir, { recursive: true });
-        }
-
-        const targetFilePath = path.join(targetDir, 'index.html');
-        fs.writeFileSync(targetFilePath, articleHtml, 'utf8');
-        successCount++;
     }
 
     console.log('================================================================');
-    console.log(`✓ SUCCESS: ${successCount} article metadata pages created in dist/blogs/<slug>/index.html`);
-    console.log(`  - All ${successCount} published articles have crawler-ready Open Graph and Twitter tags.`);
-    console.log('  - Zero scheduled articles were prerendered (protected from premature exposure).');
-    console.log('  - React SPA bundle and <div id="root"></div> fully preserved for normal visitor navigation.');
+    console.log(`${stats.failed.length ? '✗ FINISHED WITH ERRORS' : '✓ SUCCESS'}: ${publicArticles.length} public articles processed in ${path.join(distDir, 'blogs')}${path.sep}<slug>${path.sep}index.html`);
+    console.log(`  - ${DRY_RUN ? 'would be written' : 'written'}: ${stats.written}    already up to date: ${stats.unchanged}    failed: ${stats.failed.length}    skipped: ${stats.skipped.length}${PRUNE ? `    ${DRY_RUN ? 'would be pruned' : 'pruned'}: ${pruned.length}` : ''}`);
+    console.log(`  - og:image / twitter:image source:  social image ${stats.sources.social},  cover ${stats.sources.cover},  website default ${stats.sources.default}`);
+    console.log(`  - real image sizes read: ${stats.sizesRead} of ${stats.sources.social + stats.sources.cover}`);
+    console.log(`  - not public (draft / unpublished / scheduled for later): ${all.length - all.filter((a) => core.isPubliclyVisible(a, now)).length}  (never prerendered)`);
+    console.log('  - React SPA shell (<div id="root">) preserved on every page.');
+    for (const f of stats.failed) console.log(`  ✗ ${f.slug}: ${f.error}`);
+    for (const s of stats.skipped) console.log(`  ! skipped ${s.slug}: ${s.reason}`);
     console.log('================================================================\n');
+
+    if (stats.failed.length) process.exit(1);
 }
 
 prerenderBlogs().catch(err => {

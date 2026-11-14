@@ -1525,3 +1525,21 @@ html {
     padding: 24px;
   }
 }
+
+
+/* ── Launch offer on the Digital Companion button ─────────────────── */
+.v2-hero-actions-offer { align-items: center; }
+.v2-offer-row { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
+.v2-offer-was { color: #cbd5e1 !important; font-size: 19px; text-decoration: line-through; text-decoration-thickness: 2px; opacity: 0.9; }
+.v2-offer-badge {
+  display: inline-flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+  background: #F2C94C; color: #1f2937; border-radius: 999px; padding: 7px 16px;
+  font-size: 13px; font-weight: 800; letter-spacing: 0.04em; line-height: 1.25; text-transform: uppercase;
+}
+.v2-offer-code { font-weight: 800; letter-spacing: 0.06em; text-transform: none; }
+.v2-offer-note { margin: 14px 0 0; font-size: 15px; color: #e2e8f0 !important; line-height: 1.5; }
+.v2-offer-card-note { margin: 10px 0 0; text-align: center; font-size: 14px; color: #4b5563 !important; }
+@media (max-width: 640px) {
+  .v2-offer-row { gap: 10px; }
+  .v2-offer-row .v2-btn-primary { width: 100%; }
+}

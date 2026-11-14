@@ -41,7 +41,7 @@ const EbookCards = ({
       productId,
       title,
       price: Number(priceNum) || 49,
-      currency: currency || "AED",
+      currency: currency || "USD",
       coverImage: image,
       accessType: "download",
       accessLabel: "Digital Companion Edition",
@@ -51,7 +51,7 @@ const EbookCards = ({
     setTimeout(() => setAddedToCart(false), 2000);
   };
 
-  const displayPrice = price || `${currency || "AED"} ${Number(priceNum || 49).toFixed(2)}`;
+  const displayPrice = price || `${currency || "USD"} ${Number(priceNum || 49).toFixed(2)}`;
 
   return (
     <>

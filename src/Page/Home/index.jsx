@@ -16,10 +16,13 @@ import EbookCardPage from "../../Components/EbookCardPage";
 import PricingPage from "../Pricing";
 import PricingSection from "../../Components/Pricing";
 import SignatureFrameworks from "../../Components/SignatureFrameworks";
+import HeadTitle from "../../Components/Head/HeadTitle";
+import { seoProps } from "../../Data/pageSeo";
 
 const HomePage = () => {
     return(
         <>
+            <HeadTitle {...seoProps("home")} />
             <Hero/>
             {/* <HeroThree/> */}
             {/* <BannerHome /> */}

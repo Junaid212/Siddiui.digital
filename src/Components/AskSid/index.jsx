@@ -183,59 +183,7 @@ export default function AskSid() {
     }
   }, [token, demoSessionId]);
 
-  // Check direct Supabase orders whenever user logs in
-  useEffect(() => {
-    async function checkUserPurchases() {
-      if (!user?.email) return;
-      try {
-        const userEmail = user.email.toLowerCase().trim();
-        const { data: userOrders, error } = await supabase
-          .from("orders")
-          .select("*")
-          .or(`email.ilike.${userEmail},user_id.eq.${user.id}`)
-          .in("status", ["paid", "successful"]);
-
-        if (!error && userOrders && userOrders.length > 0) {
-          let hasCompanion = false;
-          let hasOnline = false;
-
-          for (const ord of userOrders) {
-            const bName = String(ord.book_name || ord.product_name || "").toLowerCase();
-            const pId = String(ord.product_id || "").toLowerCase();
-            const amt = Number(ord.amount || 0);
-
-            if (
-              bName.includes("companion") ||
-              pId === "04b84648-3609-4b31-9ded-2486bacf1e74" ||
-              amt >= 40 ||
-              (bName.includes("marketing reclassified") && !bName.includes("online"))
-            ) {
-              hasCompanion = true;
-            } else if (
-              bName.includes("online") ||
-              pId === "prod_online_reading_001" ||
-              ord.access_type === "online" ||
-              (amt >= 15 && amt < 40)
-            ) {
-              hasOnline = true;
-            }
-          }
-
-          setAccess((prev) => ({
-            ...prev,
-            authenticated: true,
-            hasCompanionAccess: hasCompanion || prev.hasCompanionAccess,
-            hasOnlineAccess: hasOnline || prev.hasOnlineAccess,
-            accessLevel: hasCompanion ? "full" : hasOnline ? "online_only" : prev.accessLevel
-          }));
-        }
-      } catch (e) {
-        console.warn("Direct order entitlement check notice:", e.message);
-      }
-    }
-
-    checkUserPurchases();
-  }, [user]);
+  // (Entitlements are decided by the server and returned by /ask-sid/access above. The page no longer reads the orders table to guess them.)
 
 
   // Derived access considering simulator override
@@ -270,13 +218,19 @@ export default function AskSid() {
 
     const isFull = access.hasCompanionAccess || access.accessLevel === "full";
     const isOnline = access.hasOnlineAccess || access.accessLevel === "online_only";
-    const isDemoActive = !isFull && access.demoAvailable && !demoExhausted;
+    // New server: an Online Reading customer has no Ask SID and no demo, only the upgrade message. Companion access that has
+    // ended (12 months) or whose allowance is spent is shown as such by the status bar.
+    const onlineLocked = access.edition === "online";
+    const isDemoActive = !isFull && !onlineLocked && access.demoAvailable && !demoExhausted;
 
     return {
       isFull,
       isOnline,
+      onlineLocked,
       isDemoActive,
-      demoExhausted: demoExhausted || (!isFull && access.demoQuestionsRemaining === 0),
+      demoExhausted: !isFull && (
+        onlineLocked || demoExhausted || access.demoQuestionsRemaining === 0
+      ),
       label: isFull
         ? "Digital Companion Edition ($49.99) — Full Access Active"
         : isOnline
@@ -325,7 +279,9 @@ export default function AskSid() {
 
     // Check if user is locked out
     if (!effectiveAccess.isFull && effectiveAccess.demoExhausted) {
-      setError("Your complimentary demonstration question has been used. Please upgrade to the Digital Companion Edition ($49.99) for full, unlimited Ask SID access.");
+      setError(effectiveAccess.onlineLocked
+        ? "Ask SID is available exclusively with the Digital Companion Edition. Upgrade your edition to unlock your AI book companion."
+        : "Your complimentary demonstration question has been used. Please upgrade to the Digital Companion Edition ($49.99) for Ask SID access.");
       const upgradeEl = document.getElementById("asksid-upgrade-card");
       if (upgradeEl) upgradeEl.scrollIntoView({ behavior: "smooth" });
       return;
@@ -341,7 +297,7 @@ export default function AskSid() {
     try {
       const historyPayload = conversation.map((c) => ({
         role: c.role,
-        content: c.role === "user" ? c.text : c.answer?.perspective || ""
+        content: c.role === "user" ? c.text : c.answer?.text || c.answer?.perspective || ""
       }));
 
       let answerData = null;
@@ -363,30 +319,64 @@ export default function AskSid() {
           answerData = res.answer;
           isDemoResult = !!res.isDemo;
           remainingCount = res.demoQuestionsRemaining || 0;
+          // Keep the visible allowance in step with what the server just counted.
+          if (res.usage && res.usage.charged) {
+            setAccess((prev) => ({
+              ...prev,
+              allowance: prev.allowance
+                ? {
+                    ...prev.allowance,
+                    dailyRemaining: res.usage.dailyRemaining,
+                    totalRemaining: res.usage.totalRemaining,
+                    dailyUsed: prev.allowance.dailyLimit - res.usage.dailyRemaining,
+                    totalUsed: prev.allowance.totalLimit - res.usage.totalRemaining
+                  }
+                : prev.allowance
+            }));
+          }
         }
       } catch (backendErr) {
-        console.warn("Backend chat endpoint encountered notice, checking fallback engine:", backendErr.message);
+        console.warn("Backend chat endpoint encountered notice:", backendErr.message);
+        const type = backendErr.errorType;
 
-        // If backend explicitly rejected due to demo limit
-        if (backendErr.errorType === "demo_limit_reached" || backendErr.errorType === "unauthorized") {
+        // The server decides access and limits. Every decision it makes is shown as it is, never worked around locally.
+        if (type === "demo_limit_reached" || type === "unauthorized") {
           setDemoExhausted(true);
-          setError("You've reached the current demo limit. Unlock Full Ask SID with the Digital Companion Edition ($49.99).");
+          setError(backendErr.message || "You've reached the current demo limit. Unlock Ask SID with the Digital Companion Edition.");
+          setLoading(false);
+          return;
+        }
+        if (type === "upgrade_required") {
+          setAccess((prev) => ({ ...prev, edition: "online", hasOnlineAccess: true, hasCompanionAccess: false, accessLevel: "online_only" }));
+          setError(backendErr.message);
+          setLoading(false);
+          return;
+        }
+        if (["daily_limit", "total_limit", "expired", "revoked", "session", "message_too_long", "rate_limited", "service_unavailable"].includes(type)) {
+          if (type === "daily_limit") setAccess((prev) => (prev.allowance ? { ...prev, allowance: { ...prev.allowance, dailyRemaining: 0 } } : prev));
+          if (type === "total_limit") setAccess((prev) => (prev.allowance ? { ...prev, allowance: { ...prev.allowance, totalRemaining: 0 } } : prev));
+          setError(backendErr.message || "Ask SID could not answer right now.");
           setLoading(false);
           return;
         }
 
-        // Fallback to grounded local knowledge engine
+        // Only a visitor trying the public demo may fall back to the on-page engine when the server cannot be reached.
+        // A signed-in customer is never given unmetered answers because a request failed.
+        if (token) {
+          setError("Ask SID is temporarily unavailable. Please try again in a moment. This question was not counted.");
+          setLoading(false);
+          return;
+        }
         const fallbackAnswer = matchPrincipleInKnowledgeBase(cleanQuery);
         answerData = fallbackAnswer;
-        if (!effectiveAccess.isFull) {
-          isDemoResult = true;
-          remainingCount = 0;
-        }
+        isDemoResult = true;
+        remainingCount = 0;
       }
 
-      // If we got an answer from backend but it lacks continueExploring, enrich it from knowledge base
+      // If we got an answer from the legacy backend but it lacks continueExploring, enrich it from knowledge base.
+      // (The new answer format has no follow-up suggestions: Ask SID answers, it does not coach.)
       if (answerData) {
-        if (!answerData.continueExploring || answerData.continueExploring.length === 0) {
+        if (!answerData.text && (!answerData.continueExploring || answerData.continueExploring.length === 0)) {
           const matched = matchPrincipleInKnowledgeBase(cleanQuery);
           if (matched && matched.continueExploring) {
             answerData.continueExploring = matched.continueExploring;
@@ -447,19 +437,19 @@ export default function AskSid() {
           <Link to="/" className="asksid-breadcrumb-link">
             Home
           </Link>
-          <span className="asksid-breadcrumb-sep">/</span>
+          <div className="asksid-breadcrumb-sep">/</div>
           <Link to="/publications" className="asksid-breadcrumb-link">
             Publications
           </Link>
-          <span className="asksid-breadcrumb-sep">/</span>
+          <div className="asksid-breadcrumb-sep">/</div>
           <Link
             to={BOOK_METADATA.publicationUrl}
             className="asksid-breadcrumb-link"
           >
             Marketing Reclassified
           </Link>
-          <span className="asksid-breadcrumb-sep">/</span>
-          <span className="asksid-breadcrumb-current">Ask SID</span>
+          <div className="asksid-breadcrumb-sep">/</div>
+          <div className="asksid-breadcrumb-current">Ask SID</div>
         </div>
       </div>
 
@@ -612,8 +602,17 @@ export default function AskSid() {
                 <span className="asksid-status-pill full">
                   <i className="fa-solid fa-circle-check" /> Full Companion Access
                 </span>
-                <span className="asksid-status-text">
-                  Unlimited conversation access active via your <strong>Digital Companion Edition ($49.99)</strong>.
+                <span className="asksid-status-text" data-testid="asksid-allowance">
+                  {access.allowance ? (
+                    <>
+                      <strong>{access.allowance.dailyRemaining}</strong> of {access.allowance.dailyLimit} questions left today
+                      {" • "}<strong>{access.allowance.totalRemaining}</strong> of {access.allowance.totalLimit} left in total
+                      {access.allowance.expiresAt ? <> {" • "}access until {new Date(access.allowance.expiresAt).toISOString().slice(0, 10)}</> : null}
+                      {access.allowance.launchOffer ? " • launch offer" : ""}
+                    </>
+                  ) : (
+                    <>Access active via your <strong>Digital Companion Edition</strong>.</>
+                  )}
                 </span>
               </>
             ) : effectiveAccess.isOnline ? (
@@ -621,8 +620,11 @@ export default function AskSid() {
                 <span className="asksid-status-pill online">
                   <i className="fa-solid fa-book-open" /> Online Edition
                 </span>
-                <span className="asksid-status-text">
-                  {effectiveAccess.demoExhausted
+                <span className="asksid-status-text" data-testid="asksid-online-note">
+                  {effectiveAccess.onlineLocked
+                    ? <>Ask SID is available exclusively with the Digital Companion Edition. Upgrade your edition to unlock your AI book companion.{" "}
+                        <Link to={config.upgradeUrl || "/publications/marketing-reclassified"} className="asksid-status-upgrade">Upgrade</Link></>
+                    : effectiveAccess.demoExhausted
                     ? "Online Edition reading active • Complimentary trial inquiry completed"
                     : "Online Edition reading active • 1 complimentary demonstration inquiry available"}
                 </span>
@@ -671,8 +673,8 @@ export default function AskSid() {
               </span>
             )}
 
-            {/* Subtle Dev/Client Tier Simulator Toggle */}
-            <button
+            {/* Reviewer tier simulator: development builds only (never shown to customers) */}
+            {import.meta.env.DEV && (<button
               type="button"
               className="asksid-sim-toggle-btn"
               onClick={() => setShowSimulator((s) => !s)}
@@ -680,7 +682,7 @@ export default function AskSid() {
             >
               <i className="fa-solid fa-sliders" />
               <span>Preview Tiers</span>
-            </button>
+            </button>)}
           </div>
         </div>
 
@@ -870,6 +872,18 @@ export default function AskSid() {
                         Frameworks by M. Q. Siddiqui
                       </span>
                     </div>
+
+                    {/* New format: a short answer taken only from the book, naming the chapter / concept it comes from */}
+                    {msg.answer?.text && (
+                      <div className="asksid-section" data-testid="asksid-answer">
+                        <p className="asksid-section-content" style={{ whiteSpace: "pre-line" }}>{msg.answer.text}</p>
+                        {Array.isArray(msg.answer.sources) && msg.answer.sources.length > 0 && (
+                          <p className="asksid-book-ref-details" data-testid="asksid-source">
+                            Source: {msg.answer.sources.map((src) => [src.concept, src.chapter].filter(Boolean).join(" — ")).join("; ")}
+                          </p>
+                        )}
+                      </div>
+                    )}
 
                     {/* Section 1: Understanding Your Situation */}
                     {msg.answer?.understanding && (

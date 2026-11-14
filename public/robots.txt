@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /login
+Disallow: /reset-password
+Disallow: /my-orders
+Disallow: /my-library
+Disallow: /cart/
+Disallow: /order-success
+Disallow: /order-cancel
+
+Sitemap: https://siddiqui.digital/sitemap.xml

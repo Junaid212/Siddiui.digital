@@ -3,6 +3,7 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { api } from '../../api';
 import { supabase } from '../../supabaseClient';
 import HeadTitle from '../../Components/Head/HeadTitle';
+import { seoProps } from '../../Data/pageSeo';
 import BannerInnerSection2 from '../../Components/Banner/inner2';
 
 const REFERENCE_TOPICS = [
@@ -234,7 +235,7 @@ const BlogSection = () => {
 
   return (
     <>
-      <HeadTitle title="Blog - Marketing & Business Management | Siddiqui.digital" />
+      <HeadTitle {...seoProps("blog")} />
 
       {/* Preserve existing site banner styling */}
       {/* <BannerInnerSection2 title="Blog" currentPage="Blog" /> */}

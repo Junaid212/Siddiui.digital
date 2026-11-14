@@ -9,7 +9,7 @@ export const INDIVIDUAL_FRAMEWORKS = [
     title: "From Purpose to Profit",
     subtitle: "The DNA of Business",
     pageHeading: "From Purpose to Profit: The DNA of Business",
-    image: "/assets/images/img/74.webp",
+    image: "/assets/images/img/74-1000.webp",
     shortDefinition:
       "From Purpose to Profit is a strategic business framework that explains how purpose, value creation, relevance, strategy, growth, and profit are connected.",
     problemAddressed:
@@ -65,7 +65,7 @@ export const INDIVIDUAL_FRAMEWORKS = [
     title: "Adaptive Value Framework",
     subtitle: "AVF",
     pageHeading: "Adaptive Value Framework",
-    image: "/assets/images/img/75.webp",
+    image: "/assets/images/img/75-1000.webp",
     shortDefinition:
       "The Adaptive Value Framework is a strategic framework for creating, shaping, and sustaining value in changing markets and business environments.",
     problemAddressed:
@@ -122,7 +122,7 @@ export const INDIVIDUAL_FRAMEWORKS = [
     title: "Value Drift Index",
     subtitle: "VDI",
     pageHeading: "Value Drift Index",
-    image: "/assets/images/img/76.webp",
+    image: "/assets/images/img/76-1000.webp",
     shortDefinition:
       "The Value Drift Index is a diagnostic framework for identifying value drift, weakening relevance, and strategic misalignment.",
     problemAddressed:

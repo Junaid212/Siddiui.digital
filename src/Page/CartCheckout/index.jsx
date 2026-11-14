@@ -11,6 +11,8 @@ import { supabase } from "../../supabaseClient";
 import { useCart } from "../../Components/Cart/CartContext";
 import HeadTitle from "../../Components/Head/HeadTitle";
 import { api } from "../../api";
+import { useOfferStatus } from "../../Components/OfferBanner/useOffer";
+import { rememberCheckout, openPayhipTab } from "../../utils/checkoutMemory";
 import "./CartCheckout.css";
 
 const isLocalhost =
@@ -41,6 +43,8 @@ export default function CartCheckoutPage() {
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [checkoutError, setCheckoutError] = useState("");
   const [showMobileSummary, setShowMobileSummary] = useState(false);
+  const offerState = useOfferStatus();
+  const [codeCopied, setCodeCopied] = useState(false);
 
   /* ── Auth ───────────────────────────────────────── */
   useEffect(() => {
@@ -157,6 +161,27 @@ export default function CartCheckoutPage() {
   const effectiveSubtotal = Math.max(0, subtotal - upgradeDiscountAmount);
   const effectiveTotal = Math.max(0, total - upgradeDiscountAmount);
 
+  /* ── Launch offer discount: only while it is genuinely valid ───────────────────────────── */
+  // The offer is stored in the cart (browser storage) when the buyer clicks the offer button. It must not outlive the offer,
+  // apply to anything else than the single Digital Companion edition, or stack with the upgrade price.
+  const launchDiscount = !!discountData && discountData.source === "launch-offer";
+  const singleCompanion = items.length === 1 && (Number(items[0].price) >= 40 || items[0].accessType === "companion");
+  useEffect(() => {
+    if (!launchDiscount || !offerState.loaded) return;
+    const cta = offerState.offer && offerState.offer.cta;
+    const valid = !!cta && cta.enabled && singleCompanion && !canUpgradeInCart && !blockedReason &&
+      String(cta.couponCode || "").toUpperCase() === String(discountCode || "").toUpperCase();
+    if (!valid) {
+      clearDiscount();
+      setDiscountInput("");
+      return;
+    }
+    // follow the administrator's latest prices
+    const value = Math.max(0, Math.round((Number(cta.originalPrice) - Number(cta.offerPrice)) * 100) / 100);
+    if (Number(discountData.value) !== value) setDiscountData({ ...discountData, value });
+  }, [launchDiscount, offerState, singleCompanion, canUpgradeInCart, blockedReason, discountCode, discountData]);
+  const launchCta = launchDiscount && offerState.offer && offerState.offer.cta && offerState.offer.cta.enabled ? offerState.offer.cta : null;
+
   /* ── Form ───────────────────────────────────────── */
   const handleInput = (e) => {
     const { name, value } = e.target;
@@ -228,6 +253,15 @@ export default function CartCheckoutPage() {
       }
     }
 
+    // Launch offer: the buyer has seen the offer price on this page; send the code along to Payhip.
+    if (launchCta && !isUpgrade && singleCompanion) {
+      try {
+        const u = new URL(launchCta.checkoutUrl || url);
+        if (discountCode && !u.searchParams.has("coupon")) u.searchParams.set("coupon", discountCode);
+        url = u.toString();
+      } catch (_) { /* keep the normal link */ }
+    }
+
     if (url && email) {
       const sep = url.includes("?") ? "&" : "?";
       url = `${url}${sep}email=${encodeURIComponent(email.trim())}`;
@@ -235,11 +269,26 @@ export default function CartCheckoutPage() {
     return url;
   };
 
+  // If Payhip does not apply the offer code by itself, the buyer can paste it: put it on the clipboard.
+  const copyLaunchCode = () => {
+    try { if (launchCta && discountCode && navigator.clipboard) navigator.clipboard.writeText(discountCode).catch(() => {}); } catch (_) { /* ignore */ }
+  };
+
   const handlePayhipItemCheckout = (item, isUpgrade) => {
+    if (!agreedLegal) {
+      setErrors(prev => ({ ...prev, legal: "You must tick the checkbox to agree to the Terms of Use, Refund Policy and Privacy Policy before paying." }));
+      return;
+    }
     const email = (user?.email || formData.email || "").trim();
     const url = resolveItemPayhipUrl(item, isUpgrade, email);
     if (url) {
-      window.location.href = url;
+      copyLaunchCode();
+      rememberCheckout({ email, title: item.title, edition: item.accessType, payhipUrl: url });
+      if (openPayhipTab(url)) {
+        navigate("/thank-you?waiting=1");
+      } else {
+        window.location.href = url;
+      }
     } else {
       setCheckoutError(`Payhip checkout for "${item.title}" is pending configuration. Please complete checkout directly on the publication page.`);
     }
@@ -277,7 +326,14 @@ export default function CartCheckoutPage() {
         const payhipUrl = resolveItemPayhipUrl(item, isUpgrade, formData.email.trim());
 
         if (payhipUrl) {
-          window.location.href = payhipUrl;
+          copyLaunchCode();
+          rememberCheckout({ email: formData.email.trim(), title: item.title, edition: item.accessType, payhipUrl });
+          if (openPayhipTab(payhipUrl)) {
+            setCheckoutLoading(false);
+            navigate("/thank-you?waiting=1");
+          } else {
+            window.location.href = payhipUrl;
+          }
           return;
         }
       } else {
@@ -288,59 +344,8 @@ export default function CartCheckoutPage() {
     }
 
     try {
-      // Build line items, adjusting price for upgrade if applicable
-      const lineItems = items.map(item => {
-        const isCompanion = Number(item.price) >= 40 ||
-          item.accessType === "companion" ||
-          String(item.title).toLowerCase().includes("companion");
-
-        let itemPrice = Number(item.price);
-        let itemTitle = item.title;
-        let accessLabel = item.accessLabel;
-
-        if (canUpgradeInCart && isCompanion) {
-          itemPrice = 29.99;
-          itemTitle = `${item.title} (Upgrade from Online Edition)`;
-          accessLabel = "Upgrade to Digital Companion Edition";
-        }
-
-        return {
-          productId: item.productId,
-          title: itemTitle,
-          accessType: item.accessType || (isCompanion ? "companion" : "online"),
-          accessLabel,
-          price: itemPrice,
-          currency: item.currency || currency,
-          quantity: item.quantity || 1,
-        };
-      });
-
-      const res = await fetch(`${API_BASE}/payment/paypal/create-order`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          customerName: formData.name.trim(),
-          customerEmail: formData.email.trim(),
-          customerPhone: formData.phone.trim() || null,
-          userId: user?.id || null,
-          marketingOptIn: sendUpdates,
-          lineItems,
-          discountCode: discountData ? discountCode : null,
-          discountAmount: discountAmount || 0,
-          currency,
-        }),
-      });
-
-      const result = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        throw new Error(result.error || `Checkout failed (${res.status})`);
-      }
-
-      if (result && result.url) {
-        window.location.href = result.url;
-      } else {
-        throw new Error(result.error || "Failed to create PayPal checkout session.");
-      }
+      // Payhip is the only checkout in use. If this item has no Payhip link, say so clearly (no other provider is tried).
+      throw new Error("Checkout for this item is not available right now. Please contact us and we will help you complete your purchase.");
     } catch (err) {
       console.error("Cart checkout error:", err);
       setCheckoutError(err.message || "Unable to start checkout. Please try again.");
@@ -807,9 +812,28 @@ export default function CartCheckoutPage() {
                       {formData.email.trim() || "(Enter email on left)"}
                     </div>
                     <div className="checkout-email-confirm-sub">
-                      Please double-check for typos. Reader login and download access will be linked to this address.
+                      Please double-check for typos. Reader login and download access will be linked to this address, so enter this same email on the Payhip page.
                     </div>
                   </div>
+
+                  {launchCta && (
+                    <div className="checkout-offer-note" data-testid="launch-offer-note">
+                      <strong>Launch offer applied:</strong> code <b>{discountCode}</b> — you pay {fmt(effectiveTotal)}.
+                      {launchCta.autoApply
+                        ? <> The code is sent to Payhip for you, so the price there matches.</>
+                        : (
+                          <>
+                            {" "}<b>Next step on Payhip:</b> paste <b>{discountCode}</b> into the <b>Coupon code</b> box and press <b>Apply</b> — the total there
+                            then shows {fmt(effectiveTotal)}.
+                            {" "}<button type="button" className="checkout-offer-copy" data-testid="copy-offer-code"
+                              onClick={() => { copyLaunchCode(); setCodeCopied(true); }}>
+                              {codeCopied ? "Copied ✓" : "Copy code"}
+                            </button>
+                            {" "}We also copy it for you when you continue.
+                          </>
+                        )}
+                    </div>
+                  )}
 
                   {/* Mandatory Legal Agreement Checkbox */}
                   <div className="checkout-legal-group">
@@ -851,13 +875,13 @@ export default function CartCheckoutPage() {
                     ) : items.every(i => i.accessType === "online" || i.accessType === "companion" || i.accessType === "download") ? (
                       <><i className="fa-solid fa-bolt" style={{ marginRight: 8 }} /> Proceed to Payhip Checkout ({fmt(effectiveTotal)})</>
                     ) : (
-                      <><i className="fa-brands fa-paypal" style={{ marginRight: 8 }} /> Pay {fmt(effectiveTotal)} with PayPal</>
+                      <><i className="fa-solid fa-lock" style={{ marginRight: 8 }} /> Continue to secure checkout ({fmt(effectiveTotal)})</>
                     )}
                   </button>
 
                   <div className="checkout-trust-row">
                     <span><i className="fa-solid fa-lock" />SSL Secured</span>
-                    <span><i className="fa-solid fa-shield-halved" />Payhip &amp; PayPal</span>
+                    <span><i className="fa-solid fa-shield-halved" />Secure checkout via Payhip</span>
                     <span><i className="fa-solid fa-bolt" />Instant Delivery</span>
                   </div>
                 </div>

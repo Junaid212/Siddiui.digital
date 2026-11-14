@@ -144,7 +144,7 @@ export function CartProvider({ children }) {
   })();
 
   const total = Math.max(0, subtotal - discountAmount);
-  const currency = safeItems[0]?.currency || "AED";
+  const currency = safeItems[0]?.currency || "USD";
 
   /* Actions */
   const addItem = useCallback((item) => dispatch({ type: "ADD_ITEM", item }), []);
@@ -194,7 +194,7 @@ const defaultCartContext = {
   subtotal: 0,
   discountAmount: 0,
   total: 0,
-  currency: "AED",
+  currency: "USD",
   addItem: () => {},
   removeItem: () => {},
   updateQty: () => {},
