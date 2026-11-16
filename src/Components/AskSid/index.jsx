@@ -267,16 +267,14 @@ export default function AskSid() {
     // New server: an Online Reading customer has no Ask SID and no demo, only the upgrade message. Companion access that has
     // ended (12 months) or whose allowance is spent is shown as such by the status bar.
     const onlineLocked = access.edition === "online";
-    const isDemoActive = !isFull && !onlineLocked && access.demoAvailable && !demoExhausted;
+    const isDemoActive = false; // the free demo was removed: only Digital Companion owners can ask
 
     return {
       isFull,
       isOnline,
       onlineLocked,
       isDemoActive,
-      demoExhausted: !isFull && (
-        onlineLocked || demoExhausted || access.demoQuestionsRemaining === 0
-      ),
+      demoExhausted: !isFull,
       label: isFull
         ? "Digital Companion Edition ($49.99) — Full Access Active"
         : isOnline
@@ -327,7 +325,9 @@ export default function AskSid() {
     if (!effectiveAccess.isFull && effectiveAccess.demoExhausted) {
       setError(effectiveAccess.onlineLocked
         ? "Ask SID is available exclusively with the Digital Companion Edition. Upgrade your edition to unlock your AI book companion."
-        : "Your complimentary demonstration question has been used. Please upgrade to the Digital Companion Edition ($49.99) for Ask SID access.");
+        : token
+          ? "Ask SID is available with the Digital Companion Edition. Please upgrade to unlock it."
+          : "Ask SID is available to Digital Companion owners. Please sign in with the account you purchased with.");
       const upgradeEl = document.getElementById("asksid-upgrade-card");
       if (upgradeEl) upgradeEl.scrollIntoView({ behavior: "smooth" });
       return;
@@ -408,15 +408,10 @@ export default function AskSid() {
 
         // Only a visitor trying the public demo may fall back to the on-page engine when the server cannot be reached.
         // A signed-in customer is never given unmetered answers because a request failed.
-        if (token) {
-          setError("Ask SID is temporarily unavailable. Please try again in a moment. This question was not counted.");
-          setLoading(false);
-          return;
-        }
-        const fallbackAnswer = matchPrincipleInKnowledgeBase(cleanQuery);
-        answerData = fallbackAnswer;
-        isDemoResult = true;
-        remainingCount = 0;
+        // No local answers for anyone: the free demo was removed.
+        setError("Ask SID is temporarily unavailable. Please try again in a moment. This question was not counted.");
+        setLoading(false);
+        return;
       }
 
       // If we got an answer from the legacy backend but it lacks continueExploring, enrich it from knowledge base.
@@ -671,8 +666,8 @@ export default function AskSid() {
                     ? <>Ask SID is available exclusively with the Digital Companion Edition. Upgrade your edition to unlock your AI book companion.{" "}
                         <Link to={config.upgradeUrl || "/publications/marketing-reclassified"} className="asksid-status-upgrade">Upgrade</Link></>
                     : effectiveAccess.demoExhausted
-                    ? "Online Edition reading active • Complimentary trial inquiry completed"
-                    : "Online Edition reading active • 1 complimentary demonstration inquiry available"}
+                    ? "Online Edition reading active • Ask SID is part of the Digital Companion Edition"
+                    : "Online Edition reading active • Ask SID is part of the Digital Companion Edition"}
                 </span>
               </>
             ) : effectiveAccess.isDemoActive ? (
@@ -690,7 +685,7 @@ export default function AskSid() {
                   <i className="fa-solid fa-lock" /> Access Required
                 </span>
                 <span className="asksid-status-text">
-                  Trial completed. Full Ask SID access is included with the <strong>Digital Companion Edition ($49.99)</strong>.
+                  Ask SID is included with the <strong>Digital Companion Edition ($49.99)</strong>. Sign in with the account you purchased with.
                 </span>
               </>
             )}
@@ -1087,7 +1082,7 @@ export default function AskSid() {
             </h2>
             <p className="asksid-upgrade-sub">
               {effectiveAccess.demoExhausted
-                ? "Your complimentary demonstration question has been used. Full Ask SID access is included exclusively with the Digital Companion Edition."
+                ? "Ask SID is included exclusively with the Digital Companion Edition. Sign in with the account you purchased with, or upgrade to unlock it."
                 : " Full Ask SID access, the book as your own PDF and the full Companion Pack are included with the Digital Companion Edition."}
             </p>
 
@@ -1179,7 +1174,7 @@ export default function AskSid() {
             </h2>
             <p className="asksid-upgrade-sub">
               {effectiveAccess.demoExhausted
-                ? "Your complimentary demonstration question has been used. Full Ask SID access is included exclusively with the Digital Companion Edition."
+                ? "Ask SID is included exclusively with the Digital Companion Edition. Sign in with the account you purchased with, or upgrade to unlock it."
                 : " Full Ask SID access, the book as your own PDF and the full Companion Pack are included with the Digital Companion Edition."}
             </p>
 

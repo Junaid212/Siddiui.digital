@@ -2,6 +2,13 @@ import React from "react";
 import { Link } from "react-router-dom";
 import NewsletterForm from "../Form/NewsletterForm";
 
+// TODO: replace with the real profile URLs once the client supplies them.
+const SOCIAL_LINKS = [
+    { name: "LinkedIn", icon: "fa-brands fa-linkedin-in", href: "https://www.linkedin.com/in/muhammad-q-siddiqui" },
+    { name: "Facebook", icon: "fa-brands fa-facebook-f", href: "https://www.facebook.com/mqsiddiqui.digital" },
+    { name: "Instagram", icon: "fa-brands fa-instagram", href: "https://www.instagram.com/siddiqui.digital1" },
+];
+
 const Footer = () => {
     return (
         <footer data-theme="dark" style={{ backgroundColor: '#121212', color: '#FCFCFC' }}>
@@ -18,11 +25,11 @@ const Footer = () => {
                                         className="logo"
                                     /> */}
                                     <p className="accent-color-2">
-                                        Siddiqui.digital: Reclassifying marketing as strategic intelligence.
+                                        Reclassifying marketing as governed strategic intelligence.
                                     </p>
                                     <ul className="footer-list no-dark">
                                         <li>
-                                            <div className="d-flex flex-row align-items-center gspace-2 secondary-accent">
+                                            <div className="footer-contact-row d-flex flex-row align-items-center gspace-2 secondary-accent">
                                                 <i className="fa-solid fa-location-dot "></i>
                                                 <span>Ajman, United Arab Emirates</span>
                                             </div>
@@ -30,7 +37,7 @@ const Footer = () => {
                                         <li>
                                             <a
                                                 href="mailto:info@siddiqui.digital"
-                                                className="d-flex flex-row align-items-center gspace-2 secondary-accent text-decoration-none"
+                                                className="footer-contact-row d-flex flex-row align-items-center gspace-2 secondary-accent text-decoration-none"
                                                 onClick={(e) => {
                                                     // Allow standard mailto, but if user has no desktop mail client (common on Windows/Chrome), fallback to webmail
                                                     let appOpened = false;
@@ -58,7 +65,7 @@ const Footer = () => {
                                         <li>
                                             <a
                                                 href="tel:+971545681182"
-                                                className="d-flex flex-row align-items-center gspace-2 secondary-accent text-decoration-none"
+                                                className="footer-contact-row d-flex flex-row align-items-center gspace-2 secondary-accent text-decoration-none"
                                                 title="Call +971 54 568 1182"
                                                 style={{ color: "inherit", cursor: "pointer" }}
                                             >
@@ -67,9 +74,16 @@ const Footer = () => {
                                             </a>
                                         </li>
                                     </ul>
+                                    <div className="footer-social" aria-label="Social media">
+                                        {SOCIAL_LINKS.map((s) => (
+                                            <a key={s.name} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.name} title={s.name}>
+                                                <i className={s.icon}></i>
+                                            </a>
+                                        ))}
+                                    </div>
                                 </div>
                                 <div className="footer-quick-links">
-                                    <h4 className="accent-color">Quick Links</h4>
+                                    <h4 className="footer-heading">Quick Links</h4>
                                     <ul className="footer-list no-dark">
                                         <li><Link to="/about">About</Link></li>
                                         <li><Link to="/publication">Books & Digital Publications</Link></li>
@@ -92,14 +106,14 @@ const Footer = () => {
                                     </ul>
                                 </div> */}
                                 <div className="footer-cta">
-                                    <h4 className="accent-color">Work Days</h4>
+                                    <h4 className="footer-heading">Work Days</h4>
                                     <p>
-                                            Feel free to reach out during working hours!
+                                            Feel free to reach out during working hours.
                                         </p>
                                         <div className="d-flex gspace-2">
-                                        <i className="fa-solid accent-color-2 fa-clock"></i>
-                                        <p className="accent-color-2">
-                                            Monday to Friday
+                                        <i className="fa-solid fa-clock footer-hours-icon"></i>
+                                        <p className="footer-hours-text">
+                                            Monday to Friday, 9:00 AM to 6:00 PM (UAE time)
                                             </p>
                                     </div>
                                     {/* <div>
@@ -110,7 +124,7 @@ const Footer = () => {
                         </div>
                         <div className="copyright-container">
                             <span className="copyright-text">
-                                 © 2026 siddiqui.digital All Rights Reserved. <a href="https://brightmedia.tech" target="_blank" rel="noopener noreferrer" style={{color:'#C80808'}}>Bright Media</a>
+                                 © 2026 Siddiqui.digital, a Targefy FZC LLC company. All rights reserved. Website by <a href="https://brightmedia.tech" target="_blank" rel="noopener noreferrer" style={{color:'#C80808'}}>Bright Media</a>
                             </span>
                             <nav className="footer-legal-links" aria-label="Legal & Policies">
                                 <Link to="/privacy-policy" className="footer-legal-link" id="footer-privacy-policy">Privacy Policy</Link>

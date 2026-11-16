@@ -135,7 +135,7 @@ const handleSidebarSignOut = async () => {
                         /> */}
                         <div className="navbar-brand-text" >
                             <span className="brand-name-2">SIDDIQUI<span className="brand-name">.DIGITAL</span></span>
-                            <span className="brand-tagline">BUSINESS SOLUTIONS</span>
+                            <span className="brand-tagline">STRATEGIC INTELLIGENCE</span>
                         </div>
                     </NavLink>
                     <button className="close-btn">
@@ -214,6 +214,9 @@ const handleSidebarSignOut = async () => {
                     
                     <li className="below-dropdown">
                         <NavLink to="/contact">Contact Us</NavLink>
+                    </li>
+                    <li className="sidebar-get-book">
+                        <NavLink to="/publications/marketing-reclassified/" className="sidebar-get-book-btn">Get the Book</NavLink>
                     </li>
                     {/* Account Navigation */}
 <li className="sidebar-account-section">

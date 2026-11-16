@@ -62,7 +62,6 @@ export default function ReaderPage() {
   const fail = useCallback(async (res) => {
     if (res.status === 401) return setState({ status: "signin" });
     if (res.status === 403) {
-      if (res.data?.edition === "companion") return setState({ status: "companion" });
       return setState({ status: "none" });
     }
     if (res.status === 503) return setState({ status: "unavailable" });
@@ -136,9 +135,9 @@ export default function ReaderPage() {
   );
 
   if (state.status === "loading" || session === undefined) return shell(<div className="reader-loading" data-testid="reader-loading">Loading…</div>);
-  if (state.status === "signin") return shell(<Notice title="Sign in to read" action={<><button className="reader-btn" onClick={signIn}>Continue with Google</button> <Link className="reader-btn reader-btn--ghost" to="/login">Sign in with e-mail</Link></>}>The Online Reading Edition is available to its owners. Please sign in with the account you purchased with.</Notice>);
+  if (state.status === "signin") return shell(<Notice title="Sign in to read" action={<><button className="reader-btn" onClick={signIn}>Continue with Google</button> <Link className="reader-btn reader-btn--ghost" to="/login">Sign in with e-mail</Link></>}>Online reading is available to Online Reading and Digital Companion owners. Please sign in with the account you purchased with.</Notice>);
   if (state.status === "companion") return shell(<Notice title="Online reading is part of the Online Reading Edition" action={<Link className="reader-btn" to="/my-orders">Go to My Orders</Link>}>Your Digital Companion Edition includes the downloadable Companion materials and Ask SID. The online reader belongs to the Online Reading Edition.</Notice>);
-  if (state.status === "none") return shell(<Notice title="No Online Reading access" action={<Link className="reader-btn" to="/publications/marketing-reclassified">View the Online Reading Edition</Link>}>We could not find an Online Reading Edition on this account. If you purchased with a different e-mail address, sign in with that account.</Notice>);
+  if (state.status === "none") return shell(<Notice title="No Online Reading access" action={<Link className="reader-btn" to="/publications/marketing-reclassified">View the Online Reading Edition</Link>}>We could not find an Online Reading or Digital Companion purchase on this account. If you purchased with a different e-mail address, sign in with that account.</Notice>);
   if (state.status === "unavailable") return shell(<Notice title="Online reading is coming soon">The Online Reading Edition is being prepared. Please check back shortly.</Notice>);
   if (state.status === "missing") return shell(<Notice title="Not found" action={<Link className="reader-btn" to="/read">Back to the library</Link>}>That book or chapter is not available.</Notice>);
   if (state.status === "error") return shell(<Notice title="Something went wrong">{state.message}</Notice>);

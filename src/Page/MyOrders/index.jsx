@@ -125,11 +125,14 @@ export default function MyOrdersPage() {
     return null;
   };
 
-  const handleDownload = async (order) => {
-    setDownloadingId(order.id);
+  // file: "book" downloads the book PDF (second file of the Digital Companion); otherwise the Companion Pack, exactly as before.
+  const handleDownload = async (order, file) => {
+    const busyKey = file === "book" ? `${order.id}:book` : order.id;
+    setDownloadingId(busyKey);
     try {
-      const url = await resolveFileUrl(order, "download");
-      if (!url) return;
+      const base = await resolveFileUrl(order, "download");
+      if (!base) return;
+      const url = file === "book" ? `${base}${base.includes("?") ? "&" : "?"}file=book` : base;
       const link = document.createElement("a");
       link.href = url;
       link.setAttribute("download", "");
@@ -157,6 +160,8 @@ export default function MyOrdersPage() {
         return;
       }
     } catch { /* fall back to the PDF reader */ }
+    // A Digital Companion order must never open its Companion PDF as a "reader": without a published book it is simply not ready.
+    if (!(Number(order.amount) < 30)) { setOrdersError("Online reading is being prepared. Please check back shortly."); return; }
     const url = await resolveFileUrl(order, "read");
     if (!url) return;
     setReaderUrl(url);
@@ -389,6 +394,7 @@ export default function MyOrdersPage() {
                                 <span className="my-order-meta-item">
                                   <i className="fa-solid fa-download" />
                                   {order.download_count || 0} / {order.download_limit || 3} downloads used
+                                  {order.book_pdf_available ? ` (Companion Pack) · ${order.book_download_count || 0} / ${order.download_limit || 3} (Book PDF)` : ""}
                                 </span>
                               )}
                               {!isOnlineOrder && order.download_expires_at && (
@@ -411,11 +417,24 @@ export default function MyOrdersPage() {
                                       aria-label={`Download ${order.book_name}`}
                                     >
                                       <i className="fa-solid fa-download" />
-                                      {downloadingId === order.id ? "Downloading…" : "Download PDF"}
+                                      {downloadingId === order.id ? "Downloading…" : order.book_pdf_available ? "Download Companion Pack" : "Download PDF"}
                                     </button>
                                   )}
 
-                                  {isOnlineOrder && (
+                                  {!isOnlineOrder && order.book_pdf_available && (
+                                    <button
+                                      className="my-order-download-btn"
+                                      onClick={() => handleDownload(order, "book")}
+                                      disabled={downloadingId === `${order.id}:book`}
+                                      id={`download-book-btn-${order.id}`}
+                                      aria-label="Download the book PDF"
+                                    >
+                                      <i className="fa-solid fa-book" />
+                                      {downloadingId === `${order.id}:book` ? "Downloading…" : "Download Book PDF"}
+                                    </button>
+                                  )}
+
+                                  {(isOnlineOrder || isCompanionOrder) && (
                                     <button
                                       type="button"
                                       className="my-order-view-btn"

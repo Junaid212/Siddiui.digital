@@ -323,7 +323,7 @@ const handleSignOut = async () => {
                             /> */}
                             <div className="navbar-brand-text">
                                 <span className="brand-name-2">SIDDIQUI<span className="brand-name">.DIGITAL</span></span>
-                                <span className="brand-tagline">BUSINESS SOLUTIONS</span>
+                                <span className="brand-tagline">STRATEGIC INTELLIGENCE</span>
                             </div>
                         </NavLink>
 
@@ -459,7 +459,10 @@ const handleSignOut = async () => {
                             </div>
                         </div>
 
-                        {/* Cart Icon */}
+                        {/* Get the Book: desktop header, just before the cart (mobile uses the menu) */}
+<Link to="/publications/marketing-reclassified/" className="get-book-btn get-book-btn--bar" id="nav-get-book-btn">Get the Book</Link>
+
+{/* Cart Icon */}
 <CartNavIcon />
 
 {/* Account Navigation */}
@@ -659,7 +662,7 @@ const handleSignOut = async () => {
 
             .brand-tagline {
                 font-size: 9.5px;
-                letter-spacing: 0.5em !important;
+                letter-spacing: 0.4em !important;
                 margin: 0;
                 margin-top: 2px;
                 color: var(--text-secondary);
@@ -862,7 +865,7 @@ const handleSignOut = async () => {
 
                 .brand-tagline {
                     font-size: 8px;
-                    letter-spacing: 0.22em;
+                    letter-spacing: 0.2em;
                 }
             }
 
@@ -879,6 +882,30 @@ const handleSignOut = async () => {
                 }
             }
                 /* Account Navigation */
+.get-book-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px;
+    padding: 0 14px;
+    margin-right: 10px;
+    background: #A3192F;
+    color: #ffffff !important;
+    border: 1px solid #A3192F;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: background 0.2s ease;
+}
+.get-book-btn:hover { background: #8a1428; border-color: #8a1428; color: #ffffff !important; }
+/* Phones and tablets: the button is in the slide-out sidebar instead (Sidebar component) */
+@media (max-width: 991px) {
+    .get-book-btn--bar { display: none; }
+}
+
 .account-nav {
     position: relative;
     display: flex;

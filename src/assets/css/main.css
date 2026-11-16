@@ -742,6 +742,19 @@ textarea.error-border {
     padding: 20px 20px 20px 20px;
 }
 
+/* Sidebar title: line up with the menu text (menu links start 15px in) and never clip */
+.sidebar .sidebar-header { padding: 20px 10px 20px 15px; gap: 12px; }
+.sidebar .sidebar-header .navbar-brand {
+    width: auto;
+    flex: 1 1 auto;
+    min-width: 0;
+    align-items: flex-start;
+    padding-left: 0;
+    margin: 0;
+}
+.sidebar .sidebar-header .navbar-brand-text { padding-left: 0; align-items: flex-start; }
+.sidebar .sidebar-header .close-btn { flex: 0 0 auto; }
+
 .sidebar-header .logo {
     max-width: 75%;
     width: 315px;
@@ -782,6 +795,20 @@ textarea.error-border {
     font-weight: 500;
     text-transform: capitalize;
 }
+
+.menu .sidebar-get-book { margin: 16px 5px 0 10px; }
+.menu a.sidebar-get-book-btn {
+    display: block;
+    text-align: center;
+    background: #A3192F;
+    color: #ffffff;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-transform: none;
+}
+.menu a.sidebar-get-book-btn:hover,
+.menu a.sidebar-get-book-btn.active { background: #8a1428; color: #ffffff; }
 
 .menu a:hover,
 .menu a.active,
@@ -3141,6 +3168,21 @@ textarea.error-border {
     padding: 0em 0em 0em 2em;
     width: 100%;
 }
+
+/* Footer polish: readable headings, aligned contact rows, social icons, hours */
+.footer-heading { color: #ffffff; }
+.footer-contact-row { gap: 12px; }
+.footer-contact-row > i { width: 20px; flex: 0 0 20px; text-align: center; }
+.footer-social { display: flex; gap: 12px; margin-top: 4px; }
+.footer-social a {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.35); color: #ffffff; text-decoration: none;
+    transition: all 0.2s ease;
+}
+.footer-social a:hover { background: #A3192F; border-color: #A3192F; color: #ffffff; }
+.footer-hours-icon { color: #d0d0d0; margin-top: 3px; }
+.footer-hours-text { color: #d0d0d0; margin: 0; }
 
 .copyright-container {
     display: flex;

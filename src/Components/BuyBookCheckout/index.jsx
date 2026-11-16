@@ -92,8 +92,12 @@ export default function BuyBookCheckout() {
   productRef.current = product;
   const isCompanionOption = (o) => !!o && typeof o === "object" && (o.access_type === "companion" || Number(o.price) >= 40);
   const isOnlineOption = (o) => !!o && typeof o === "object" && (o.access_type === "online" || Number(o.price) === 20);
+  // The edition's Status (admin > Digital Products > 8. Editions & Pricing) decides. Words like "Coming soon" left in the
+  // button text or badge only count for an older record that has no Status at all.
   const isComingSoonOption = (o) =>
-    !!o && (o.status === "coming_soon" || /coming\s*soon/i.test(String(o.cta_text || "")) || /coming\s*soon/i.test(String(o.badge || "")));
+    !!o && (typeof o.status === "string" && o.status !== ""
+      ? o.status === "coming_soon"
+      : /coming\s*soon/i.test(String(o.cta_text || "")) || /coming\s*soon/i.test(String(o.badge || "")));
   // The offer applies to the Digital Companion edition of Marketing Reclassified, for buyers who do not own anything yet
   // (an Online Reading owner pays the separate upgrade price).
   const offerApplyCheck = (cta, prod, own, o) =>
@@ -585,8 +589,9 @@ export default function BuyBookCheckout() {
   const hasOptions = product.access_options && product.access_options.length > 0;
   // "Online Reading: Coming Soon" is not a button: it becomes one line of text under the buttons.
   const isSoonOnline = (o) => isOnlineOption(o) && isComingSoonOption(o);
-  const heroOpts = hasOptions ? product.access_options.slice(0, 2).filter((o) => !isSoonOnline(o)) : [];
-  const showSoonNote = hasOptions && product.access_options.slice(0, 2).some(isSoonOnline);
+  // Available editions first (a "coming soon" one never takes a button slot), then at most two buttons.
+  const heroOpts = hasOptions ? product.access_options.filter((o) => !isSoonOnline(o)).slice(0, 2) : [];
+  const showSoonNote = hasOptions && product.access_options.some(isSoonOnline);
   const comingSoonNote = offer && offer.cta && typeof offer.cta.note === "string" ? offer.cta.note : COMING_SOON_NOTE;
 
   return (
@@ -623,7 +628,7 @@ export default function BuyBookCheckout() {
             )}
 
             {/* Launch offer on the Digital Companion button */}
-            {!isComingSoon && hasOptions && product.access_options.slice(0, 2).some((o) => offerAppliesTo(o)) && (
+            {!isComingSoon && hasOptions && heroOpts.some((o) => offerAppliesTo(o)) && (
               <div className="v2-hero-actions v2-hero-actions-offer" data-testid="hero-offer">
                 {heroOpts.map((opt, i) => {
                   const key = opt.access_type || `opt-${i}`;
@@ -655,7 +660,7 @@ export default function BuyBookCheckout() {
             )}
 
             {/* CTAs from Access Options or direct price */}
-            {!isComingSoon && !(hasOptions && product.access_options.slice(0, 2).some((o) => offerAppliesTo(o))) && (
+            {!isComingSoon && !(hasOptions && heroOpts.some((o) => offerAppliesTo(o))) && (
               <div className="v2-hero-actions">
                 {hasOptions ? (
                   heroOpts.map((opt, i) => (
