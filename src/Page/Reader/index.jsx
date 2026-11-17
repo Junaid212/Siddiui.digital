@@ -1,8 +1,8 @@
 /**
  * Reader/index.jsx - the Online Reading experience (chapters written in the admin dashboard).
- *   /read                         -> the library (or straight into the only book)
- *   /read/:bookSlug               -> table of contents, "Continue reading" where the reader stopped
- *   /read/:bookSlug/:chapterSlug  -> a chapter with previous / next
+ *   ONE book (today): /read -> its table of contents, "Continue reading" where the reader stopped; /read/:chapterSlug -> a chapter
+ *   (the older long form /read/:bookSlug/:chapterSlug still works and is tidied to the short one)
+ *   SEVERAL books:    /read -> the library; /read/:bookSlug -> contents; /read/:bookSlug/:chapterSlug -> a chapter with previous / next
  * Read-only. Access is decided by the server on every request: only an Online Reading customer gets content; a Digital
  * Companion customer is told the reader belongs to the Online edition; visitors are asked to sign in. This page never
  * decides access itself. Chapter HTML is sanitised again here before it is shown.
@@ -42,11 +42,20 @@ function Notice({ title, children, action }) {
 export default function ReaderPage() {
   useNoIndex();
   const navigate = useNavigate();
-  const { bookSlug, chapterSlug } = useParams();
+  const { bookSlug: p1, chapterSlug: p2 } = useParams();
 
   const [session, setSession] = useState(undefined); // undefined = still checking
   const [state, setState] = useState({ status: "loading" });
   const [books, setBooks] = useState([]);
+
+  // With ONE book the address is short: /read (contents) and /read/<chapter>. The old long form /read/<anything>/<chapter> still works
+  // and is tidied to the short one, so a wrong or old book address in a bookmark never breaks reading. With several books the long form stays.
+  const single = state.status === "ready" && books.length === 1;
+  const book0 = single ? books[0] : null;
+  const bookSlug = single ? book0.slug : p1;
+  const chapterSlug = single ? (p2 || (p1 && p1 !== book0.slug ? p1 : undefined)) : p2;
+  const tocPath = single ? "/read" : `/read/${bookSlug}`;
+  const chapterPath = (slug) => (single ? `/read/${slug}` : `/read/${bookSlug}/${slug}`);
   const [book, setBook] = useState(null);
   const [chapter, setChapter] = useState(null);
   const [tocOpen, setTocOpen] = useState(false);
@@ -79,10 +88,16 @@ export default function ReaderPage() {
       if (!res.ok) return fail(res);
       setBooks(res.data.books || []);
       setState({ status: "ready" });
-      if (!bookSlug && res.data.books?.length === 1) navigate(`/read/${res.data.books[0].slug}`, { replace: true });
     })();
     return () => { alive = false; };
-  }, [session, bookSlug, fail, navigate]);
+  }, [session, fail]);
+
+  // tidy the address (single-book mode): /read/<old book>/<chapter> -> /read/<chapter>; /read/<book> -> /read
+  useEffect(() => {
+    if (!single) return;
+    if (p2) navigate(`/read/${p2}`, { replace: true });
+    else if (p1 && p1 === book0.slug) navigate("/read", { replace: true });
+  }, [single, p1, p2, book0, navigate]);
 
   // 2. a book's table of contents
   useEffect(() => {
@@ -161,12 +176,12 @@ export default function ReaderPage() {
     if (!book) return shell(<div className="reader-loading">Loading…</div>);
     return shell(
       <section className="reader-toc" data-testid="reader-toc">
-        <Link to="/read" className="reader-back">← Library</Link>
+        {!single && <Link to="/read" className="reader-back">← Library</Link>}
         <h1>{book.book.title}</h1>
         {book.book.subtitle && <p className="reader-sub">{book.book.subtitle}</p>}
         {book.book.description && <p>{book.book.description}</p>}
-        {book.progress && <Link className="reader-btn" to={`/read/${bookSlug}/${book.progress.chapterSlug}`} data-testid="resume">Continue reading</Link>}
-        <ol>{book.chapters.map((c) => <li key={c.slug}><Link to={`/read/${bookSlug}/${c.slug}`}>{c.title}</Link></li>)}</ol>
+        {book.progress && <Link className="reader-btn" to={chapterPath(book.progress.chapterSlug)} data-testid="resume">Continue reading</Link>}
+        <ol>{book.chapters.map((c) => <li key={c.slug}><Link to={chapterPath(c.slug)}>{c.title}</Link></li>)}</ol>
         {book.chapters.length === 0 && <p>No chapters have been published yet.</p>}
       </section>
     );
@@ -179,16 +194,16 @@ export default function ReaderPage() {
     <div className="reader-layout" data-testid="reader-chapter">
       <button className="reader-toc-toggle" onClick={() => setTocOpen((o) => !o)} aria-expanded={tocOpen}>Contents</button>
       <nav className={`reader-sidebar ${tocOpen ? "open" : ""}`} aria-label="Chapters">
-        <Link to={`/read/${bookSlug}`} className="reader-back">← {chapter.book.title}</Link>
-        <ol>{(book?.chapters || []).map((c) => <li key={c.slug} className={c.slug === ch.slug ? "current" : ""}><Link to={`/read/${bookSlug}/${c.slug}`} onClick={() => setTocOpen(false)}>{c.title}</Link></li>)}</ol>
+        <Link to={tocPath} className="reader-back">← {chapter.book.title}</Link>
+        <ol>{(book?.chapters || []).map((c) => <li key={c.slug} className={c.slug === ch.slug ? "current" : ""}><Link to={chapterPath(c.slug)} onClick={() => setTocOpen(false)}>{c.title}</Link></li>)}</ol>
       </nav>
       <article className="reader-article">
-        <p className="reader-count">Chapter {ch.number} of {ch.total}</p>
+        <p className="reader-count">Section {ch.number} of {ch.total}</p>
         <h1>{ch.title}</h1>
         <div className="reader-content" data-testid="reader-content" dangerouslySetInnerHTML={{ __html: html }} />
         <div className="reader-pager">
-          {previous ? <Link to={`/read/${bookSlug}/${previous.slug}`} data-testid="prev">← {previous.title}</Link> : <span />}
-          {next ? <Link to={`/read/${bookSlug}/${next.slug}`} data-testid="next">{next.title} →</Link> : <span />}
+          {previous ? <Link to={chapterPath(previous.slug)} data-testid="prev">← {previous.title}</Link> : <span />}
+          {next ? <Link to={chapterPath(next.slug)} data-testid="next">{next.title} →</Link> : <span />}
         </div>
       </article>
     </div>

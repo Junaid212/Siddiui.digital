@@ -130,6 +130,7 @@ export default function ThankYouPage() {
         <button type="button" className="thankyou-btn primary" onClick={signIn} disabled={authLoading} data-testid="thank-you-signin-btn">
           {authLoading ? "Opening…" : "Sign in with Google"}
         </button>
+        <Link to="/login?redirect=/my-library" className="thankyou-btn" data-testid="thank-you-email-signin">Sign in with email instead</Link>
         <Link to="/my-library" className="thankyou-btn">Go to My Library</Link>
       </div>
     </div>

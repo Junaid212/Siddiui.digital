@@ -514,7 +514,7 @@ const handleSignOut = async () => {
                         onClick={() => setAccountOpen(false)}
                     >
                         <i className="fa-solid fa-right-to-bracket"></i>
-                        Sign In
+                        Sign in / Create account
                     </Link>
                 )}
             </div>

@@ -17,6 +17,11 @@ export default function LoginPage() {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+  const [linkLoading, setLinkLoading] = useState(false);
+  const [linkSentTo, setLinkSentTo] = useState("");
+  const [usePassword, setUsePassword] = useState(false);
+  const [code, setCode] = useState("");
+  const [codeLoading, setCodeLoading] = useState(false);
 
   // Forgot password flow
   const [showForgot, setShowForgot] = useState(false);
@@ -106,6 +111,62 @@ export default function LoginPage() {
     }
   };
 
+  /* ── Email me a sign-in link (no password; creates the account on first use) ── */
+  const handleMagicLink = async (e) => {
+    e.preventDefault();
+    setErrorMsg("");
+    setSuccessMsg("");
+    const cleanEmail = email.trim();
+    if (!cleanEmail) {
+      setErrorMsg("Please enter your email address.");
+      return;
+    }
+    setLinkLoading(true);
+    try {
+      const searchParams = new URLSearchParams(window.location.search);
+      const targetPath = searchParams.get("redirect") || "/my-orders";
+      const { error } = await supabase.auth.signInWithOtp({
+        email: cleanEmail,
+        options: { emailRedirectTo: window.location.origin + targetPath, shouldCreateUser: true },
+      });
+      if (error) throw error;
+      setLinkSentTo(cleanEmail);
+    } catch (err) {
+      console.error("Email link error:", err);
+      const m = String(err?.message || "");
+      setErrorMsg(/rate limit|too many|security purposes/i.test(m)
+        ? "Too many requests. Please wait a minute and try again."
+        : "We could not send the link. Please check the address and try again.");
+    } finally {
+      setLinkLoading(false);
+    }
+  };
+
+  /* ── Sign in with the code from the same email (immune to mail scanners that open the link first) ── */
+  const handleVerifyCode = async (e) => {
+    e.preventDefault();
+    setErrorMsg("");
+    const token = code.replace(/\s+/g, "");
+    if (!/^\d{6,10}$/.test(token)) {
+      setErrorMsg("Please enter the numeric code from the email.");
+      return;
+    }
+    setCodeLoading(true);
+    try {
+      const { data, error } = await supabase.auth.verifyOtp({ email: linkSentTo, token, type: "email" });
+      if (error) throw error;
+      if (data?.session) {
+        const searchParams = new URLSearchParams(window.location.search);
+        navigate(searchParams.get("redirect") || "/my-orders");
+      }
+    } catch (err) {
+      console.error("Code verification error:", err);
+      setErrorMsg("That code is not valid or has expired. Please request a new sign-in email.");
+    } finally {
+      setCodeLoading(false);
+    }
+  };
+
   /* ── Forgot Password ────────────────────────────── */
   const handleForgotPassword = async (e) => {
     e.preventDefault();
@@ -139,8 +200,8 @@ export default function LoginPage() {
 
   return (
     <>
-      <HeadTitle title="Customer Login | Siddiqui.Digital" />
-      <BannerInnerSection title="Account Login" currentPage="Sign In" />
+      <HeadTitle title="Sign in / Create account | Siddiqui.Digital" />
+      <BannerInnerSection title="Sign in / Create account" currentPage="Sign In" />
 
       <div className="login-page-container">
         <div className="login-card">
@@ -148,8 +209,12 @@ export default function LoginPage() {
             <div className="login-brand-icon">
               <i className="fa-solid fa-book-open-reader" />
             </div>
-            <h1>Customer Sign In</h1>
+            <h1>Sign in / Create account</h1>
             <p>Access your digital editions, online reader, and reader companions.</p>
+            <p className="login-first-time-note" data-testid="login-first-time-note">
+              <strong>First time here?</strong> Sign in with Google or your email, and your account is created automatically.
+              If you bought the book, use the same email you used at checkout.
+            </p>
           </div>
 
           {sessionUser ? (
@@ -197,7 +262,7 @@ export default function LoginPage() {
               </div>
 
               <div className="login-divider">
-                <span>or log in with email</span>
+                <span>or use your email</span>
               </div>
 
               {/* Error / Success Messages */}
@@ -214,7 +279,66 @@ export default function LoginPage() {
                 </div>
               )}
 
-              {/* Email Form */}
+              {/* Email me a sign-in link: no password to create or remember; a first-time visitor's account is created automatically */}
+              {linkSentTo ? (
+                <div className="login-alert success" role="status" data-testid="login-link-sent">
+                  <i className="fa-solid fa-envelope-circle-check" />
+                  <span>
+                    We sent a sign-in link to <strong>{linkSentTo}</strong>. Open it on this device to sign in. It can take a minute; please also check your spam folder.{" "}
+                    <button type="button" className="login-forgot-link" onClick={() => { setLinkSentTo(""); setCode(""); }}>Use a different email</button>
+                  </span>
+                </div>
+              ) : null}
+              {linkSentTo ? (
+                <form onSubmit={handleVerifyCode} className="login-form" data-testid="login-code-form">
+                  <div className="login-form-group">
+                    <label htmlFor="login-code">Link not working? Enter the code from the same email</label>
+                    <input
+                      id="login-code"
+                      type="text"
+                      inputMode="numeric"
+                      autoComplete="one-time-code"
+                      className="login-input"
+                      placeholder="123456"
+                      value={code}
+                      onChange={(e) => setCode(e.target.value)}
+                      maxLength={12}
+                    />
+                  </div>
+                  <button type="submit" className="login-submit-btn" disabled={codeLoading || code.replace(/\s+/g, "").length < 6} id="login-code-btn">
+                    {codeLoading ? "Checking…" : "Sign in with code"}
+                  </button>
+                </form>
+              ) : (
+                <form onSubmit={handleMagicLink} className="login-form" data-testid="login-link-form">
+                  <div className="login-form-group">
+                    <label htmlFor="login-link-email">Email Address</label>
+                    <input
+                      id="login-link-email"
+                      type="email"
+                      className="login-input"
+                      placeholder="you@example.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      autoComplete="email"
+                    />
+                  </div>
+                  <button type="submit" className="login-submit-btn" disabled={linkLoading} id="login-link-btn">
+                    {linkLoading ? "Sending…" : "Email me a sign-in link"}
+                  </button>
+                  <p className="login-link-hint">No password needed. New here? Your account is created the first time you use the link.</p>
+                </form>
+              )}
+
+              <div className="login-password-toggle">
+                <button type="button" className="login-forgot-link" onClick={() => setUsePassword((v) => !v)} id="login-use-password-btn" aria-expanded={usePassword}>
+                  {usePassword ? "Hide the password option" : "I already have a password"}
+                </button>
+              </div>
+
+              {/* Email & password (for accounts that already have one) */}
+              {usePassword && (
               <form onSubmit={handleEmailSignIn} className="login-form">
                 <div className="login-form-group">
                   <label htmlFor="login-email">Email Address</label>
@@ -269,6 +393,7 @@ export default function LoginPage() {
                   {loading ? "Signing in…" : "Sign In to Read"}
                 </button>
               </form>
+              )}
 
               {/* Forgot Password Modal / Drawer */}
               {showForgot && (

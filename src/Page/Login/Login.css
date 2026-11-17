@@ -122,6 +122,29 @@
   gap: 18px;
 }
 
+.login-first-time-note {
+  margin: 14px 0 0;
+  padding: 10px 12px;
+  background: rgba(200, 8, 8, 0.06);
+  border-left: 3px solid #c80808;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.login-link-hint {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #6b7280;
+  text-align: center;
+}
+
+.login-password-toggle {
+  margin: 16px 0 12px;
+  text-align: center;
+}
+
 .login-form-group {
   display: flex;
   flex-direction: column;

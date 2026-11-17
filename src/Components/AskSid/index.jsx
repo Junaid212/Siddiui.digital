@@ -700,6 +700,11 @@ export default function AskSid() {
               >
                 <i className="fa-brands fa-google" style={{ marginRight: 6 }} /> Sign In
               </button>
+            ) : null}
+            {!user ? (
+              <Link to="/login?redirect=/ask-sid" className="asksid-status-btn" id="btn-asksid-signin-email" style={{ marginLeft: 8 }}>
+                <i className="fa-solid fa-envelope" style={{ marginRight: 6 }} /> Use email
+              </Link>
             ) : !effectiveAccess.isFull ? (
               <Link
                 to={config.upgradeUrl || BOOK_METADATA.publicationUrl}

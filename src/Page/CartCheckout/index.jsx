@@ -191,7 +191,7 @@ export default function CartCheckoutPage() {
 
   const validate = () => {
     const errs = {};
-    if (!formData.name.trim()) errs.name = "Full name is required";
+    // The name is optional: Payhip collects the buyer's details itself and nothing here depends on it.
     const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const cleanEmail = formData.email.trim();
     if (!cleanEmail) {
@@ -306,6 +306,12 @@ export default function CartCheckoutPage() {
     const errs = validate();
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
+      // Never fail silently: say what is wrong next to the button and bring the first problem into view.
+      setCheckoutError(`Please fix this before continuing: ${Object.values(errs)[0]}`);
+      setTimeout(() => {
+        const el = document.querySelector(".checkout-form-input.error, .checkout-legal-error");
+        if (el && el.scrollIntoView) el.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 50);
       return;
     }
 
@@ -542,7 +548,7 @@ export default function CartCheckoutPage() {
 
                   <div className="checkout-form-grid">
                     <div className="checkout-form-group">
-                      <label className="checkout-form-label" htmlFor="checkout-name">Full Name *</label>
+                      <label className="checkout-form-label" htmlFor="checkout-name">Full Name (optional)</label>
                       <input
                         id="checkout-name"
                         name="name"
@@ -862,6 +868,11 @@ export default function CartCheckoutPage() {
                   </div>
 
                   {/* Submit Button */}
+                  {checkoutError && (
+                    <div className="checkout-legal-error" role="alert" data-testid="checkout-error-near-button" style={{ marginBottom: 10 }}>
+                      <i className="fa-solid fa-circle-exclamation" /> {checkoutError}
+                    </div>
+                  )}
                   <button
                     type="submit"
                     className="checkout-submit-btn"

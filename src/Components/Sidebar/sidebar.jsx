@@ -245,7 +245,7 @@ const handleSidebarSignOut = async () => {
     ) : (
         <NavLink to="/login?redirect=/my-library">
             <i className="fa-solid fa-right-to-bracket"></i>
-            Sign In
+            Sign in / Create account
         </NavLink>
     )}
 </li>

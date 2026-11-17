@@ -251,7 +251,7 @@ export default function MyOrdersPage() {
                 <i className="fa-solid fa-lock" />
               </div>
               <h2>Access Your Orders</h2>
-              <p>Sign in with Google to view your full order history, or enter the email you used at checkout.</p>
+              <p>First time here? Sign in with Google or your email, and your account is created automatically. If you bought the book, use the same email you used at checkout.</p>
 
               <button
                 className="my-orders-google-btn"
@@ -270,7 +270,7 @@ export default function MyOrdersPage() {
 
               <div style={{ marginTop: 12, textAlign: "center" }}>
                 <Link to="/login" style={{ fontSize: "0.85rem", color: "#c80808", fontWeight: 600, textDecoration: "none" }}>
-                  <i className="fa-solid fa-envelope" style={{ marginRight: 6 }} /> Or Sign In with Email &amp; Password →
+                  <i className="fa-solid fa-envelope" style={{ marginRight: 6 }} /> Or use your email: we send you a sign-in link, no password needed →
                 </Link>
               </div>
 
