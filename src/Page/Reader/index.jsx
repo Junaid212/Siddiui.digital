@@ -13,6 +13,7 @@ import DOMPurify from "dompurify";
 import { supabase } from "../../supabaseClient";
 import { api } from "../../api";
 import HeadTitle from "../../Components/Head/HeadTitle";
+import { decorateBoxes } from "../../utils/readerBoxes";
 import "./Reader.css";
 
 // Reader pages are private: keep them out of search results.
@@ -48,16 +49,20 @@ export default function ReaderPage() {
   const [state, setState] = useState({ status: "loading" });
   const [books, setBooks] = useState([]);
 
+  const [book, setBook] = useState(null);
+  const [chapter, setChapter] = useState(null);
+
   // With ONE book the address is short: /read (contents) and /read/<chapter>. The old long form /read/<anything>/<chapter> still works
   // and is tidied to the short one, so a wrong or old book address in a bookmark never breaks reading. With several books the long form stays.
+  // One name can be BOTH the book's address and a chapter's (e.g. a book stored as "chapter-1-introduction" next to a chapter of the same name):
+  // /read/<that name> is then the chapter, not the old book address, so it is decided from the book's own chapter list.
   const single = state.status === "ready" && books.length === 1;
   const book0 = single ? books[0] : null;
   const bookSlug = single ? book0.slug : p1;
-  const chapterSlug = single ? (p2 || (p1 && p1 !== book0.slug ? p1 : undefined)) : p2;
+  const slugIsChapter = !!(single && p1 && book && Array.isArray(book.chapters) && book.chapters.some((c) => c.slug === p1));
+  const chapterSlug = single ? (p2 || (p1 && (p1 !== book0.slug || slugIsChapter) ? p1 : undefined)) : p2;
   const tocPath = single ? "/read" : `/read/${bookSlug}`;
   const chapterPath = (slug) => (single ? `/read/${slug}` : `/read/${bookSlug}/${slug}`);
-  const [book, setBook] = useState(null);
-  const [chapter, setChapter] = useState(null);
   const [tocOpen, setTocOpen] = useState(false);
   const saveTimer = useRef(null);
   const lastSaved = useRef(0);
@@ -96,8 +101,9 @@ export default function ReaderPage() {
   useEffect(() => {
     if (!single) return;
     if (p2) navigate(`/read/${p2}`, { replace: true });
-    else if (p1 && p1 === book0.slug) navigate("/read", { replace: true });
-  }, [single, p1, p2, book0, navigate]);
+    // only once the book's chapter list is known, and only if that name is NOT also a chapter
+    else if (p1 && p1 === book0.slug && book && !slugIsChapter) navigate("/read", { replace: true });
+  }, [single, p1, p2, book0, book, slugIsChapter, navigate]);
 
   // 2. a book's table of contents
   useEffect(() => {
@@ -139,7 +145,8 @@ export default function ReaderPage() {
     return () => { window.removeEventListener("scroll", onScroll); clearTimeout(saveTimer.current); };
   }, [chapter]);
 
-  const html = useMemo(() => (chapter ? clean(chapter.chapter.contentHtml) : ""), [chapter]);
+  // sanitised first; the "Lens / Field Note / Key Ideas" boxes are drawn afterwards (presentation only, nothing is stored)
+  const html = useMemo(() => (chapter ? decorateBoxes(clean(chapter.chapter.contentHtml)) : ""), [chapter]);
   const signIn = () => supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: window.location.href, scopes: "openid email profile" } });
 
   const shell = (children) => (

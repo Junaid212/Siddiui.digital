@@ -374,6 +374,20 @@
   margin-top: 8px;
 }
 
+/* ── Notice Banner (success) ──────────────────────── */
+.my-orders-notice {
+  padding: 14px 16px;
+  background: rgba(5,150,105,0.07);
+  border: 1px solid rgba(5,150,105,0.25);
+  border-radius: 10px;
+  color: #047857;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
 /* ── Error Banner ─────────────────────────────────── */
 .my-orders-error {
   padding: 14px 16px;

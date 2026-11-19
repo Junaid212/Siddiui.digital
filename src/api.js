@@ -43,13 +43,14 @@ const authedGet = async (pathname, ownEmail) => {
 
 export const api = {
     // Launch offer settings (banner + Digital Companion button offer) edited in the admin dashboard.
-    // The banner and the button share ONE request (cached for 30 s). Resolves to null on any failure.
+    // The banner and the button share ONE request (reused for 5 s only, so they do not ask twice while a page draws). Always fresh from the
+    // server: the browser is told not to keep a copy, so a returning visitor never sees an outdated offer or price. Resolves to null on any failure.
     getOfferBanner() {
         const now = Date.now();
-        if (!api._offerCache || now - api._offerCache.at > 30000) {
+        if (!api._offerCache || now - api._offerCache.at > 5000) {
             const p = (async () => {
                 try {
-                    const res = await fetch(`${ADMIN_API_BASE}/api/public/offer-banner`);
+                    const res = await fetch(`${ADMIN_API_BASE}/api/public/offer-banner`, { cache: "no-store" });
                     if (!res.ok) return null;
                     return await res.json();
                 } catch {
@@ -114,7 +115,7 @@ export const api = {
     getProductById: async (id) => {
         // 1. Try Admin Public Products API
         try {
-            const res = await fetch(`${ADMIN_API_BASE}/api/public/products/${id}`);
+            const res = await fetch(`${ADMIN_API_BASE}/api/public/products/${id}`, { cache: "no-store" });
             if (res.ok) {
                 const data = await res.json();
                 if (data && data.product) return data;
@@ -145,7 +146,7 @@ export const api = {
 
         // 1. Try Admin Public Products API slug endpoint
         try {
-            const res = await fetch(`${ADMIN_API_BASE}/api/public/products/by-slug/${encodeURIComponent(slug)}`);
+            const res = await fetch(`${ADMIN_API_BASE}/api/public/products/by-slug/${encodeURIComponent(slug)}`, { cache: "no-store" });
             if (res.ok) {
                 const data = await res.json();
                 if (data && data.product) return data;
@@ -250,12 +251,13 @@ export const api = {
         }),
 
     // Validate Discount Code
-    validateDiscount: async (code, subtotal) => {
+    // items: [{ productId, accessType }] of what the coupon is being used for, so a coupon limited to certain products can be judged.
+    validateDiscount: async (code, subtotal, items) => {
         try {
             const res = await fetch(`${API_BASE}/payment/validate-discount`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ code, subtotal }),
+                body: JSON.stringify({ code, subtotal, items }),
             });
             const data = await res.json().catch(() => ({}));
             if (res.ok && data.valid) return data;
@@ -267,7 +269,7 @@ export const api = {
             const fallbackRes = await fetch("http://localhost:5001/api/public/coupons/validate", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ code, subtotal }),
+                body: JSON.stringify({ code, subtotal, items }),
             });
             return await fallbackRes.json();
         } catch (e) {
@@ -307,6 +309,24 @@ export const api = {
             return res.ok && data && data.path ? { ok: true, path: data.path } : { ok: false, status: res.status, error: data && data.error };
         } catch {
             return { ok: false, status: 0, error: "Network error." };
+        }
+    },
+
+    // "Request new download link" (Digital Companion): a fresh 72 hours and 3 downloads per file, allowed when the window is over or a file is used up.
+    // { ok:true, renewalsLeft } on success; { ok:false, status, error } otherwise.
+    renewDownload: async (orderId) => {
+        try {
+            const headers = await authHeaders();
+            if (!headers) return { ok: false, status: 401, error: "Please sign in again." };
+            const res = await fetch(`${API_BASE}/payment/orders/${encodeURIComponent(orderId)}/renew-download`, {
+                method: "POST",
+                headers: { ...headers, "Content-Type": "application/json" },
+                body: "{}",
+            });
+            const data = await res.json().catch(() => null);
+            return res.ok && data && data.ok ? { ok: true, renewalsLeft: data.renewalsLeft, downloadExpiresAt: data.downloadExpiresAt } : { ok: false, status: res.status, error: (data && data.error) || "Could not renew the download links." };
+        } catch {
+            return { ok: false, status: 0, error: "Network error. Please try again." };
         }
     },
 
@@ -449,11 +469,11 @@ export const api = {
     // Ask SID — Digital Companion to Marketing Reclassified
     getAskSidConfig: async () => {
         try {
-            const res = await fetch(`${API_BASE}/ask-sid/config`);
+            const res = await fetch(`${API_BASE}/ask-sid/config`, { cache: "no-store" });
             if (res.ok) return await res.json();
         } catch (e) {}
         try {
-            const fallbackRes = await fetch(`${ADMIN_API_BASE}/api/public/ask-sid-config`);
+            const fallbackRes = await fetch(`${ADMIN_API_BASE}/api/public/ask-sid-config`, { cache: "no-store" });
             if (fallbackRes.ok) return await fallbackRes.json();
         } catch (e) {}
         return {

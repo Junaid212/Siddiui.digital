@@ -6,6 +6,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "./CartContext";
 import { api } from "../../api";
+import { cartItemsForCoupon } from "../../utils/couponScope";
 import "./CartDrawer.css";
 
 const isLocalhost =
@@ -38,7 +39,7 @@ export default function CartDrawer() {
     setDiscountLoading(true);
     setDiscountError("");
     try {
-      const data = await api.validateDiscount(code, subtotal);
+      const data = await api.validateDiscount(code, subtotal, cartItemsForCoupon(items));
       if (data && data.valid && data.discount) {
         setDiscountCode(code);
         setDiscountData(data.discount);

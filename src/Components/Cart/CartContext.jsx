@@ -4,6 +4,7 @@
  * discount codes, and access-type selection per product.
  */
 import React, { createContext, useContext, useReducer, useEffect, useCallback } from "react";
+import { eligibleSubtotal } from "../../utils/couponScope";
 
 const CART_STORAGE_KEY = "siddiqui_cart_v1";
 
@@ -137,9 +138,11 @@ export function CartProvider({ children }) {
 
   const discountAmount = (() => {
     if (!state.discountData) return 0;
-    const { type, value } = state.discountData;
-    if (type === "percentage") return Math.min(subtotal, (subtotal * value) / 100);
-    if (type === "fixed") return Math.min(subtotal, value);
+    const { type, value, applies_to } = state.discountData;
+    // A coupon limited to certain products ("Applies to") reduces only those items, never the rest of the cart.
+    const base = Array.isArray(applies_to) && applies_to.length ? eligibleSubtotal(safeItems, applies_to) : subtotal;
+    if (type === "percentage") return Math.min(base, (base * value) / 100);
+    if (type === "fixed") return Math.min(base, value);
     return 0;
   })();
 

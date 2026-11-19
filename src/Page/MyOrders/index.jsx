@@ -50,6 +50,9 @@ export default function MyOrdersPage() {
   const [downloadingId, setDownloadingId] = useState(null);
   const [readingOrder, setReadingOrder] = useState(null);
   const [readerUrl, setReaderUrl] = useState("");
+  const [entitlement, setEntitlement] = useState(null); // the customer's current access (Ask SID has its own end date)
+  const [renewingId, setRenewingId] = useState(null);
+  const [ordersNotice, setOrdersNotice] = useState("");
 
   /* ── Auth ───────────────────────────────────────── */
   useEffect(() => {
@@ -93,6 +96,7 @@ export default function MyOrdersPage() {
       const { ok, data } = await api.listMyOrders(email);
       if (ok) {
         setOrders(Array.isArray(data.orders) ? data.orders : []);
+        setEntitlement(data.entitlement || null);
       } else {
         setOrdersError(data.error || "Failed to load orders.");
       }
@@ -147,6 +151,22 @@ export default function MyOrdersPage() {
       console.error("Download error:", err);
     } finally {
       setTimeout(() => setDownloadingId(null), 3000);
+    }
+  };
+
+  // "Request new download link": after the 72 hours, or once a file has had its 3 downloads, the buyer can ask for a fresh window
+  // (72 hours, 3 new downloads of each file). The server allows it 3 times per order and only for the buyer's own order.
+  const handleRenew = async (order) => {
+    setRenewingId(order.id);
+    setOrdersError("");
+    setOrdersNotice("");
+    try {
+      const r = await api.renewDownload(order.id);
+      if (!r.ok) { setOrdersError(r.error); return; }
+      setOrdersNotice(`Your download links are renewed: ${formatDate(r.downloadExpiresAt)}, 3 downloads per file.${typeof r.renewalsLeft === "number" ? ` You can renew ${r.renewalsLeft} more time${r.renewalsLeft === 1 ? "" : "s"} for this order.` : ""}`);
+      if (user?.email) await loadUserOrders(user.email);
+    } finally {
+      setRenewingId(null);
     }
   };
 
@@ -286,6 +306,12 @@ export default function MyOrdersPage() {
                   {ordersError}
                 </div>
               )}
+              {ordersNotice && (
+                <div className="my-orders-notice" role="status" data-testid="orders-notice">
+                  <i className="fa-solid fa-circle-check" />
+                  {ordersNotice}
+                </div>
+              )}
 
               {ordersLoading && (
                 <div className="my-orders-loading">
@@ -356,6 +382,14 @@ export default function MyOrdersPage() {
                       const name = String(order.book_name || "").toLowerCase();
                       const isOnlineOrder = (amt >= 18 && amt <= 25) || name.includes("online");
                       const isCompanionOrder = amt >= 40 || name.includes("companion") || name.includes("upgrade");
+                      // Downloads and Ask SID have separate dates: the files are available for 72 hours (3 downloads per file), Ask SID for the customer's own period.
+                      const dlLimit = Number(order.download_limit) || 3;
+                      const windowOver = !!order.download_expires_at && new Date(order.download_expires_at) < new Date();
+                      const askSidEnd = entitlement && entitlement.edition === "companion" ? entitlement.askSidExpiresAt : null;
+                      const askSidOver = askSidEnd ? new Date(askSidEnd) < new Date() : false;
+                      const isPaidOrder = order.status === "paid" || order.status === "successful";
+                      const canRenew = isPaidOrder && !isOnlineOrder && order.needs_download_renewal === true;
+                      const renewalsLeft = typeof order.download_renewals_left === "number" ? order.download_renewals_left : 3;
 
                       return (
                         <motion.div
@@ -398,9 +432,17 @@ export default function MyOrdersPage() {
                                 </span>
                               )}
                               {!isOnlineOrder && order.download_expires_at && (
-                                <span className="my-order-meta-item">
+                                <span className="my-order-meta-item" data-testid="downloads-until">
                                   <i className="fa-solid fa-clock" />
-                                  Expires {formatDate(order.download_expires_at)}
+                                  {windowOver
+                                    ? `Download links ended ${formatDate(order.download_expires_at)}`
+                                    : `Downloads available until ${formatDate(order.download_expires_at)} (${dlLimit} per file)`}
+                                </span>
+                              )}
+                              {isCompanionOrder && askSidEnd && (
+                                <span className="my-order-meta-item" data-testid="asksid-until">
+                                  <i className="fa-solid fa-wand-magic-sparkles" />
+                                  {askSidOver ? `Ask SID access ended ${formatDate(askSidEnd)}` : `Ask SID until ${formatDate(askSidEnd)}`}
                                 </span>
                               )}
                             </div>
@@ -446,6 +488,17 @@ export default function MyOrdersPage() {
                                     </button>
                                   )}
 
+                                  {isCompanionOrder && (
+                                    <Link
+                                      to="/ask-sid"
+                                      className="my-order-view-btn"
+                                      style={{ borderColor: "#c80808", color: "#c80808" }}
+                                      id={`asksid-btn-${order.id}`}
+                                    >
+                                      <i className="fa-solid fa-wand-magic-sparkles" /> Ask SID
+                                    </Link>
+                                  )}
+
                                   {isOnlineOrder && canUpgrade && (
                                     <button
                                       type="button"
@@ -472,24 +525,29 @@ export default function MyOrdersPage() {
                                   Awaiting payment
                                 </span>
                               )}
-                              {(order.status === "expired" || (order.download_count >= order.download_limit)) && !isOnlineOrder && (
-                                <Link
-                                  to="/order-success"
-                                  className="my-order-view-btn"
-                                  style={{ borderColor: "#c80808", color: "#c80808" }}
+                              {canRenew && renewalsLeft > 0 && (
+                                <button
+                                  type="button"
+                                  className="my-order-download-btn"
+                                  onClick={() => handleRenew(order)}
+                                  disabled={renewingId === order.id}
+                                  id={`renew-btn-${order.id}`}
+                                  data-testid="renew-download"
                                 >
                                   <i className="fa-solid fa-rotate" />
-                                  Request Replacement
-                                </Link>
+                                  {renewingId === order.id ? "Renewing…" : "Request new download link"}
+                                </button>
                               )}
                             </div>
 
-                            {(order.status === "paid" || order.status === "successful") &&
-                              !isOnlineOrder &&
-                              Number(order.download_count) >= Number(order.download_limit) && (
-                              <div className="my-order-dl-info">
+                            {isPaidOrder && !isOnlineOrder && (
+                              <div className="my-order-dl-info" data-testid="download-info">
                                 <i className="fa-solid fa-circle-info" />
-                                Download limit reached. Request a replacement link from the order detail page.
+                                {canRenew && renewalsLeft > 0
+                                  ? `Your download links have ended (72 hours, or 3 downloads of a file). Request new links: each time gives 72 hours and 3 downloads per file (${renewalsLeft} ${renewalsLeft === 1 ? "renewal" : "renewals"} left for this order).`
+                                  : canRenew
+                                    ? "All 3 renewals for this order have been used. Please contact info@siddiqui.digital and we will help."
+                                    : "Each file can be downloaded 3 times within 72 hours. After that, a “Request new download link” button appears here (up to 3 times per order)."}
                               </div>
                             )}
                           </div>

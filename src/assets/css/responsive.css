@@ -2,6 +2,19 @@
 /* Responsive */
 /* ================================ */
 
+/* 0. Phones and tablets: the page must never scroll sideways.
+   Images that animate in from the side (animate.css fadeInRight / fadeInLeft) are, for a moment, shifted past the screen edge and made the
+   page up to ~170px wider while scrolling, so it swayed left and right. "clip" cuts that overflow without turning the page into a scroll
+   container (sticky and fixed elements keep working). Browsers without "clip" fall back to "hidden" on the body. */
+@media screen and (max-width: 991px) {
+    #root { overflow-x: clip; }
+}
+@media screen and (max-width: 991px) {
+    @supports not (overflow: clip) {
+        body { overflow-x: hidden; }
+    }
+}
+
 /* 1. Tablet (max-width: 991px) */
 
 @media screen and (max-width: 991px) {

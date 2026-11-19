@@ -13,6 +13,7 @@ import HeadTitle from "../../Components/Head/HeadTitle";
 import { api } from "../../api";
 import { useOfferStatus } from "../../Components/OfferBanner/useOffer";
 import { rememberCheckout, openPayhipTab } from "../../utils/checkoutMemory";
+import { cartItemsForCoupon } from "../../utils/couponScope";
 import "./CartCheckout.css";
 
 const isLocalhost =
@@ -164,12 +165,19 @@ export default function CartCheckoutPage() {
   /* ── Launch offer discount: only while it is genuinely valid ───────────────────────────── */
   // The offer is stored in the cart (browser storage) when the buyer clicks the offer button. It must not outlive the offer,
   // apply to anything else than the single Digital Companion edition, or stack with the upgrade price.
+  // Each edition has its OWN offer (Digital Companion: offer.cta, Online Reading: offer.onlineCta); a cart holding exactly ONE of them
+  // can carry that edition's offer - never the other edition's code, and never two items.
   const launchDiscount = !!discountData && discountData.source === "launch-offer";
-  const singleCompanion = items.length === 1 && (Number(items[0].price) >= 40 || items[0].accessType === "companion");
+  const singleEdition = items.length === 1
+    ? (items[0].accessType === "companion" ? "companion"
+      : items[0].accessType === "online" ? "online"
+      : Number(items[0].price) >= 40 ? "companion" : null)
+    : null;
+  const offerOf = (off) => (off && singleEdition === "companion" ? off.cta : off && singleEdition === "online" ? off.onlineCta : null);
   useEffect(() => {
     if (!launchDiscount || !offerState.loaded) return;
-    const cta = offerState.offer && offerState.offer.cta;
-    const valid = !!cta && cta.enabled && singleCompanion && !canUpgradeInCart && !blockedReason &&
+    const cta = offerOf(offerState.offer);
+    const valid = !!cta && cta.enabled && !!singleEdition && !canUpgradeInCart && !blockedReason &&
       String(cta.couponCode || "").toUpperCase() === String(discountCode || "").toUpperCase();
     if (!valid) {
       clearDiscount();
@@ -179,8 +187,9 @@ export default function CartCheckoutPage() {
     // follow the administrator's latest prices
     const value = Math.max(0, Math.round((Number(cta.originalPrice) - Number(cta.offerPrice)) * 100) / 100);
     if (Number(discountData.value) !== value) setDiscountData({ ...discountData, value });
-  }, [launchDiscount, offerState, singleCompanion, canUpgradeInCart, blockedReason, discountCode, discountData]);
-  const launchCta = launchDiscount && offerState.offer && offerState.offer.cta && offerState.offer.cta.enabled ? offerState.offer.cta : null;
+  }, [launchDiscount, offerState, singleEdition, canUpgradeInCart, blockedReason, discountCode, discountData]);
+  const launchOffer = launchDiscount ? offerOf(offerState.offer) : null;
+  const launchCta = launchOffer && launchOffer.enabled ? launchOffer : null;
 
   /* ── Form ───────────────────────────────────────── */
   const handleInput = (e) => {
@@ -221,7 +230,7 @@ export default function CartCheckoutPage() {
     setDiscountLoading(true);
     setDiscountError("");
     try {
-      const data = await api.validateDiscount(code, effectiveSubtotal);
+      const data = await api.validateDiscount(code, effectiveSubtotal, cartItemsForCoupon(items));
       if (data && data.valid && data.discount) {
         setDiscountCode(code);
         setDiscountData(data.discount);
@@ -254,7 +263,7 @@ export default function CartCheckoutPage() {
     }
 
     // Launch offer: the buyer has seen the offer price on this page; send the code along to Payhip.
-    if (launchCta && !isUpgrade && singleCompanion) {
+    if (launchCta && !isUpgrade && singleEdition) {
       try {
         const u = new URL(launchCta.checkoutUrl || url);
         if (discountCode && !u.searchParams.has("coupon")) u.searchParams.set("coupon", discountCode);

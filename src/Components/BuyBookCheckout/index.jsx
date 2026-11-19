@@ -6,9 +6,13 @@ import { api } from "../../api";
 import { useCart } from "../Cart/CartContext";
 import { useOffer } from "../OfferBanner/useOffer";
 import { rememberCheckout, openPayhipTab } from "../../utils/checkoutMemory";
+import { couponAppliesToItem } from "../../utils/couponScope";
 
 // Shown under the buttons while Online Reading is "coming soon" (the administrator can change the wording).
 const COMING_SOON_NOTE = "Online reading and Ask SID: coming soon, free for Companion buyers.";
+// Small text under each edition's button in the hero.
+const DEFAULT_ONLINE_CAPTION = "Read the complete book online.";
+const DEFAULT_COMPANION_CAPTION = "Book PDF, Companion Pack, online reading and 12 months of Ask SID.";
 import "./BuyBookCheckout.css";
 
 /* ============================================================
@@ -83,43 +87,65 @@ export default function BuyBookCheckout() {
 
   // Launch offer (admin dashboard > Products > Launch offer). The CHECKOUT price is set by Payhip: the button shows the
   // offer price and sends the buyer to Payhip with the coupon code, which must give that price.
+  // Each edition has its OWN offer (Online Reading: offer.onlineCta, Digital Companion: offer.cta), so each button shows its own price,
+  // crossed-out price, badge and code - or none, when that edition has no offer.
   const offer = useOffer();
-  const offerCta = offer && offer.cta && offer.cta.enabled ? offer.cta : null;
   // handlePurchase can run later from an older render (purchase resumed after login), so it reads the LIVE values from refs
   const offerRef = useRef(null);
-  offerRef.current = offerCta;
+  offerRef.current = offer;
   const productRef = useRef(null);
   productRef.current = product;
-  const isCompanionOption = (o) => !!o && typeof o === "object" && (o.access_type === "companion" || Number(o.price) >= 40);
-  const isOnlineOption = (o) => !!o && typeof o === "object" && (o.access_type === "online" || Number(o.price) === 20);
+  // an explicit access type wins; the price is only a fallback for an older record without one
+  const editionOfOption = (o) => {
+    if (!o || typeof o !== "object") return null;
+    if (o.access_type === "companion") return "companion";
+    if (o.access_type === "online") return "online";
+    if (Number(o.price) >= 40) return "companion";
+    if (Number(o.price) === 20) return "online";
+    return null;
+  };
+  const isCompanionOption = (o) => editionOfOption(o) === "companion";
+  const isOnlineOption = (o) => editionOfOption(o) === "online";
   // The edition's Status (admin > Digital Products > 8. Editions & Pricing) decides. Words like "Coming soon" left in the
   // button text or badge only count for an older record that has no Status at all.
   const isComingSoonOption = (o) =>
     !!o && (typeof o.status === "string" && o.status !== ""
       ? o.status === "coming_soon"
       : /coming\s*soon/i.test(String(o.cta_text || "")) || /coming\s*soon/i.test(String(o.badge || "")));
-  // The offer applies to the Digital Companion edition of Marketing Reclassified, for buyers who do not own anything yet
-  // (an Online Reading owner pays the separate upgrade price).
-  const offerApplyCheck = (cta, prod, own, o) =>
-    !!cta && (slug === "marketing-reclassified" || prod?.slug === "marketing-reclassified") &&
-    isCompanionOption(o) && !own.edition;
-  const offerAppliesTo = (o) => ownershipReady && offerApplyCheck(offerCta, product, ownership, o);
-  const offerPriceText = offerCta ? `$${Number(offerCta.offerPrice).toFixed(2)}` : "";
-  const offerOriginalText = offerCta ? `$${Number(offerCta.originalPrice).toFixed(2)}` : "";
-  const offerButtonLabel = (o) => {
+  // The offer of an edition applies to Marketing Reclassified, for buyers who do not own anything yet (an Online Reading owner pays
+  // the separate upgrade price). Returns THAT edition's live offer for this option, or null.
+  const offerApplyCheck = (off, prod, own, o) => {
+    const ed = editionOfOption(o);
+    const cta = ed === "companion" ? off?.cta : ed === "online" ? off?.onlineCta : null;
+    if (!cta || !cta.enabled) return null;
+    if (!(slug === "marketing-reclassified" || prod?.slug === "marketing-reclassified")) return null;
+    return own.edition ? null : cta;
+  };
+  const offerFor = (o) => (ownershipReady ? offerApplyCheck(offer, product, ownership, o) : null);
+  const offerAppliesTo = (o) => !!offerFor(o);
+  const moneyText = (n) => `$${Number(n).toFixed(2)}`;
+  const offerButtonLabel = (o, cta) => {
     const base = o.cta_text || `Get ${o.name}`;
     const re = /(\$|USD\s?)\s?\d+(\.\d+)?/;
     // The buyer lands on OUR checkout page with the offer already applied and the final price shown, so the button
     // simply shows the offer price.
-    return re.test(base) ? base.replace(re, () => offerPriceText) : `${base} · ${offerPriceText}`;
+    return re.test(base) ? base.replace(re, () => moneyText(cta.offerPrice)) : `${base} · ${moneyText(cta.offerPrice)}`;
   };
-  // Launch offer: the Digital Companion edition (alone) goes into the cart with the offer code already applied, and the
+  // The small text under each edition's button (edited in the admin; the wording below is used if the settings cannot be loaded)
+  const captionFor = (o) => {
+    const ed = editionOfOption(o);
+    const cta = ed === "companion" ? offer?.cta : ed === "online" ? offer?.onlineCta : null;
+    if (typeof cta?.caption === "string") return cta.caption;
+    return ed === "companion" ? DEFAULT_COMPANION_CAPTION : ed === "online" ? DEFAULT_ONLINE_CAPTION : "";
+  };
+  // Launch offer: that edition (alone) goes into the cart with its own offer code already applied, and the
   // buyer continues on OUR checkout page: details, policies to tick, final price - and only then Payhip.
   const handleOfferCheckout = (option, cta) => {
     const prod = productRef.current;
     if (!prod || !cta) return;
     const original = Number(cta.originalPrice);
     const offerP = Number(cta.offerPrice);
+    const ed = editionOfOption(option);
     clearCart();
     addItem({
       productId: prod.id,
@@ -127,8 +153,8 @@ export default function BuyBookCheckout() {
       price: original,
       currency: option.currency || prod.currency || "USD",
       coverImage: prod.cover_image,
-      accessType: "companion",
-      accessLabel: option.name || "Digital Companion Edition",
+      accessType: ed,
+      accessLabel: option.name || (ed === "online" ? "Online Reading Edition" : "Digital Companion Edition"),
       isUpgrade: false,
       slug: slug || null,
       payhipProductId: option.payhip_product_id || "",
@@ -337,7 +363,11 @@ export default function BuyBookCheckout() {
     setCouponError("");
     setCouponSuccess("");
     try {
-      const data = await api.validateDiscount(code, subtotalAmount || product?.price || 0);
+      // The editions on this page are what the coupon could be used for: it is accepted if it covers at least one of them.
+      const couponItems = (Array.isArray(product?.access_options) && product.access_options.length
+        ? product.access_options.map((o) => ({ productId: product.id, accessType: o.access_type || (Number(o.price) >= 40 ? "companion" : Number(o.price) === 20 ? "online" : "other") }))
+        : [{ productId: product?.id, accessType: "other" }]);
+      const data = await api.validateDiscount(code, subtotalAmount || product?.price || 0, couponItems);
       if (data && data.valid && data.discount) {
         setCouponCode(code);
         setCouponDiscount(data.discount);
@@ -513,8 +543,8 @@ export default function BuyBookCheckout() {
     }
 
     // Launch offer: continue on our checkout page (details, policies, offer applied) instead of jumping straight to Payhip.
-    const liveCta = offerRef.current;
-    if (offerApplyCheck(liveCta, productRef.current, ownership, option)) {
+    const liveCta = offerApplyCheck(offerRef.current, productRef.current, ownership, option);
+    if (liveCta) {
       handleOfferCheckout(option, liveCta);
       return;
     }
@@ -590,7 +620,12 @@ export default function BuyBookCheckout() {
   // "Online Reading: Coming Soon" is not a button: it becomes one line of text under the buttons.
   const isSoonOnline = (o) => isOnlineOption(o) && isComingSoonOption(o);
   // Available editions first (a "coming soon" one never takes a button slot), then at most two buttons.
-  const heroOpts = hasOptions ? product.access_options.filter((o) => !isSoonOnline(o)).slice(0, 2) : [];
+  // Online Reading is line 1 and Digital Companion line 2 (each is its own product, with its own offer).
+  const editionRank = (o) => (isOnlineOption(o) ? 0 : isCompanionOption(o) ? 1 : 2);
+  const heroOpts = hasOptions
+    ? product.access_options.map((o, i) => ({ o, i })).filter(({ o }) => !isSoonOnline(o))
+        .sort((a, b) => editionRank(a.o) - editionRank(b.o) || a.i - b.i).map(({ o }) => o).slice(0, 2)
+    : [];
   const showSoonNote = hasOptions && product.access_options.some(isSoonOnline);
   const comingSoonNote = offer && offer.cta && typeof offer.cta.note === "string" ? offer.cta.note : COMING_SOON_NOTE;
 
@@ -627,67 +662,54 @@ export default function BuyBookCheckout() {
               <p className="v2-hero-motto">{product.hero_motto}</p>
             )}
 
-            {/* Launch offer on the Digital Companion button */}
-            {!isComingSoon && hasOptions && heroOpts.some((o) => offerAppliesTo(o)) && (
-              <div className="v2-hero-actions v2-hero-actions-offer" data-testid="hero-offer">
+            {/* One line per edition: Online Reading, then Digital Companion. They are different products and may have different offers,
+                so each line has its own button, and - only while THAT edition's offer is active - its own crossed-out price, badge and code.
+                The small text under each button is edited in the admin (Launch offer). */}
+            {!isComingSoon && hasOptions && (
+              <div className="v2-hero-editions" data-testid="hero-editions">
                 {heroOpts.map((opt, i) => {
                   const key = opt.access_type || `opt-${i}`;
-                  // "Online Reading: Coming soon" is replaced by the note line below the button while the offer is on
-                  if (isOnlineOption(opt) && isComingSoonOption(opt)) return null;
-                  if (offerAppliesTo(opt)) {
-                    return (
-                      <div className="v2-offer-row" key={i}>
-                        <button type="button" className="v2-btn-primary" data-testid="offer-cta" onClick={() => handlePurchase(opt)} disabled={processingOption === key}>
-                          {processingOption === key ? "Connecting to Payhip…" : offerButtonLabel(opt)}
+                  const oc = offerFor(opt);
+                  const caption = captionFor(opt);
+                  const busy = processingOption === key;
+                  return (
+                    <div className="v2-hero-edition" key={`${key}-${i}`} data-edition={editionOfOption(opt) || "other"} data-testid="hero-edition">
+                      <div className="v2-offer-row">
+                        <button
+                          type="button"
+                          className={oc || i === 0 ? "v2-btn-primary" : "v2-btn-secondary"}
+                          data-testid={oc ? "offer-cta" : "edition-cta"}
+                          onClick={() => handlePurchase(opt)}
+                          disabled={busy}
+                        >
+                          {busy ? "Connecting to Payhip…" : oc ? offerButtonLabel(opt, oc) : (opt.cta_text || `${opt.name} · ${opt.currency || product.currency || "USD"} ${Number(opt.price).toFixed(2)}`)}
                         </button>
-                        <span className="v2-offer-was" aria-label="Original price">{offerOriginalText}</span>
-                        {(offerCta.badgeText || offerCta.couponCode) && (
+                        {oc && <span className="v2-offer-was" aria-label="Original price">{moneyText(oc.originalPrice)}</span>}
+                        {oc && (oc.badgeText || oc.couponCode) && (
                           <span className="v2-offer-badge">
-                            {offerCta.badgeText}
-                            {offerCta.couponCode && <span className="v2-offer-code">code {offerCta.couponCode}</span>}
+                            {oc.badgeText}
+                            {oc.couponCode && <span className="v2-offer-code">code {oc.couponCode}</span>}
                           </span>
                         )}
                       </div>
-                    );
-                  }
-                  return (
-                    <button key={i} type="button" className={i === 0 ? "v2-btn-primary" : "v2-btn-secondary"} onClick={() => handlePurchase(opt)} disabled={processingOption === key}>
-                      {processingOption === key ? "Connecting to Payhip…" : (opt.cta_text || `${opt.name} · ${opt.currency || product.currency || "USD"} ${Number(opt.price).toFixed(2)}`)}
-                    </button>
+                      {caption && <p className="v2-hero-caption" data-testid="edition-caption">{caption}</p>}
+                    </div>
                   );
                 })}
               </div>
             )}
 
-            {/* CTAs from Access Options or direct price */}
-            {!isComingSoon && !(hasOptions && heroOpts.some((o) => offerAppliesTo(o))) && (
+            {/* No editions defined: a single price */}
+            {!isComingSoon && !hasOptions && product.price > 0 && (
               <div className="v2-hero-actions">
-                {hasOptions ? (
-                  heroOpts.map((opt, i) => (
-                    <button
-                      key={i}
-                      type="button"
-                      className={i === 0 ? "v2-btn-primary" : "v2-btn-secondary"}
-                      onClick={() => handlePurchase(opt)}
-                      disabled={processingOption === (opt.access_type || `opt-${i}`)}
-                    >
-                      {processingOption === (opt.access_type || `opt-${i}`) ? (
-                        <>Connecting to Payhip…</>
-                      ) : (
-                        <>{opt.cta_text || `${opt.name} · ${opt.currency || product.currency || 'USD'} ${Number(opt.price).toFixed(2)}`}</>
-                      )}
-                    </button>
-                  ))
-                ) : product.price > 0 ? (
-                  <button
-                    type="button"
-                    className="v2-btn-primary"
-                    onClick={() => handlePurchase("download")}
-                    disabled={processingOption === "download"}
-                  >
-                    {processingOption === "download" ? "Connecting to Payhip…" : `Get Publication · ${product.currency || "USD"} ${Number(product.price).toFixed(2)}`}
-                  </button>
-                ) : null}
+                <button
+                  type="button"
+                  className="v2-btn-primary"
+                  onClick={() => handlePurchase("download")}
+                  disabled={processingOption === "download"}
+                >
+                  {processingOption === "download" ? "Connecting to Payhip…" : `Get Publication · ${product.currency || "USD"} ${Number(product.price).toFixed(2)}`}
+                </button>
               </div>
             )}
 
@@ -990,9 +1012,10 @@ export default function BuyBookCheckout() {
                   (ownership.edition === "online" && isOnlineOpt);
 
                 const isUpgradeAvailable = ownership.edition === "online" && isCompanionOpt;
-                const showOffer = offerAppliesTo(opt) && !isOwned;
+                const oc = offerFor(opt); // THIS edition's own offer, if it has a live one
+                const showOffer = !!oc && !isOwned;
                 const isSoonEdition = isSoonOnline(opt);
-                const displayPrice = isUpgradeAvailable ? 29.99 : showOffer ? Number(offerCta.offerPrice) : priceNum;
+                const displayPrice = isUpgradeAvailable ? 29.99 : showOffer ? Number(oc.offerPrice) : priceNum;
 
                 let cardBadge = opt.badge;
                 if (isOwned) cardBadge = "ALREADY OWNED";
@@ -1014,14 +1037,14 @@ export default function BuyBookCheckout() {
                     <p className="v2-edition-price">
                       ${displayPrice.toFixed(2)}
                       {showOffer && (
-                        <span style={{ fontSize: "0.5em", color: "#6b7280", marginLeft: 8, fontWeight: 500, textDecoration: "line-through" }}>{offerOriginalText}</span>
+                        <span style={{ fontSize: "0.5em", color: "#6b7280", marginLeft: 8, fontWeight: 500, textDecoration: "line-through" }}>{moneyText(oc.originalPrice)}</span>
                       )}
                       {isUpgradeAvailable && (
                         <span style={{ fontSize: "0.45em", color: "#6b7280", marginLeft: 6, fontWeight: 500 }}>
                           (Price difference from Online Edition)
                         </span>
                       )}
-                      {couponDiscount && !isUpgradeAvailable && (
+                      {couponDiscount && !isUpgradeAvailable && couponAppliesToItem(couponDiscount.applies_to, { productId: product?.id, accessType: isCompanionOpt ? "companion" : isOnlineOpt ? "online" : "other" }) && (
                         <span style={{ fontSize: "0.5em", color: "#1E7A4F", marginLeft: 8 }}>
                           (${((priceNum * (100 - (couponDiscount.value || couponDiscount.discount_percentage))) / 100).toFixed(2)})
                         </span>
@@ -1089,7 +1112,7 @@ export default function BuyBookCheckout() {
                             : isUpgradeAvailable
                             ? "Upgrade to Digital Companion · $29.99"
                             : showOffer
-                            ? offerButtonLabel(opt)
+                            ? offerButtonLabel(opt, oc)
                             : (opt.cta_text || `Get ${opt.name} · $${priceNum.toFixed(2)}`)}
                         </button>
 
@@ -1103,9 +1126,9 @@ export default function BuyBookCheckout() {
                           {isUpgradeAvailable ? "Add Upgrade ($29.99)" : "Add to Cart"}
                         </button>
                         )}
-                        {showOffer && offerCta.couponCode && (
+                        {showOffer && oc.couponCode && (
                           <p className="v2-offer-card-note">
-                            Offer code <strong>{offerCta.couponCode}</strong> is applied automatically at checkout.
+                            Offer code <strong>{oc.couponCode}</strong> is applied automatically at checkout.
                           </p>
                         )}
                       </>
