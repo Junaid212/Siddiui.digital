@@ -449,3 +449,44 @@
   box-shadow: 0 4px 14px rgba(200, 8, 8, 0.4);
 }
 
+
+/* ── "View Details" panel (opens inside the order card) ─────────────────────── */
+.my-order-details {
+  margin-top: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.025);
+}
+.my-order-details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 12px 18px;
+  margin: 0;
+}
+.my-order-details-grid dt {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary, #6b7280);
+  font-weight: 700;
+  margin: 0 0 2px;
+}
+.my-order-details-grid dd {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-primary, #111827);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.my-order-details-files {
+  margin: 14px 0 0;
+  padding: 12px 0 0;
+  border-top: 1px solid var(--border-color, #e5e7eb);
+  list-style: none;
+  font-size: 0.84rem;
+  line-height: 1.6;
+  color: var(--text-primary, #374151);
+}
+.my-order-details-files li { margin: 0 0 4px; }
+.my-order-details-files i { color: #c80808; width: 18px; text-align: center; margin-right: 4px; }

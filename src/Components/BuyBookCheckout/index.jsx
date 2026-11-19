@@ -10,6 +10,14 @@ import { couponAppliesToItem } from "../../utils/couponScope";
 
 // Shown under the buttons while Online Reading is "coming soon" (the administrator can change the wording).
 const COMING_SOON_NOTE = "Online reading and Ask SID: coming soon, free for Companion buyers.";
+// A button label "Name · $price" drawn as name + separator + price, so on a phone the price can sit under the name (without a stray "·")
+// instead of the label breaking in an awkward place. Any other wording is shown exactly as written.
+function PriceLabel({ text }) {
+  const m = /^(.*?)\s*·\s*((?:\$|USD\s?)\s?\d+(?:\.\d+)?)\s*$/.exec(String(text || ""));
+  if (!m) return <>{text}</>;
+  return (<><span className="v2-btn-name">{m[1]}</span><span className="v2-btn-sep"> · </span><span className="v2-btn-price">{m[2]}</span></>);
+}
+
 // Small text under each edition's button in the hero.
 const DEFAULT_ONLINE_CAPTION = "Read the complete book online.";
 const DEFAULT_COMPANION_CAPTION = "Book PDF, Companion Pack, online reading and 12 months of Ask SID.";
@@ -674,7 +682,7 @@ export default function BuyBookCheckout() {
                   const busy = processingOption === key;
                   return (
                     <div className="v2-hero-edition" key={`${key}-${i}`} data-edition={editionOfOption(opt) || "other"} data-testid="hero-edition">
-                      <div className="v2-offer-row">
+                      <div className={`v2-offer-row${oc ? " v2-offer-row--offer" : ""}`}>
                         <button
                           type="button"
                           className={oc || i === 0 ? "v2-btn-primary" : "v2-btn-secondary"}
@@ -682,7 +690,7 @@ export default function BuyBookCheckout() {
                           onClick={() => handlePurchase(opt)}
                           disabled={busy}
                         >
-                          {busy ? "Connecting to Payhip…" : oc ? offerButtonLabel(opt, oc) : (opt.cta_text || `${opt.name} · ${opt.currency || product.currency || "USD"} ${Number(opt.price).toFixed(2)}`)}
+                          {busy ? "Connecting to Payhip…" : <PriceLabel text={oc ? offerButtonLabel(opt, oc) : (opt.cta_text || `${opt.name} · ${opt.currency || product.currency || "USD"} ${Number(opt.price).toFixed(2)}`)} />}
                         </button>
                         {oc && <span className="v2-offer-was" aria-label="Original price">{moneyText(oc.originalPrice)}</span>}
                         {oc && (oc.badgeText || oc.couponCode) && (

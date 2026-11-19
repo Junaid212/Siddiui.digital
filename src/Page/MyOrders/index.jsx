@@ -26,6 +26,10 @@ function formatDate(dateStr) {
   } catch { return dateStr; }
 }
 
+const PROVIDERS = { payhip: "Payhip", paypal: "PayPal", stripe: "Stripe" };
+// Only a payment provider we know is named ("manual" and similar internal values are not shown to the customer).
+const providerLabel = (p) => PROVIDERS[String(p || "").toLowerCase()] || "";
+
 function StatusBadge({ status }) {
   const s = (status || "pending").toLowerCase();
   const icons = { paid: "fa-check-circle", successful: "fa-check-circle", pending: "fa-clock", refunded: "fa-rotate-left", failed: "fa-xmark-circle", expired: "fa-ban" };
@@ -53,6 +57,7 @@ export default function MyOrdersPage() {
   const [entitlement, setEntitlement] = useState(null); // the customer's current access (Ask SID has its own end date)
   const [renewingId, setRenewingId] = useState(null);
   const [ordersNotice, setOrdersNotice] = useState("");
+  const [detailsOpenId, setDetailsOpenId] = useState(null); // the order whose "View Details" panel is open
 
   /* ── Auth ───────────────────────────────────────── */
   useEffect(() => {
@@ -442,7 +447,7 @@ export default function MyOrdersPage() {
                               {isCompanionOrder && askSidEnd && (
                                 <span className="my-order-meta-item" data-testid="asksid-until">
                                   <i className="fa-solid fa-wand-magic-sparkles" />
-                                  {askSidOver ? `Ask SID access ended ${formatDate(askSidEnd)}` : `Ask SID until ${formatDate(askSidEnd)}`}
+                                  {askSidOver ? `Ask SID access ended ${formatDate(askSidEnd)}` : new Date(askSidEnd).getUTCFullYear() >= 2100 ? "Ask SID access: no end date" : `Ask SID until ${formatDate(askSidEnd)}`}
                                 </span>
                               )}
                             </div>
@@ -510,13 +515,18 @@ export default function MyOrdersPage() {
                                     </button>
                                   )}
 
-                                  <Link
-                                    to={`/order-success?provider=${order.payment_provider || (order.paypal_order_id ? "paypal" : order.payhip_transaction_id ? "payhip" : "stripe")}&order_id=${order.paypal_order_id || order.payhip_transaction_id || order.stripe_session_id || order.id}`}
+                                  {/* The details open right here, in the order card (they used to open a separate, old confirmation page). */}
+                                  <button
+                                    type="button"
                                     className="my-order-view-btn"
                                     id={`view-btn-${order.id}`}
+                                    aria-expanded={detailsOpenId === order.id}
+                                    aria-controls={`details-${order.id}`}
+                                    data-testid="view-details"
+                                    onClick={() => setDetailsOpenId((cur) => (cur === order.id ? null : order.id))}
                                   >
-                                    <i className="fa-solid fa-eye" /> View Details
-                                  </Link>
+                                    <i className={`fa-solid ${detailsOpenId === order.id ? "fa-eye-slash" : "fa-eye"}`} /> {detailsOpenId === order.id ? "Hide Details" : "View Details"}
+                                  </button>
                                 </>
                               )}
                               {order.status === "pending" && (
@@ -539,6 +549,34 @@ export default function MyOrdersPage() {
                                 </button>
                               )}
                             </div>
+
+                            {isPaidOrder && detailsOpenId === order.id && (
+                              <div className="my-order-details" id={`details-${order.id}`} data-testid="order-details">
+                                <dl className="my-order-details-grid">
+                                  <div><dt>Order number</dt><dd>{order.order_number || `ORD-${order.id?.substring(0, 8).toUpperCase()}`}</dd></div>
+                                  <div><dt>Ordered on</dt><dd>{formatDate(order.created_at)}</dd></div>
+                                  <div><dt>Edition</dt><dd>{name.includes("upgrade") ? "Upgrade to the Digital Companion Edition" : isOnlineOrder ? "Online Reading Edition" : isCompanionOrder ? "Digital Companion Edition" : (order.book_name || "Digital Publication")}</dd></div>
+                                  <div><dt>Amount</dt><dd>{order.currency} {amt.toFixed(2)}</dd></div>
+                                  <div><dt>Payment</dt><dd>Paid{providerLabel(order.payment_provider) ? ` via ${providerLabel(order.payment_provider)}` : ""}</dd></div>
+                                  {order.email && <div><dt>Access linked to</dt><dd>{order.email}</dd></div>}
+                                </dl>
+                                {isOnlineOrder ? (
+                                  <p className="my-order-details-files">
+                                    <i className="fa-solid fa-book-open" /> This edition is for <b>reading online</b>: use “Read Online” above. File downloads are part of the Digital Companion Edition.
+                                  </p>
+                                ) : (
+                                  <ul className="my-order-details-files" data-testid="details-files">
+                                    <li><i className="fa-solid fa-folder-open" /> <b>Companion Pack</b> (“Download Companion Pack”): {order.download_count || 0} of {dlLimit} downloads used</li>
+                                    {order.book_pdf_available && (
+                                      <li><i className="fa-solid fa-book" /> <b>Book PDF</b> (“Download Book PDF”): {order.book_download_count || 0} of {dlLimit} downloads used</li>
+                                    )}
+                                    {order.download_expires_at && (
+                                      <li><i className="fa-solid fa-clock" /> {windowOver ? `Download links ended ${formatDate(order.download_expires_at)}` : `Download links work until ${formatDate(order.download_expires_at)}`}</li>
+                                    )}
+                                  </ul>
+                                )}
+                              </div>
+                            )}
 
                             {isPaidOrder && !isOnlineOrder && (
                               <div className="my-order-dl-info" data-testid="download-info">

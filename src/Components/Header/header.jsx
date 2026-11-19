@@ -141,6 +141,7 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import { useCart } from "../Cart/CartContext";
 import "../Cart/CartDrawer.css";
 import { supabase } from "../../supabaseClient";
+import BrandMark from "../Brand/BrandMark";
 
 const Navbar = () => {
     const location = useLocation();
@@ -321,10 +322,7 @@ const handleSignOut = async () => {
                                 className="logo" 
                                 alt="Logo" 
                             /> */}
-                            <div className="navbar-brand-text">
-                                <span className="brand-name-2">SIDDIQUI<span className="brand-name">.DIGITAL</span></span>
-                                <span className="brand-tagline">STRATEGIC INTELLIGENCE</span>
-                            </div>
+                            <BrandMark />
                         </NavLink>
 
                         <div className="nav-link-container">

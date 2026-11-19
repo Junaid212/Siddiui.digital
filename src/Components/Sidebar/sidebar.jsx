@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
+import BrandMark from "../Brand/BrandMark";
 
 function Sidebar() {
     const overlayRef = useRef(null);
@@ -133,10 +134,7 @@ const handleSidebarSignOut = async () => {
                             className="img-fluid logo"
                             alt="Logo"
                         /> */}
-                        <div className="navbar-brand-text" >
-                            <span className="brand-name-2">SIDDIQUI<span className="brand-name">.DIGITAL</span></span>
-                            <span className="brand-tagline">STRATEGIC INTELLIGENCE</span>
-                        </div>
+                        <BrandMark />
                     </NavLink>
                     <button className="close-btn">
                         <span>X</span>

@@ -648,7 +648,7 @@ export default function AskSid() {
                     <>
                       <strong>{access.allowance.dailyRemaining}</strong> of {access.allowance.dailyLimit} questions left today
                       {" • "}<strong>{access.allowance.totalRemaining}</strong> of {access.allowance.totalLimit} left in total
-                      {access.allowance.expiresAt ? <> {" • "}access until {new Date(access.allowance.expiresAt).toISOString().slice(0, 10)}</> : null}
+                      {access.allowance.expiresAt ? <> {" • "}{new Date(access.allowance.expiresAt).getUTCFullYear() >= 2100 ? "no end date" : `access until ${new Date(access.allowance.expiresAt).toISOString().slice(0, 10)}`}</> : null}
                       {access.allowance.launchOffer ? " • launch offer" : ""}
                     </>
                   ) : (
